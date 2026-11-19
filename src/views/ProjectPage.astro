@@ -1,0 +1,309 @@
+---
+import { getCollection, render } from "astro:content";
+import Icon from "~/components/Icon.astro";
+import PostList from "~/components/PostList.astro";
+import ProjectLogo from "~/components/ProjectLogo.astro";
+import { localePath, type Locale } from "~/i18n/config";
+import { useTranslations } from "~/i18n/ui";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { entryLocale, entrySlug, getPosts, projectUrl, type Project } from "~/lib/content";
+import { SITE } from "~/lib/site";
+import "~/styles/prose.css";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const locale: Locale = entryLocale(project);
+const slug = entrySlug(project);
+const t = useTranslations(locale);
+const { Content } = await render(project);
+const data = project.data;
+
+const translations = await getCollection("projects", (p) => entrySlug(p) === slug);
+const alternates = Object.fromEntries(translations.map((p) => [entryLocale(p), projectUrl(p)]));
+const articles = (await getPosts(locale)).filter((post) => post.data.project === slug);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: data.name,
+  description: data.description,
+  applicationCategory: "MultimediaApplication",
+  operatingSystem: data.platforms.join(", "),
+  url: data.url ?? data.repo,
+  license: data.license,
+  isAccessibleForFree: true,
+  offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+  author: { "@type": "Person", name: SITE.author, alternateName: SITE.handle, url: SITE.github },
+  codeRepository: data.repo,
+};
+---
+
+<BaseLayout
+  title={`${data.name} · ${data.tagline}`}
+  description={data.description}
+  locale={locale}
+  alternates={alternates}
+  image={`/og/${locale}/projects/${slug}.png`}
+  jsonLd={jsonLd}
+>
+  <div class="container page" style={`--p-a:${data.colors[0]};--p-b:${data.colors[1]}`}>
+    <a class="back" href={localePath(locale, "projects")}>
+      <Icon name="arrowLeft" size={16} />
+      {t("project.all")}
+    </a>
+
+    <header class="hero">
+      <div class="mark">
+        <ProjectLogo logo={data.logo} size={72} />
+      </div>
+      <div>
+        <h1>{data.name}</h1>
+        <p class="tagline">{data.tagline}</p>
+        <p class="desc">{data.description}</p>
+        <div class="actions">
+          {data.url && (
+            <a class="primary" href={data.url} rel="noopener">
+              {t("project.visit")} {new URL(data.url).host}
+              <Icon name="arrowUpRight" size={16} />
+            </a>
+          )}
+          <a class="secondary" href={data.repo} rel="noopener">
+            <Icon name="github" size={16} />
+            {t("project.source")}
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <dl class="facts">
+      <div>
+        <dt class="label">{t("project.platforms")}</dt>
+        <dd>{data.platforms.join(" · ")}</dd>
+      </div>
+      <div>
+        <dt class="label">{t("project.license")}</dt>
+        <dd>{data.license}</dd>
+      </div>
+      <div>
+        <dt class="label">{t("project.stack")}</dt>
+        <dd>{data.stack.join(" · ")}</dd>
+      </div>
+      <div>
+        <dt class="label">{t("project.status")}</dt>
+        <dd>{t(`project.status.${data.status}`)}</dd>
+      </div>
+    </dl>
+
+    <section class="features" aria-labelledby="features-title">
+      <h2 id="features-title">{t("project.features")}</h2>
+      <ul>
+        {data.features.map((feature) => (
+          <li set:html={feature} />
+        ))}
+      </ul>
+    </section>
+
+    <article class="prose">
+      <Content />
+    </article>
+
+    {articles.length > 0 && (
+      <section class="articles" aria-labelledby="articles-title">
+        <h2 id="articles-title">{t("project.articles")}</h2>
+        <PostList posts={articles} locale={locale} headingLevel={3} />
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    max-width: calc(980px + 2 * var(--gutter));
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: clamp(32px, 6vw, 64px);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--fg-muted);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--fg);
+    }
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+    margin-top: 28px;
+  }
+
+  .mark {
+    display: grid;
+    place-items: center;
+    width: 120px;
+    height: 120px;
+    border-radius: 28px;
+    border: 1px solid var(--line);
+    background:
+      linear-gradient(140deg, color-mix(in srgb, var(--p-a) 30%, transparent), transparent 65%),
+      linear-gradient(320deg, color-mix(in srgb, var(--p-b) 18%, transparent), transparent 60%),
+      var(--raised);
+    box-shadow: var(--shadow);
+    animation: settle 800ms var(--ease-out) both;
+  }
+
+  @keyframes settle {
+    from {
+      transform: rotate(-8deg) scale(0.92);
+      opacity: 0;
+    }
+  }
+
+  h1 {
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    letter-spacing: -0.03em;
+    font-weight: 800;
+  }
+
+  .tagline {
+    margin-top: 6px;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .desc {
+    margin-top: 12px;
+    max-width: 60ch;
+    color: var(--fg-muted);
+    font-size: 1.0625rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+
+    & a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 42px;
+      padding-inline: 18px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      text-decoration: none;
+      transition:
+        transform var(--dur) var(--ease-out),
+        background-color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+
+  .primary {
+    background: var(--fg);
+    color: var(--bg);
+
+    &:hover {
+      background: color-mix(in srgb, var(--fg) 85%, var(--p-a));
+    }
+  }
+
+  .secondary {
+    border: 1px solid var(--line-strong);
+    color: var(--fg);
+
+    &:hover {
+      background: var(--surface);
+    }
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    margin-top: 48px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--line);
+    overflow: hidden;
+
+    & div {
+      padding: 16px 18px;
+      background: var(--surface);
+    }
+
+    & dd {
+      margin-top: 6px;
+      font-weight: 500;
+    }
+  }
+
+  .features {
+    margin-top: 56px;
+
+    & h2 {
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+
+    & ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0 32px;
+      padding: 0;
+      list-style: none;
+    }
+
+    & li {
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+      color: var(--fg-muted);
+    }
+
+    & li :global(strong) {
+      color: var(--fg);
+      font-weight: 600;
+    }
+  }
+
+  .prose {
+    margin-top: 48px;
+  }
+
+  .articles {
+    margin-top: 64px;
+
+    & h2 {
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+
+    .mark {
+      width: 96px;
+      height: 96px;
+      border-radius: 22px;
+    }
+  }
+</style>

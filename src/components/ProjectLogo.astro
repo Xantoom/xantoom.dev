@@ -1,0 +1,83 @@
+---
+/**
+ * Renders a project logo from src/assets/projects/<logo>.
+ * A logo may ship light and dark variants as <name>-light.svg / <name>-dark.svg.
+ */
+const files = import.meta.glob<string>("../assets/projects/*.svg", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+});
+
+interface Props {
+  logo: string;
+  size?: number;
+}
+
+const { logo, size = 40 } = Astro.props;
+const read = (name: string) => files[`../assets/projects/${name}.svg`];
+const single = read(logo);
+const light = read(`${logo}-light`);
+const dark = read(`${logo}-dark`);
+
+// Frontmatter runs once per render, so this is unique per logo on the page.
+const uid = Math.random().toString(36).slice(2, 8);
+let variant = 0;
+
+function sized(svg: string | undefined) {
+  if (!svg) return "";
+  // Inlined SVGs share the document: suffix ids so two copies never collide.
+  const suffix = `-${uid}${++variant}`;
+  svg = svg
+    .replace(/\sid="([^"]+)"/g, (_, id) => ` id="${id}${suffix}"`)
+    .replace(/url\(#([^)]+)\)/g, (_, id) => `url(#${id}${suffix})`)
+    .replace(/href="#([^"]+)"/g, (_, id) => `href="#${id}${suffix}"`);
+  // Only the root <svg> gets resized: inner shapes keep their own width/height.
+  return svg.replace(/<svg\b[^>]*>/, (tag) =>
+    tag
+      .replace(/\s(width|height|role|aria-label)="[^"]*"/g, "")
+      .replace(
+        "<svg",
+        `<svg width="${size}" height="${size}" aria-hidden="true" focusable="false"`,
+      ),
+  );
+}
+---
+
+{single ? (
+  <span class="logo" set:html={sized(single)} />
+) : (
+  <>
+    <span class="logo only-light" set:html={sized(light)} />
+    <span class="logo only-dark" set:html={sized(dark)} />
+  </>
+)}
+
+<style>
+  .logo {
+    display: inline-grid;
+    place-items: center;
+  }
+
+  .only-dark {
+    display: none;
+  }
+
+  :global(:root[data-theme="dark"]) .only-dark {
+    display: inline-grid;
+  }
+
+  :global(:root[data-theme="dark"]) .only-light {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .only-dark {
+      display: inline-grid;
+    }
+
+    :global(:root:not([data-theme="light"])) .only-light {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,165 @@
+---
+import Icon from "~/components/Icon.astro";
+import PostList from "~/components/PostList.astro";
+import ProjectList from "~/components/ProjectList.astro";
+import { homePath, localePath, LOCALES, type Locale } from "~/i18n/config";
+import { useTranslations } from "~/i18n/ui";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { getPosts, getProjects } from "~/lib/content";
+import { SITE } from "~/lib/site";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const posts = (await getPosts(locale)).slice(0, 5);
+const projects = await getProjects(locale);
+const alternates = Object.fromEntries(LOCALES.map((l) => [l, homePath(l)]));
+
+const headline = {
+  fr: ["Des apps légères,", "des guides utiles."],
+  en: ["Lightweight apps,", "useful guides."],
+}[locale];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE.name,
+  url: SITE.url,
+  inLanguage: locale,
+  author: { "@type": "Person", name: SITE.author, alternateName: SITE.handle, url: SITE.github },
+};
+---
+
+<BaseLayout
+  title={SITE.name}
+  description={t("site.description")}
+  locale={locale}
+  alternates={alternates}
+  jsonLd={jsonLd}
+>
+  <section class="container intro">
+    <h1>
+      <span>{headline[0]}</span>
+      <span class="second">{headline[1]}</span>
+    </h1>
+    <p class="lede">{t("home.lede")}</p>
+  </section>
+
+  <section class="container block" aria-labelledby="projects-title">
+    <div class="block-head">
+      <h2 id="projects-title">{t("home.projects")}</h2>
+      <a class="more" href={localePath(locale, "projects")}>
+        {t("home.allProjects")}
+        <Icon name="arrowRight" size={16} />
+      </a>
+    </div>
+    <ProjectList projects={projects} locale={locale} />
+  </section>
+
+  <section class="container block" aria-labelledby="posts-title">
+    <div class="block-head">
+      <h2 id="posts-title">{t("home.latest")}</h2>
+      <a class="more" href={localePath(locale, "blog")}>
+        {t("home.allPosts")}
+        <Icon name="arrowRight" size={16} />
+      </a>
+    </div>
+    {posts.length > 0 ? (
+      <PostList posts={posts} locale={locale} headingLevel={3} />
+    ) : (
+      <p class="empty">{t("blog.none")}</p>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .intro {
+    padding-top: clamp(56px, 10vw, 128px);
+    padding-bottom: clamp(48px, 7vw, 88px);
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 6.4vw, 4.75rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    font-weight: 800;
+
+    & span {
+      display: block;
+    }
+  }
+
+  .second {
+    color: var(--fg-faint);
+    animation: rise 700ms var(--ease-out) 80ms both;
+  }
+
+  h1 span:first-child {
+    animation: rise 700ms var(--ease-out) both;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+      filter: blur(6px);
+    }
+  }
+
+  .lede {
+    margin-top: 28px;
+    max-width: 56ch;
+    font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
+    line-height: 1.6;
+    color: var(--fg-muted);
+    animation: rise 700ms var(--ease-out) 160ms both;
+  }
+
+  .block {
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+
+  .block-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--fg-muted);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease-out);
+
+    & :global(.icon) {
+      transition: transform var(--dur) var(--ease-out);
+    }
+
+    &:hover {
+      color: var(--accent);
+    }
+
+    &:hover :global(.icon) {
+      transform: translateX(3px);
+    }
+  }
+
+  .empty {
+    padding: 32px 0;
+    color: var(--fg-muted);
+    border-top: 1px solid var(--line);
+  }
+</style>

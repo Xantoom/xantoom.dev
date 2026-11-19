@@ -1,0 +1,5 @@
+{
+  "printWidth": 100,
+  "astro": true,
+  "ignorePatterns": ["dist/**", ".astro/**", "docs/**", ".impeccable/**", "bun.lock"]
+}

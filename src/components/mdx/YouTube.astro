@@ -1,0 +1,109 @@
+---
+import Icon from "../Icon.astro";
+import { isLocale, DEFAULT_LOCALE } from "~/i18n/config";
+import { useTranslations } from "~/i18n/ui";
+
+/**
+ * Privacy-first YouTube embed: nothing loads from YouTube until the visitor clicks.
+ * Then the player loads from youtube-nocookie.com.
+ *   <YouTube id="dQw4w9WgXcQ" title="…" />
+ */
+interface Props {
+  id: string;
+  title: string;
+  start?: number;
+}
+
+const { id, title, start } = Astro.props;
+const locale = isLocale(Astro.currentLocale) ? Astro.currentLocale : DEFAULT_LOCALE;
+const t = useTranslations(locale);
+const params = new URLSearchParams({ autoplay: "1", rel: "0" });
+if (start) params.set("start", String(start));
+const embed = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?${params}`;
+---
+
+<figure class="yt" data-youtube data-embed={embed} data-title={title}>
+  <button type="button" class="facade" aria-label={`${t("video.play")} : ${title}`}>
+    <span class="title">{title}</span>
+    <span class="play">
+      <Icon name="play" size={22} />
+    </span>
+  </button>
+  <figcaption>{t("video.youtubeNotice")}</figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-youtube]").forEach((figure) => {
+    const button = figure.querySelector("button");
+    button?.addEventListener(
+      "click",
+      () => {
+        const iframe = document.createElement("iframe");
+        iframe.src = figure.dataset.embed!;
+        iframe.title = figure.dataset.title ?? "YouTube";
+        iframe.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+        iframe.loading = "lazy";
+        button.replaceWith(iframe);
+      },
+      { once: true },
+    );
+  });
+</script>
+
+<style>
+  .yt {
+    margin-block: 2em;
+  }
+
+  .facade,
+  .yt :global(iframe) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+
+  .facade {
+    position: relative;
+    display: grid;
+    place-items: center;
+    background:
+      linear-gradient(160deg, color-mix(in srgb, var(--brand-a) 25%, transparent), transparent 60%),
+      var(--raised);
+    overflow: hidden;
+    text-align: left;
+  }
+
+  .title {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 18px;
+    font-weight: 600;
+    color: var(--fg);
+  }
+
+  .play {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 999px;
+    background: var(--brand-gradient);
+    color: var(--on-brand);
+    box-shadow: var(--shadow);
+    transition: transform var(--dur) var(--ease-out);
+  }
+
+  .facade:hover .play {
+    transform: scale(1.08);
+  }
+
+  figcaption {
+    margin-top: 0.6em;
+    font-size: 0.8125rem;
+    color: var(--fg-faint);
+  }
+</style>

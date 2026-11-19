@@ -1,0 +1,144 @@
+---
+import type { Locale } from "~/i18n/config";
+import { useTranslations } from "~/i18n/ui";
+import { projectUrl, type Project } from "~/lib/content";
+import Icon from "./Icon.astro";
+import ProjectLogo from "./ProjectLogo.astro";
+
+interface Props {
+  projects: Project[];
+  locale: Locale;
+  headingLevel?: 2 | 3;
+}
+
+const { projects, locale, headingLevel = 3 } = Astro.props;
+const t = useTranslations(locale);
+const Heading = `h${headingLevel}` as "h2" | "h3";
+---
+
+<ul class="projects">
+  {projects.map((project) => (
+    <li style={`--p-a:${project.data.colors[0]};--p-b:${project.data.colors[1]}`} class="project">
+      <a href={projectUrl(project)}>
+        <span class="tile">
+          <ProjectLogo logo={project.data.logo} size={44} />
+        </span>
+        <span class="text">
+          <span class="head">
+            <Heading class="name">{project.data.name}</Heading>
+            <span class:list={["status", project.data.status]}>
+              {t(`project.status.${project.data.status}`)}
+            </span>
+          </span>
+          <span class="tagline">{project.data.tagline}</span>
+        </span>
+        <Icon name="arrowRight" class="arrow" />
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .projects {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+
+  a {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) 24px;
+    align-items: center;
+    gap: 20px;
+    padding: 14px 20px 14px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    text-decoration: none;
+    color: inherit;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out),
+      transform var(--dur) var(--ease-out);
+
+    &:hover {
+      border-color: color-mix(in srgb, var(--p-a) 55%, var(--line));
+      background: var(--raised);
+    }
+
+    &:active {
+      transform: scale(0.995);
+    }
+  }
+
+  .tile {
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 14px;
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--p-a) 22%, transparent), transparent 70%),
+      var(--raised);
+    border: 1px solid var(--line);
+    transition: transform var(--dur) var(--ease-out);
+  }
+
+  a:hover .tile {
+    transform: rotate(-4deg);
+  }
+
+  .head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+  }
+
+  .name {
+    font-size: 1.25rem;
+  }
+
+  .tagline {
+    display: block;
+    margin-top: 4px;
+    color: var(--fg-muted);
+  }
+
+  .status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--fg);
+  }
+
+  .status.wip {
+    background: transparent;
+    border: 1px dashed var(--line-strong);
+    color: var(--fg-muted);
+  }
+
+  .arrow {
+    color: var(--fg-faint);
+    transition: transform var(--dur) var(--ease-out);
+  }
+
+  a:hover .arrow {
+    transform: translateX(4px);
+    color: var(--fg);
+  }
+
+  @media (max-width: 520px) {
+    a {
+      gap: 14px;
+    }
+
+    .tile {
+      width: 56px;
+      height: 56px;
+    }
+  }
+</style>

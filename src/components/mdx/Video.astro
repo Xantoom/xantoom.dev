@@ -1,0 +1,89 @@
+---
+/**
+ * Self-hosted video. Put files in public/media/ and reference them by path.
+ *
+ *   <Video src="/media/demo.mp4" caption="…" />                 // with controls
+ *   <Video src="/media/loop.webm" gif alt="…" />               // silent loop, like a GIF
+ *
+ * `gif` = autoplay + muted + loop + playsinline, no controls. Motion stops for visitors
+ * who ask for reduced motion (controls appear instead).
+ */
+interface Props {
+  src: string;
+  /** Optional alternative source (e.g. an .mp4 next to a .webm). */
+  fallback?: string;
+  poster?: string;
+  caption?: string;
+  /** Describes the video for screen readers when it plays as a silent loop. */
+  alt?: string;
+  gif?: boolean;
+  width?: number;
+  height?: number;
+}
+
+const { src, fallback, poster, caption, alt, gif = false, width, height } = Astro.props;
+const type = (path: string) => (path.endsWith(".webm") ? "video/webm" : "video/mp4");
+---
+
+<figure class="video">
+  <video
+    poster={poster}
+    width={width}
+    height={height}
+    preload={gif ? "auto" : "metadata"}
+    controls={!gif}
+    autoplay={gif}
+    muted={gif}
+    loop={gif}
+    playsinline
+    aria-label={alt}
+    data-gif={gif ? "" : undefined}
+  >
+    <source src={src} type={type(src)} />
+    {fallback && <source src={fallback} type={type(fallback)} />}
+  </video>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<script>
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const loops = document.querySelectorAll<HTMLVideoElement>("video[data-gif]");
+
+  const applyMotion = () => {
+    loops.forEach((video) => {
+      if (reduce.matches) {
+        video.pause();
+        video.controls = true;
+      } else if (video.paused && !video.controls) {
+        void video.play().catch(() => {});
+      }
+    });
+  };
+
+  // Only play loops while they are on screen.
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      const video = entry.target as HTMLVideoElement;
+      if (reduce.matches) continue;
+      if (entry.isIntersecting) void video.play().catch(() => {});
+      else video.pause();
+    }
+  });
+
+  loops.forEach((video) => observer.observe(video));
+  reduce.addEventListener("change", applyMotion);
+  applyMotion();
+</script>
+
+<style>
+  .video {
+    margin-block: 2em;
+  }
+
+  video {
+    width: 100%;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+</style>

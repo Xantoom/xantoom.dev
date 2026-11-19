@@ -1,0 +1,358 @@
+---
+import { Image } from "astro:assets";
+import { render } from "astro:content";
+import Icon from "~/components/Icon.astro";
+import Callout from "~/components/mdx/Callout.astro";
+import Figure from "~/components/mdx/Figure.astro";
+import Settings from "~/components/mdx/Settings.astro";
+import Video from "~/components/mdx/Video.astro";
+import YouTube from "~/components/mdx/YouTube.astro";
+import ProjectList from "~/components/ProjectList.astro";
+import Toc from "~/components/Toc.astro";
+import { localePath, LOCALE_META, type Locale } from "~/i18n/config";
+import { categoryLabel, formatDate, useTranslations } from "~/i18n/ui";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import {
+  entryLocale,
+  entrySlug,
+  getPosts,
+  getPostTranslations,
+  getProjects,
+  postUrl,
+  readingTime,
+  type Post,
+} from "~/lib/content";
+import { SITE } from "~/lib/site";
+import "~/styles/prose.css";
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const locale: Locale = entryLocale(post);
+const t = useTranslations(locale);
+const { Content, headings } = await render(post);
+const alternates = await getPostTranslations(post);
+const otherLocale = (Object.keys(alternates) as Locale[]).find((l) => l !== locale);
+
+const posts = await getPosts(locale);
+const index = posts.findIndex((p) => p.id === post.id);
+const newer = index > 0 ? posts[index - 1] : undefined;
+const older = index >= 0 && index < posts.length - 1 ? posts[index + 1] : undefined;
+
+const related = post.data.project
+  ? (await getProjects(locale)).filter((p) => entrySlug(p) === post.data.project)
+  : [];
+
+const minutes = readingTime(post.body);
+const url = new URL(postUrl(post), SITE.url).href;
+const ogImage = `/og/${locale}/${entrySlug(post)}.png`;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate.toISOString(),
+  dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+  inLanguage: LOCALE_META[locale].htmlLang,
+  mainEntityOfPage: url,
+  url,
+  image: new URL(ogImage, SITE.url).href,
+  author: { "@type": "Person", name: SITE.author, alternateName: SITE.handle, url: SITE.github },
+  publisher: { "@type": "Person", name: SITE.author, url: SITE.url },
+  keywords: post.data.tags.join(", ") || undefined,
+  timeRequired: `PT${minutes}M`,
+};
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  locale={locale}
+  alternates={alternates}
+  type="article"
+  image={ogImage}
+  imageAlt={post.data.title}
+  publishedTime={post.data.pubDate}
+  modifiedTime={post.data.updatedDate}
+  jsonLd={jsonLd}
+>
+  <div class="container layout">
+    <header class="post-head">
+      <a class="back" href={localePath(locale, "blog")}>
+        <Icon name="arrowLeft" size={16} />
+        {t("post.back")}
+      </a>
+      <h1>{post.data.title}</h1>
+      <p class="lede">{post.data.description}</p>
+      <ul class="meta">
+        <li>
+          <span class="tag">{categoryLabel(post.data.category, locale)}</span>
+        </li>
+        <li>
+          <time datetime={post.data.pubDate.toISOString()}>
+            {formatDate(post.data.pubDate, locale)}
+          </time>
+        </li>
+        {post.data.updatedDate && (
+          <li>
+            {t("post.updated")}{" "}
+            <time datetime={post.data.updatedDate.toISOString()}>
+              {formatDate(post.data.updatedDate, locale)}
+            </time>
+          </li>
+        )}
+        <li>
+          {minutes} {t("post.minRead")}
+        </li>
+        {otherLocale && (
+          <li>
+            <a href={alternates[otherLocale]} hreflang={otherLocale} lang={otherLocale}>
+              <Icon name="globe" size={14} />
+              {t("post.translation")}
+            </a>
+          </li>
+        )}
+      </ul>
+    </header>
+
+    {post.data.cover && (
+      <Image
+        class="cover"
+        src={post.data.cover}
+        alt={post.data.coverAlt ?? ""}
+        widths={[640, 960, 1280, 1600]}
+        sizes="(max-width: 1100px) 100vw, 980px"
+        loading="eager"
+        fetchpriority="high"
+      />
+    )}
+
+    <div class="body">
+      <aside class="side">
+        <Toc headings={headings} locale={locale} />
+      </aside>
+
+      <article class="prose" data-prose>
+        <Content components={{ Figure, Video, YouTube, Callout, Settings }} />
+      </article>
+
+      <footer class="post-foot">
+        {related.length > 0 && (
+          <section class="related" aria-labelledby="related-title">
+            <h2 id="related-title" class="label">
+              {t("post.related")}
+            </h2>
+            <ProjectList projects={related} locale={locale} />
+          </section>
+        )}
+        {(newer || older) && (
+          <nav class="pager" aria-label="Articles">
+            {older ? (
+              <a class="prev" href={postUrl(older)}>
+                <span class="label">
+                  <Icon name="arrowLeft" size={14} />
+                  {t("post.prev")}
+                </span>
+                <span class="pager-title">{older.data.title}</span>
+              </a>
+            ) : (
+              <span />
+            )}
+            {newer && (
+              <a class="next" href={postUrl(newer)}>
+                <span class="label">
+                  {t("post.next")}
+                  <Icon name="arrowRight" size={14} />
+                </span>
+                <span class="pager-title">{newer.data.title}</span>
+              </a>
+            )}
+          </nav>
+        )}
+      </footer>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { initCodeCopy } from "~/lib/code-copy";
+  initCodeCopy();
+</script>
+
+<style>
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .post-head {
+    padding-top: clamp(32px, 6vw, 72px);
+    padding-bottom: 32px;
+    max-width: 860px;
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 28px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--fg-muted);
+    text-decoration: none;
+
+    & :global(.icon) {
+      transition: transform var(--dur) var(--ease-out);
+    }
+
+    &:hover {
+      color: var(--fg);
+    }
+
+    &:hover :global(.icon) {
+      transform: translateX(-3px);
+    }
+  }
+
+  h1 {
+    font-size: clamp(2rem, 4.6vw, 3.25rem);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+  }
+
+  .lede {
+    margin-top: 18px;
+    max-width: 62ch;
+    font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+    color: var(--fg-muted);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 18px;
+    margin-top: 24px;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875rem;
+    color: var(--fg-faint);
+
+    & a {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--accent);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .cover {
+    width: 100%;
+    max-width: 980px;
+    height: auto;
+    margin-bottom: 40px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+  }
+
+  .side {
+    margin-bottom: 32px;
+  }
+
+  .post-foot {
+    margin-top: 64px;
+    max-width: var(--measure);
+    display: grid;
+    gap: 40px;
+  }
+
+  .related h2 {
+    margin-bottom: 12px;
+  }
+
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+
+    & a {
+      display: grid;
+      gap: 6px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      text-decoration: none;
+      transition:
+        border-color var(--dur-fast) var(--ease-out),
+        background-color var(--dur-fast) var(--ease-out);
+
+      &:hover {
+        border-color: var(--line-strong);
+        background: var(--surface);
+      }
+    }
+
+    & .label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    & .next {
+      text-align: right;
+      justify-items: end;
+    }
+  }
+
+  .pager-title {
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  @media (min-width: 1100px) {
+    .body {
+      display: grid;
+      grid-template-columns: 220px minmax(0, var(--measure));
+      column-gap: 64px;
+      align-items: start;
+    }
+
+    .post-head,
+    .cover {
+      margin-left: calc(220px + 64px);
+    }
+
+    .side {
+      grid-row: 1 / span 2;
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
+      max-height: calc(100dvh - var(--header-h) - 64px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      margin: 0;
+    }
+
+    .prose,
+    .post-foot {
+      grid-column: 2;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .pager {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

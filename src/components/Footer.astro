@@ -1,0 +1,82 @@
+---
+import { localePath, type Locale } from "~/i18n/config";
+import { useTranslations } from "~/i18n/ui";
+import { SITE } from "~/lib/site";
+import Icon from "./Icon.astro";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const rss = locale === "fr" ? "/rss.xml" : `/${locale}/rss.xml`;
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container inner">
+    <p class="note">
+      © {year} {SITE.name} · {t("footer.noTracking")}
+    </p>
+    <ul class="links">
+      <li>
+        <a href={localePath(locale, "legal")}>{t("footer.legal")}</a>
+      </li>
+      <li>
+        <a href={localePath(locale, "privacy")}>{t("footer.privacy")}</a>
+      </li>
+      <li>
+        <a href={rss}>
+          <Icon name="rss" size={15} />
+          RSS
+        </a>
+      </li>
+      <li>
+        <a href={SITE.repo} rel="noopener">
+          <Icon name="github" size={15} />
+          {t("footer.source")}
+        </a>
+      </li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: clamp(64px, 10vw, 120px);
+    border-top: 1px solid var(--line);
+    font-size: 0.875rem;
+    color: var(--fg-faint);
+  }
+
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    padding-block: 28px;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    list-style: none;
+    padding: 0;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--fg-muted);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--fg);
+      text-decoration: underline;
+    }
+  }
+</style>

@@ -1,0 +1,226 @@
+---
+import type { MarkdownHeading } from "astro";
+import type { Locale } from "~/i18n/config";
+import { useTranslations } from "~/i18n/ui";
+import Icon from "./Icon.astro";
+
+interface Props {
+  headings: MarkdownHeading[];
+  locale: Locale;
+}
+
+const { headings, locale } = Astro.props;
+const t = useTranslations(locale);
+const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{items.length > 0 && (
+  <nav class="toc" aria-labelledby="toc-title" data-toc>
+    <details open>
+      <summary>
+        <Icon name="list" size={16} />
+        <span id="toc-title">{t("post.toc")}</span>
+      </summary>
+      <ol>
+        {items.map((heading) => (
+          <li class:list={[`d${heading.depth}`]}>
+            <a href={`#${heading.slug}`} data-toc-link={heading.slug}>
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </details>
+    <div class="progress" aria-hidden="true">
+      <span />
+    </div>
+  </nav>
+)}
+
+<script>
+  const toc = document.querySelector<HTMLElement>("[data-toc]");
+  if (toc) {
+    const links = new Map<string, HTMLAnchorElement>();
+    toc.querySelectorAll<HTMLAnchorElement>("[data-toc-link]").forEach((link) => {
+      links.set(link.dataset.tocLink!, link);
+    });
+
+    const headings = [...links.keys()]
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    let current = "";
+    const update = () => {
+      const offset = window.innerHeight * 0.25;
+      let active = headings[0]?.id ?? "";
+      for (const heading of headings) {
+        if (heading.getBoundingClientRect().top - offset <= 0) active = heading.id;
+        else break;
+      }
+      if (active === current) return;
+      links.get(current)?.removeAttribute("aria-current");
+      links.get(active)?.setAttribute("aria-current", "location");
+      current = active;
+    };
+
+    let ticking = false;
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          update();
+          ticking = false;
+        });
+      },
+      { passive: true },
+    );
+    update();
+
+    // On wide screens the sidebar contents stay open; on small screens they start folded.
+    const details = toc.querySelector("details");
+    const wide = window.matchMedia("(min-width: 1100px)");
+    const sync = () => {
+      if (details) details.open = wide.matches;
+    };
+    wide.addEventListener("change", sync);
+    sync();
+    toc.addEventListener("click", (event) => {
+      if ((event.target as HTMLElement).closest("a") && !wide.matches && details) {
+        details.open = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .toc {
+    position: relative;
+    font-size: 0.875rem;
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-faint);
+    padding-block: 4px 12px;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+
+  ol {
+    list-style: none;
+    padding: 0 0 0 14px;
+    margin: 0;
+    border-left: 1px solid var(--line);
+  }
+
+  li {
+    margin: 0;
+  }
+
+  li.d3 {
+    padding-left: 14px;
+  }
+
+  a {
+    position: relative;
+    display: block;
+    padding: 5px 0;
+    color: var(--fg-muted);
+    text-decoration: none;
+    line-height: 1.4;
+    transition: color var(--dur-fast) var(--ease-out);
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: -15px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      border-radius: 2px;
+      background: var(--brand-gradient);
+      opacity: 0;
+      transform: scaleY(0.4);
+      transition:
+        opacity var(--dur-fast) var(--ease-out),
+        transform var(--dur) var(--ease-out);
+    }
+
+    &:hover {
+      color: var(--fg);
+    }
+
+    &[aria-current="location"] {
+      color: var(--fg);
+      font-weight: 550;
+
+      &::before {
+        opacity: 1;
+        transform: scaleY(1);
+      }
+    }
+  }
+
+  li.d3 a::before {
+    left: -29px;
+  }
+
+  /* Whole-article reading progress, drawn under the contents list. */
+  .progress {
+    margin-top: 20px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--line);
+    overflow: hidden;
+
+    & span {
+      display: block;
+      height: 100%;
+      background: var(--brand-gradient);
+      transform-origin: left;
+      transform: scaleX(0);
+      animation: read-progress linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+
+  @keyframes read-progress {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @media (max-width: 1099px) {
+    .toc {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 12px 16px;
+    }
+
+    summary {
+      cursor: pointer;
+      padding-block: 2px;
+    }
+
+    details[open] summary {
+      padding-bottom: 12px;
+    }
+
+    .progress {
+      display: none;
+    }
+  }
+</style>

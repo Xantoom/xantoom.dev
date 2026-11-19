@@ -1,0 +1,269 @@
+---
+import Icon from "~/components/Icon.astro";
+import PostList from "~/components/PostList.astro";
+import { localePath, LOCALES, type Locale } from "~/i18n/config";
+import { categoryLabel, CATEGORY_KEYS, useTranslations } from "~/i18n/ui";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { getPosts } from "~/lib/content";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const posts = await getPosts(locale);
+const used = CATEGORY_KEYS.filter((key) => posts.some((post) => post.data.category === key));
+const alternates = Object.fromEntries(LOCALES.map((l) => [l, localePath(l, "blog")]));
+const rss = locale === "fr" ? "/rss.xml" : `/${locale}/rss.xml`;
+const countLabel = (n: number) => `${n} ${n === 1 ? t("blog.count.one") : t("blog.count.other")}`;
+---
+
+<BaseLayout
+  title={t("blog.title")}
+  description={t("blog.description")}
+  locale={locale}
+  alternates={alternates}
+>
+  <div class="container">
+    <header class="head">
+      <h1>{t("blog.title")}</h1>
+      <p class="lede">{t("blog.description")}</p>
+      <a class="rss" href={rss}>
+        <Icon name="rss" size={16} />
+        RSS
+      </a>
+    </header>
+
+    {posts.length === 0 ? (
+      <p class="empty">{t("blog.none")}</p>
+    ) : (
+      <>
+        <div class="controls" data-blog-controls hidden>
+          <div class="chips" role="group" aria-label={t("blog.filters")}>
+            <button type="button" aria-pressed="true" data-category="all">
+              {t("blog.filterAll")}
+            </button>
+            {used.map((key) => (
+              <button type="button" aria-pressed="false" data-category={key}>
+                {categoryLabel(key, locale)}
+              </button>
+            ))}
+          </div>
+          <label class="search">
+            <Icon name="search" size={16} />
+            <span class="sr-only">{t("blog.searchLabel")}</span>
+            <input type="search" placeholder={t("blog.search")} autocomplete="off" />
+          </label>
+          <p
+            class="count"
+            aria-live="polite"
+            data-count
+            data-one={t("blog.count.one")}
+            data-other={t("blog.count.other")}
+          >
+            {countLabel(posts.length)}
+          </p>
+        </div>
+
+        <PostList posts={posts} locale={locale} lead filterable />
+        <p class="empty" data-empty hidden>
+          {t("blog.empty")}
+        </p>
+      </>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+  const controls = document.querySelector<HTMLElement>("[data-blog-controls]");
+  /** Lowercase without accents, so « reglage » matches « Réglage ». */
+  const normalize = (value: string) => value.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
+  const list = document.querySelector<HTMLElement>("[data-post-list]");
+
+  if (controls && list) {
+    controls.hidden = false;
+    const items = [...list.querySelectorAll<HTMLElement>("li")];
+    const buttons = [...controls.querySelectorAll<HTMLButtonElement>("button[data-category]")];
+    const input = controls.querySelector<HTMLInputElement>("input")!;
+    const count = controls.querySelector<HTMLElement>("[data-count]")!;
+    const empty = document.querySelector<HTMLElement>("[data-empty]")!;
+    let category = "all";
+
+    const apply = () => {
+      const query = normalize(input.value.trim());
+      let visible = 0;
+      for (const item of items) {
+        const matchCategory = category === "all" || item.dataset.category === category;
+        const matchQuery = !query || normalize(item.dataset.search ?? "").includes(query);
+        item.hidden = !(matchCategory && matchQuery);
+        if (!item.hidden) visible++;
+      }
+      // The lead layout only makes sense on the unfiltered list.
+      list.classList.toggle("filtered", category !== "all" || query !== "");
+      empty.hidden = visible > 0;
+      count.textContent = `${visible} ${visible === 1 ? count.dataset.one : count.dataset.other}`;
+    };
+
+    for (const button of buttons) {
+      button.addEventListener("click", () => {
+        category = button.dataset.category ?? "all";
+        for (const other of buttons) other.setAttribute("aria-pressed", String(other === button));
+        apply();
+      });
+    }
+    input.addEventListener("input", apply);
+  }
+</script>
+
+<style>
+  .head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 16px 32px;
+    padding-top: clamp(48px, 8vw, 96px);
+    padding-bottom: 40px;
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 4.25rem);
+    letter-spacing: -0.035em;
+    font-weight: 800;
+  }
+
+  .lede {
+    grid-column: 1;
+    max-width: 52ch;
+    color: var(--fg-muted);
+    font-size: 1.125rem;
+  }
+
+  .rss {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--fg-muted);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--accent);
+    }
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    margin-bottom: 8px;
+    padding-bottom: 20px;
+  }
+
+  .controls[hidden] {
+    display: none;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .chips button {
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--fg-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+
+    &:hover {
+      color: var(--fg);
+      border-color: var(--line-strong);
+    }
+
+    &[aria-pressed="true"] {
+      background: var(--fg);
+      border-color: var(--fg);
+      color: var(--bg);
+    }
+  }
+
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 220px;
+    max-width: 340px;
+    height: 38px;
+    padding-inline: 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--fg-faint);
+    transition: border-color var(--dur-fast) var(--ease-out);
+
+    &:focus-within {
+      border-color: var(--accent);
+    }
+
+    & input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      background: none;
+      outline: none;
+      color: var(--fg);
+
+      &::placeholder {
+        color: var(--fg-faint);
+      }
+    }
+  }
+
+  .count {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--fg-faint);
+  }
+
+  .empty {
+    padding: 40px 0;
+    color: var(--fg-muted);
+  }
+
+  .empty[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .head {
+      grid-template-columns: 1fr;
+    }
+
+    .rss {
+      grid-column: 1;
+      grid-row: auto;
+    }
+
+    .search {
+      max-width: none;
+    }
+
+    .count {
+      margin-left: 0;
+    }
+  }
+</style>

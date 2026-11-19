@@ -1,0 +1,107 @@
+---
+title: Guide de style des articles
+description: Article de démonstration (brouillon, jamais publié) qui montre tous les éléments disponibles pour écrire un article sur xantoom.dev.
+pubDate: 2026-11-19
+category: guide
+tags: [démo, rédaction]
+translationKey: style-guide
+project: vixely
+draft: true
+---
+
+import chaine from "./chaine.png";
+
+Cet article est un **brouillon de démonstration** : il n'apparaît qu'en développement (`bun run dev`) et sert de référence pour écrire. Le sommaire se génère tout seul à partir des titres `##` et `###`.
+
+## Texte et mise en forme
+
+Un paragraphe normal, avec du **gras**, de l'_italique_, du `code en ligne`, un raccourci <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Échap</kbd>, un [lien interne](/projets/vixely/) et un [lien externe](https://developer.mozilla.org/fr/).
+
+> Une citation, pour mettre en avant une phrase ou rapporter les mots de quelqu'un.
+
+### Listes
+
+- Une liste à puces
+- avec plusieurs éléments
+  - et un sous-niveau
+
+1. Une liste numérotée
+2. pour les étapes à suivre dans l'ordre
+
+## Encadrés
+
+<Callout>Une note neutre, pour une précision utile.</Callout>
+
+<Callout type="tip">Une astuce : plafonne tes FPS juste sous la fréquence de ton écran.</Callout>
+
+<Callout type="warning" title="Avant de modifier le BIOS">
+  Note tes réglages actuels. Un mauvais réglage peut empêcher la machine de démarrer.
+</Callout>
+
+## Tableau de réglages
+
+Pour les articles « meilleurs paramètres », le composant `Settings` met en avant les réglages qui comptent :
+
+<Settings
+  title="Exemple : réglages graphiques"
+  rows={[
+    {
+      name: "Synchronisation verticale",
+      value: "Désactivée",
+      why: "Ajoute de la latence",
+      highlight: true,
+    },
+    { name: "Limite d'images", value: "Fréquence − 3", why: "Évite le plafond de la VRR" },
+    { name: "Mise à l'échelle", value: "Qualité", why: "Bon compromis netteté / FPS" },
+    { name: "Ombres", value: "Moyennes", why: "Gros gain de FPS, peu visible" },
+  ]}
+/>
+
+Un tableau Markdown classique marche aussi :
+
+| Résolution | Pixels    | Rapport à 1080p |
+| ---------- | --------- | --------------- |
+| 1080p      | 2 073 600 | ×1              |
+| 1440p      | 3 686 400 | ×1,78           |
+| 4K         | 8 294 400 | ×4              |
+
+## Images et vidéos
+
+### Image optimisée
+
+Les images placées à côté de l'article sont converties en AVIF/WebP, redimensionnées et chargées à la demande :
+
+<Figure
+  src={chaine}
+  alt="Schéma : souris, système, GPU, écran"
+  caption="La chaîne de latence, de la souris à l'écran."
+/>
+
+### Vidéo en boucle (comme un GIF)
+
+Les GIF pèsent souvent 10 fois plus qu'une vidéo. Mets plutôt un fichier `.webm` ou `.mp4` dans `public/media/` et utilise :
+
+```mdx
+<Video src="/media/demo.webm" gif alt="Description de l'animation" />
+```
+
+### Vidéo YouTube
+
+Rien n'est chargé depuis YouTube avant le clic :
+
+<YouTube id="aqz-KE-bpKQ" title="Big Buck Bunny (Blender Foundation)" />
+
+## Code
+
+```ts title="exemple.ts"
+// Calcule la durée d'une image à une fréquence donnée.
+export function frameTime(hz: number): number {
+  return 1000 / hz;
+}
+
+console.log(frameTime(240).toFixed(2)); // 4.17 ms
+```
+
+```bash
+bun run dev
+```

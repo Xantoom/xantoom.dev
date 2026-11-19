@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "xantoom-dev",
+  "account_id": "480ab55dd9b66a585ffd0d71676d26d2",
+  "compatibility_date": "2026-11-19",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash",
+  },
+  // Served only on the real domain: no *.workers.dev copy, no per-version preview URLs.
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    { "pattern": "xantoom.dev", "custom_domain": true },
+    // Redirected to the apex by a zone redirect rule.
+    { "pattern": "www.xantoom.dev", "custom_domain": true },
+  ],
+}

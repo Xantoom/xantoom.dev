@@ -1,0 +1,102 @@
+---
+title: Article style guide
+description: Demo article (draft, never published) showing every element available to write a post on xantoom.dev.
+pubDate: 2026-11-19
+category: guide
+tags: [demo, writing]
+translationKey: style-guide
+project: vixely
+draft: true
+---
+
+import chain from "./chain.png";
+
+This post is a **demo draft**: it only shows up in development (`bun run dev`) and is the writing reference. The table of contents is generated from the `##` and `###` headings.
+
+## Text and formatting
+
+A normal paragraph, with **bold**, _italic_, `inline code`, a shortcut <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Esc</kbd>, an [internal link](/en/projects/vixely/) and an [external link](https://developer.mozilla.org/en-US/).
+
+> A quote, to highlight a sentence or report someone's words.
+
+### Lists
+
+- A bullet list
+- with several items
+  - and a nested level
+
+1. A numbered list
+2. for steps to follow in order
+
+## Callouts
+
+<Callout>A neutral note, for a useful detail.</Callout>
+
+<Callout type="tip">A tip: cap your FPS just below your display's refresh rate.</Callout>
+
+<Callout type="warning" title="Before changing BIOS settings">
+  Write down your current settings. A wrong value can stop the machine from booting.
+</Callout>
+
+## Settings table
+
+For "best settings" posts, the `Settings` component highlights what matters:
+
+<Settings
+  title="Example: graphics settings"
+  rows={[
+    { name: "Vertical sync", value: "Off", why: "Adds latency", highlight: true },
+    { name: "Frame cap", value: "Refresh − 3", why: "Stays under the VRR ceiling" },
+    { name: "Upscaling", value: "Quality", why: "Good sharpness / FPS balance" },
+    { name: "Shadows", value: "Medium", why: "Big FPS gain, barely visible" },
+  ]}
+/>
+
+A plain Markdown table works too:
+
+| Resolution | Pixels    | Versus 1080p |
+| ---------- | --------- | ------------ |
+| 1080p      | 2,073,600 | ×1           |
+| 1440p      | 3,686,400 | ×1.78        |
+| 4K         | 8,294,400 | ×4           |
+
+## Images and videos
+
+### Optimized image
+
+Images next to the post are converted to AVIF/WebP, resized and lazy-loaded:
+
+<Figure
+  src={chain}
+  alt="Diagram: mouse, system, GPU, display"
+  caption="The latency chain, from mouse to display."
+/>
+
+### Looping video (like a GIF)
+
+GIFs are often 10 times heavier than a video. Put a `.webm` or `.mp4` file in `public/media/` and use:
+
+```mdx
+<Video src="/media/demo.webm" gif alt="Description of the animation" />
+```
+
+### YouTube video
+
+Nothing loads from YouTube before the click:
+
+<YouTube id="aqz-KE-bpKQ" title="Big Buck Bunny (Blender Foundation)" />
+
+## Code
+
+```ts title="example.ts"
+// Frame time at a given refresh rate.
+export function frameTime(hz: number): number {
+  return 1000 / hz;
+}
+
+console.log(frameTime(240).toFixed(2)); // 4.17 ms
+```
+
+```bash
+bun run dev
+```

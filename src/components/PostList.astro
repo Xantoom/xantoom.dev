@@ -1,0 +1,212 @@
+---
+import { Image } from "astro:assets";
+import type { Locale } from "~/i18n/config";
+import { categoryLabel, formatDate, useTranslations } from "~/i18n/ui";
+import { postUrl, readingTime, type Post } from "~/lib/content";
+import Icon from "./Icon.astro";
+
+interface Props {
+  posts: Post[];
+  locale: Locale;
+  /** Give the first post a larger row. */
+  lead?: boolean;
+  /** Add data attributes used by the blog filter. */
+  filterable?: boolean;
+  headingLevel?: 2 | 3;
+}
+
+const { posts, locale, lead = false, filterable = false, headingLevel = 2 } = Astro.props;
+const t = useTranslations(locale);
+const Heading = `h${headingLevel}` as "h2" | "h3";
+---
+
+<ol class="posts" data-post-list={filterable ? "" : undefined}>
+  {posts.map((post, index) => {
+    const isLead = lead && index === 0;
+    return (
+      <li
+        class:list={["post", { lead: isLead }]}
+        data-category={filterable ? post.data.category : undefined}
+        data-search={
+          filterable
+            ? `${post.data.title} ${post.data.description} ${post.data.tags.join(" ")}`.toLowerCase()
+            : undefined
+        }
+      >
+        <a href={postUrl(post)}>
+          <div class="meta">
+            <time class="mono" datetime={post.data.pubDate.toISOString()}>
+              {formatDate(post.data.pubDate, locale, "short")}
+            </time>
+            <span class="tag">{categoryLabel(post.data.category, locale)}</span>
+          </div>
+          <div class="body">
+            <Heading class="title">{post.data.title}</Heading>
+            <p class="desc">{post.data.description}</p>
+            <span class="read">
+              {readingTime(post.body)} {t("post.minRead")}
+            </span>
+          </div>
+          {isLead && post.data.cover && (
+            <Image
+              class="cover"
+              src={post.data.cover}
+              alt={post.data.coverAlt ?? ""}
+              widths={[480, 720, 960]}
+              sizes="(max-width: 900px) 100vw, 420px"
+              loading="eager"
+            />
+          )}
+          <Icon name="arrowRight" class="arrow" />
+        </a>
+      </li>
+    );
+  })}
+</ol>
+
+<style>
+  .posts {
+    list-style: none;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .post {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .post[hidden] {
+    display: none;
+  }
+
+  a {
+    position: relative;
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr) 24px;
+    gap: 8px 32px;
+    align-items: start;
+    padding: 24px 0;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-top: 4px;
+  }
+
+  time {
+    font-size: 0.8125rem;
+    color: var(--fg-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .title {
+    font-size: 1.3125rem;
+    letter-spacing: -0.015em;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+
+  .desc {
+    margin-top: 6px;
+    color: var(--fg-muted);
+    max-width: 68ch;
+  }
+
+  .read {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 0.8125rem;
+    color: var(--fg-faint);
+  }
+
+  .arrow {
+    margin-top: 6px;
+    color: var(--fg-faint);
+    transition:
+      transform var(--dur) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+
+  a:hover .title {
+    color: var(--accent);
+  }
+
+  a:hover .arrow {
+    color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  /* Lead row: the newest post reads first. */
+  .lead a {
+    grid-template-columns: 150px minmax(0, 1fr) auto 24px;
+    padding: 36px 0 40px;
+  }
+
+  .lead .title {
+    font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+
+  .lead .desc {
+    font-size: 1.125rem;
+    margin-top: 12px;
+  }
+
+  .cover {
+    width: 360px;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  /* When the blog list is filtered, the lead row falls back to a normal row. */
+  :global(.filtered) .lead a {
+    padding: 24px 0;
+  }
+
+  @media (min-width: 901px) {
+    :global(.filtered) .lead a {
+      grid-template-columns: 150px minmax(0, 1fr) 24px;
+    }
+  }
+
+  :global(.filtered) .lead .title {
+    font-size: 1.3125rem;
+  }
+
+  :global(.filtered) .lead .desc {
+    font-size: 1rem;
+    margin-top: 6px;
+  }
+
+  :global(.filtered) .cover {
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    a,
+    .lead a {
+      grid-template-columns: minmax(0, 1fr) 24px;
+    }
+
+    .meta {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      padding-top: 0;
+    }
+
+    .cover {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      width: 100%;
+    }
+  }
+</style>

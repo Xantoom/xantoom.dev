@@ -1,0 +1,51 @@
+---
+import ProjectList from "~/components/ProjectList.astro";
+import { localePath, LOCALES, type Locale } from "~/i18n/config";
+import { useTranslations } from "~/i18n/ui";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { getProjects } from "~/lib/content";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const projects = await getProjects(locale);
+const alternates = Object.fromEntries(LOCALES.map((l) => [l, localePath(l, "projects")]));
+---
+
+<BaseLayout
+  title={t("projects.title")}
+  description={t("projects.description")}
+  locale={locale}
+  alternates={alternates}
+>
+  <div class="container">
+    <header class="head">
+      <h1>{t("projects.title")}</h1>
+      <p class="lede">{t("projects.description")}</p>
+    </header>
+    <ProjectList projects={projects} locale={locale} headingLevel={2} />
+  </div>
+</BaseLayout>
+
+<style>
+  .head {
+    padding-top: clamp(48px, 8vw, 96px);
+    padding-bottom: 40px;
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 4.25rem);
+    letter-spacing: -0.035em;
+    font-weight: 800;
+  }
+
+  .lede {
+    margin-top: 14px;
+    max-width: 52ch;
+    color: var(--fg-muted);
+    font-size: 1.125rem;
+  }
+</style>

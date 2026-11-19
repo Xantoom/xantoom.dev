@@ -1,0 +1,49 @@
+---
+import BaseHead, { type SeoProps } from "~/components/BaseHead.astro";
+import Footer from "~/components/Footer.astro";
+import Header from "~/components/Header.astro";
+import { LOCALE_META } from "~/i18n/config";
+import { useTranslations } from "~/i18n/ui";
+
+type Props = SeoProps;
+
+const props = Astro.props;
+const t = useTranslations(props.locale);
+---
+
+<!doctype html>
+<html lang={LOCALE_META[props.locale].htmlLang}>
+  <head>
+    <BaseHead {...props} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href="#main">
+      {t("skip")}
+    </a>
+    <Header locale={props.locale} alternates={props.alternates} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer locale={props.locale} />
+  </body>
+</html>
+
+<style>
+  .skip {
+    position: absolute;
+    left: 16px;
+    top: -60px;
+    z-index: 50;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--fg);
+    color: var(--bg);
+    text-decoration: none;
+    transition: top var(--dur-fast) var(--ease-out);
+
+    &:focus {
+      top: 12px;
+    }
+  }
+</style>

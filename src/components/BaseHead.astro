@@ -1,0 +1,106 @@
+---
+import { Font } from "astro:assets";
+import { LOCALE_META, LOCALES, DEFAULT_LOCALE, type Locale } from "~/i18n/config";
+import { SITE } from "~/lib/site";
+import "~/styles/global.css";
+
+export interface SeoProps {
+  title: string;
+  description: string;
+  locale: Locale;
+  /** Absolute paths of this page in each locale, used for hreflang and the language switch. */
+  alternates?: Partial<Record<Locale, string>>;
+  /** Path of the Open Graph image (1200×630 PNG). */
+  image?: string;
+  imageAlt?: string;
+  type?: "website" | "article";
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  locale,
+  alternates = {},
+  image = "/og/default.png",
+  imageAlt,
+  type = "website",
+  publishedTime,
+  modifiedTime,
+  jsonLd,
+  noindex = false,
+} = Astro.props as SeoProps;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const fullTitle = title === SITE.name ? title : `${title} · ${SITE.name}`;
+const imageUrl = new URL(image, Astro.site);
+const xDefault = alternates[DEFAULT_LOCALE];
+const ldItems = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex" />}
+
+{LOCALES.filter((l) => alternates[l]).map((l) => (
+  <link
+    rel="alternate"
+    hreflang={LOCALE_META[l].htmlLang}
+    href={new URL(alternates[l]!, Astro.site)}
+  />
+))}
+{xDefault && <link rel="alternate" hreflang="x-default" href={new URL(xDefault, Astro.site)} />}
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<meta name="theme-color" content="#ebebee" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#15161c" media="(prefers-color-scheme: dark)" />
+<meta name="color-scheme" content="light dark" />
+
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={`${SITE.name} (${locale.toUpperCase()})`}
+  href={locale === DEFAULT_LOCALE ? "/rss.xml" : `/${locale}/rss.xml`}
+/>
+<link rel="sitemap" href="/sitemap-index.xml" />
+
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content={LOCALE_META[locale].ogLocale} />
+{LOCALES.filter((l) => l !== locale && alternates[l]).map((l) => (
+  <meta property="og:locale:alternate" content={LOCALE_META[l].ogLocale} />
+))}
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+{imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+{publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+{modifiedTime && <meta property="article:modified_time" content={modifiedTime.toISOString()} />}
+<meta name="twitter:card" content="summary_large_image" />
+
+<Font cssVariable="--font-inter" />
+<Font cssVariable="--font-jetbrains" />
+
+<script is:inline>
+  (() => {
+    try {
+      const t = localStorage.getItem("theme");
+      if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+    } catch {}
+  })();
+</script>
+
+{ldItems.map((item) => (
+  <script type="application/ld+json" set:html={JSON.stringify(item)} />
+))}

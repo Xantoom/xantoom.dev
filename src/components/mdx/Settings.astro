@@ -1,0 +1,146 @@
+---
+import { DEFAULT_LOCALE, isLocale } from "~/i18n/config";
+import { useTranslations } from "~/i18n/ui";
+
+/**
+ * Table of recommended settings, for "best settings" guides.
+ *
+ *   <Settings
+ *     title="Graphismes"
+ *     rows={[
+ *       { name: "VSync", value: "Off", why: "Ajoute une image de latence" },
+ *       { name: "DLSS", value: "Qualité", highlight: true },
+ *     ]}
+ *   />
+ */
+interface Row {
+  name: string;
+  value: string;
+  why?: string;
+  /** Mark the settings that matter most. */
+  highlight?: boolean;
+}
+
+interface Props {
+  title?: string;
+  rows: Row[];
+}
+
+const { title, rows } = Astro.props;
+const locale = isLocale(Astro.currentLocale) ? Astro.currentLocale : DEFAULT_LOCALE;
+const t = useTranslations(locale);
+const hasWhy = rows.some((row) => row.why);
+---
+
+<div class="settings">
+  {title && <p class="caption">{title}</p>}
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">{t("settings.setting")}</th>
+        <th scope="col">{t("settings.value")}</th>
+        {hasWhy && <th scope="col">{t("settings.why")}</th>}
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr class:list={{ hl: row.highlight }}>
+          <th scope="row">{row.name}</th>
+          <td>
+            <span class="value">{row.value}</span>
+          </td>
+          {hasWhy && <td class="why">{row.why}</td>}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .settings {
+    margin-block: 2em;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .caption {
+    padding: 12px 16px;
+    font-weight: 650;
+    border-bottom: 1px solid var(--line);
+  }
+
+  table {
+    display: table !important;
+    margin: 0 !important;
+  }
+
+  tbody th {
+    font-weight: 550;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.9375rem;
+    color: var(--fg);
+    border-bottom-color: var(--line);
+  }
+
+  tr:last-child th,
+  tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .value {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .hl .value {
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--brand-gradient);
+    color: var(--on-brand);
+  }
+
+  .why {
+    color: var(--fg-muted);
+  }
+
+  /* Narrow screens: each setting becomes a two-line row (name and value, then why). */
+  @media (width < 560px) {
+    table,
+    tbody {
+      display: block !important;
+    }
+
+    thead {
+      display: none;
+    }
+
+    tr {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      column-gap: 12px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    tr:last-child {
+      border-bottom: 0;
+    }
+
+    th,
+    td {
+      padding: 0 !important;
+      border: 0 !important;
+    }
+
+    .why {
+      grid-column: 1 / -1;
+      margin-top: 2px;
+      font-size: 0.875rem;
+    }
+  }
+</style>

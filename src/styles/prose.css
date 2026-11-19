@@ -1,0 +1,230 @@
+/* Article body. Applied to the element that wraps rendered Markdown/MDX. */
+@layer prose {
+  .prose {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--fg);
+    max-width: var(--measure);
+
+    & > * + * {
+      margin-top: 1.25em;
+    }
+
+    & h2,
+    & h3,
+    & h4 {
+      position: relative;
+      scroll-margin-top: calc(var(--header-h) + 24px);
+    }
+
+    & h2 {
+      font-size: 1.75rem;
+      margin-top: 2.4em;
+      padding-top: 1.1em;
+      border-top: 1px solid var(--line);
+    }
+
+    & h3 {
+      font-size: 1.3125rem;
+      margin-top: 2em;
+    }
+
+    & h4 {
+      font-size: 1.0625rem;
+      margin-top: 1.8em;
+    }
+
+    & h2 + *,
+    & h3 + *,
+    & h4 + * {
+      margin-top: 0.6em;
+    }
+
+    & a {
+      color: var(--accent);
+      text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+      transition: text-decoration-color var(--dur-fast) var(--ease-out);
+
+      &:hover {
+        text-decoration-color: currentColor;
+      }
+    }
+
+    & a[href^="http"]:not(.no-ext)::after {
+      content: "↗";
+      display: inline-block;
+      margin-left: 0.15em;
+      font-size: 0.8em;
+      text-decoration: none;
+    }
+
+    & strong {
+      font-weight: 650;
+    }
+
+    & ul,
+    & ol {
+      padding-left: 1.4em;
+
+      & li + li {
+        margin-top: 0.4em;
+      }
+
+      & li::marker {
+        color: var(--fg-faint);
+      }
+    }
+
+    & blockquote {
+      padding: 0.2em 0 0.2em 1.2em;
+      color: var(--fg-muted);
+      font-style: italic;
+      background: linear-gradient(var(--line-strong), var(--line-strong)) left / 1px 100% no-repeat;
+    }
+
+    & hr {
+      border: 0;
+      height: 1px;
+      background: var(--line);
+      margin-block: 3em;
+    }
+
+    & :not(pre) > code {
+      padding: 0.12em 0.4em;
+      border-radius: 5px;
+      background: var(--raised);
+      border: 1px solid var(--line);
+      font-size: 0.85em;
+    }
+
+    & kbd {
+      display: inline-block;
+      padding: 0.05em 0.45em;
+      border: 1px solid var(--line-strong);
+      border-bottom-width: 2px;
+      border-radius: 5px;
+      background: var(--raised);
+      font-size: 0.8em;
+    }
+
+    & table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9375rem;
+      font-variant-numeric: tabular-nums;
+      display: block;
+      overflow-x: auto;
+    }
+
+    & th,
+    & td {
+      padding: 0.6em 0.9em;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    & th {
+      font-weight: 600;
+      color: var(--fg-muted);
+      font-size: 0.8125rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom-color: var(--line-strong);
+    }
+
+    & img,
+    & video {
+      border-radius: var(--radius);
+    }
+
+    & figure figcaption {
+      margin-top: 0.7em;
+      font-size: 0.875rem;
+      color: var(--fg-faint);
+      text-align: center;
+    }
+
+    /* Code blocks: Shiki dual themes through CSS variables. */
+    & pre {
+      position: relative;
+      padding: 1.1em 1.25em;
+      border-radius: var(--radius);
+      background: var(--code-bg) !important;
+      border: 1px solid var(--line);
+      overflow-x: auto;
+      font-size: 0.875rem;
+      line-height: 1.65;
+      tab-size: 2;
+    }
+
+    & pre code {
+      font-variant-ligatures: none;
+    }
+
+    & pre .copy {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: var(--raised);
+      color: var(--fg-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity var(--dur-fast) var(--ease-out);
+
+      &:hover {
+        color: var(--fg);
+      }
+
+      &:focus-visible,
+      &[data-done] {
+        opacity: 1;
+      }
+    }
+
+    & pre:hover .copy {
+      opacity: 1;
+    }
+
+    @media (hover: none) {
+      & pre .copy {
+        opacity: 1;
+      }
+    }
+  }
+
+  .astro-code span {
+    color: var(--shiki-light);
+  }
+
+  :root[data-theme="dark"] .astro-code span {
+    color: var(--shiki-dark);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .astro-code span {
+      color: var(--shiki-dark);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .prose {
+      font-size: 1rem;
+
+      & h2 {
+        font-size: 1.5rem;
+      }
+
+      & pre {
+        margin-inline: calc(var(--gutter) * -1);
+        border-radius: 0;
+        border-inline: 0;
+      }
+    }
+  }
+}

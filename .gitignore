@@ -1,0 +1,23 @@
+# Dependencies & build output
+node_modules/
+dist/
+.astro/
+.wrangler/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Local working notes (never published)
+/docs/
+/PRODUCT.md
+/DESIGN.md
+/.impeccable/
+
+# OS / editors
+.DS_Store
+*.log
+.vscode/*
+!.vscode/extensions.json
+.idea/

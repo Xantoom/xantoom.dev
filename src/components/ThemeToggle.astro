@@ -1,0 +1,108 @@
+---
+import type { Locale } from "~/i18n/config";
+import { useTranslations } from "~/i18n/ui";
+import Icon from "./Icon.astro";
+
+interface Props {
+  locale: Locale;
+}
+
+const t = useTranslations(Astro.props.locale);
+const options = [
+  { value: "system", icon: "monitor", label: t("theme.system") },
+  { value: "light", icon: "sun", label: t("theme.light") },
+  { value: "dark", icon: "moon", label: t("theme.dark") },
+] as const;
+---
+
+<fieldset class="theme" data-theme-toggle>
+  <legend class="sr-only">{t("theme.label")}</legend>
+  {options.map((option) => (
+    <label title={option.label}>
+      <input
+        type="radio"
+        name="theme"
+        value={option.value}
+        checked={option.value === "system"}
+        class="sr-only"
+      />
+      <Icon name={option.icon} size={16} />
+      <span class="sr-only">{option.label}</span>
+    </label>
+  ))}
+</fieldset>
+
+<script>
+  const root = document.documentElement;
+  const toggle = document.querySelector<HTMLFieldSetElement>("[data-theme-toggle]");
+
+  function stored(): string {
+    try {
+      return localStorage.getItem("theme") ?? "system";
+    } catch {
+      return "system";
+    }
+  }
+
+  function apply(value: string) {
+    if (value === "light" || value === "dark") root.dataset.theme = value;
+    else delete root.dataset.theme;
+    try {
+      if (value === "system") localStorage.removeItem("theme");
+      else localStorage.setItem("theme", value);
+    } catch {
+      /* storage unavailable: the choice lasts for this page only */
+    }
+  }
+
+  if (toggle) {
+    const current = stored();
+    const input = toggle.querySelector<HTMLInputElement>(`input[value="${current}"]`);
+    if (input) input.checked = true;
+    toggle.addEventListener("change", (event) => {
+      const target = event.target as HTMLInputElement;
+      if (!document.startViewTransition) return apply(target.value);
+      // A transition can be skipped (resize, hidden tab): the theme still applies.
+      document.startViewTransition(() => apply(target.value)).ready.catch(() => {});
+    });
+  }
+</script>
+
+<style>
+  .theme {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+  }
+
+  label {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    color: var(--fg-faint);
+    cursor: pointer;
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
+
+    &:hover {
+      color: var(--fg);
+    }
+
+    &:has(input:checked) {
+      color: var(--fg);
+      background: var(--raised);
+      box-shadow: var(--shadow);
+    }
+
+    &:has(input:focus-visible) {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+  }
+</style>
