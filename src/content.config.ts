@@ -2,6 +2,7 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 import { CATEGORY_KEYS } from "./i18n/ui";
+import { PLATFORM_KEYS } from "./lib/platforms";
 
 const blog = defineCollection({
   // src/content/blog/<locale>/<slug>.mdx or src/content/blog/<locale>/<slug>/index.mdx
@@ -40,7 +41,7 @@ const projects = defineCollection({
     url: z.url().optional(),
     repo: z.url(),
     license: z.string(),
-    platforms: z.array(z.string()),
+    platforms: z.array(z.enum(PLATFORM_KEYS)).min(1),
     stack: z.array(z.string()),
     features: z.array(z.string()),
   }),

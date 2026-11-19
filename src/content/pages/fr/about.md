@@ -5,7 +5,7 @@ description: Qui écrit sur xantoom.dev, et pourquoi.
 
 Salut, moi c'est **Xavier**, alias **Xantoom**. Je suis développeur web en France.
 
-Je construis des apps petites, rapides et respectueuses de la vie privée : [Vixely](/projets/vixely/) pour éditer des médias dans le navigateur, [Vixion](/projets/vixion/) pour enregistrer des lives Twitch, et [Vixeeny](/projets/vixeeny/) pour la capture d'écran.
+Je développe des apps gratuites et open source : [Vixely](/projets/vixely/) pour éditer des médias dans le navigateur, [Vixion](/projets/vixion/) pour enregistrer des lives Twitch, et [Vixeeny](/projets/vixeeny/) pour la capture d'écran.
 
 Sur ce blog, j'écris sur ce qui me passionne :
 

@@ -5,7 +5,7 @@ description: Who writes on xantoom.dev, and why.
 
 Hi, I'm **Xavier**, also known as **Xantoom**. I'm a web developer based in France.
 
-I build small, fast, privacy-respecting apps: [Vixely](/en/projects/vixely/) to edit media in the browser, [Vixion](/en/projects/vixion/) to record Twitch streams, and [Vixeeny](/en/projects/vixeeny/) for screen capture.
+I build free, open source apps: [Vixely](/en/projects/vixely/) to edit media in the browser, [Vixion](/en/projects/vixion/) to record Twitch streams, and [Vixeeny](/en/projects/vixeeny/) for screen capture.
 
 On this blog I write about what I enjoy:
 

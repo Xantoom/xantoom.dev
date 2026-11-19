@@ -2,9 +2,13 @@ export const LOCALES = ["fr", "en"] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = "fr";
 
-export const LOCALE_META: Record<Locale, { label: string; htmlLang: string; ogLocale: string }> = {
-  fr: { label: "Français", htmlLang: "fr", ogLocale: "fr_FR" },
-  en: { label: "English", htmlLang: "en", ogLocale: "en_US" },
+/** `flag` is a Circle Flags icon name (country code). */
+export const LOCALE_META: Record<
+  Locale,
+  { label: string; htmlLang: string; ogLocale: string; flag: string }
+> = {
+  fr: { label: "Français", htmlLang: "fr", ogLocale: "fr_FR", flag: "fr" },
+  en: { label: "English", htmlLang: "en", ogLocale: "en_US", flag: "gb" },
 };
 
 /** Route segments that are translated. Keys are stable ids used in code. */

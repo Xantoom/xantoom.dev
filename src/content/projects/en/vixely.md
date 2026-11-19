@@ -1,7 +1,7 @@
 ---
 name: Vixely
 tagline: Edit videos, images and GIFs in your browser.
-description: A 100% local, free media editor. Nothing is uploaded to a server, there isn't even a server. No account, no sign-up.
+description: A video, image and GIF editor that runs entirely in your browser. Your files are not sent anywhere, and there is no account to create.
 status: stable
 order: 1
 logo: vixely
@@ -9,7 +9,7 @@ colors: ["#a78bfa", "#7c3aed"]
 url: https://vixely.app/
 repo: https://github.com/Xantoom/Vixely
 license: MIT
-platforms: [Browser (Chrome, Edge, Firefox, Safari)]
+platforms: [web]
 stack: [React 19, TypeScript, TanStack Router, Zustand, WebCodecs, WebGL2]
 features:
   - "<strong>Video</strong>: trim, crop, resize, color correction, switch audio or subtitle tracks."
@@ -20,9 +20,9 @@ features:
   - "<strong>Local-only</strong>: your files never leave your device, and the app works offline after the first load."
 ---
 
-Vixely comes from a simple frustration: to trim a video or shrink a GIF, most online tools ask you to upload your files to a server, create an account, or pay to remove a watermark.
+To trim a video or shrink a GIF, most online tools ask you to upload your files to a server, create an account or pay to remove a watermark.
 
-Vixely does everything in the browser, using the native **WebCodecs** (hardware decode and encode) and **WebGL2** (real-time preview) APIs. No FFmpeg, no backend: the app is a static site.
+Vixely does everything in your browser, with the **WebCodecs** (hardware decode and encode) and **WebGL2** (real-time preview) APIs. No FFmpeg, no backend: the app is a static site.
 
 ## Supported formats
 

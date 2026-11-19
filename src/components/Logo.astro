@@ -1,23 +1,36 @@
 ---
+import { Image } from "astro:assets";
+import avatar from "~/assets/avatar.jpg";
+
+/** Xantoom's avatar, used as the site logo. */
 interface Props {
+  /** Rendered size in rem. */
   size?: number;
+  class?: string;
+  eager?: boolean;
 }
-const { size = 28 } = Astro.props;
+
+const { size = 2, class: className, eager = false } = Astro.props;
+const px = Math.round(size * 16);
 ---
 
-<svg class="logo" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
-  <defs>
-    <linearGradient id="xt-grad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ff5a2c" />
-      <stop offset="1" stop-color="#ffae1a" />
-    </linearGradient>
-  </defs>
-  <rect width="32" height="32" rx="9" fill="url(#xt-grad)" />
-  <path
-    d="M10 9.5 22 22.5M22 9.5l-4.6 5M14.6 17.5 10 22.5"
-    stroke="#1a1009"
-    stroke-width="3.2"
-    stroke-linecap="round"
-    fill="none"
-  ></path>
-</svg>
+<Image
+  src={avatar}
+  alt=""
+  width={px}
+  height={px}
+  densities={[1, 2, 3]}
+  loading={eager ? "eager" : "lazy"}
+  class:list={["logo", className]}
+  style={`--logo-size:${size}rem`}
+/>
+
+<style>
+  .logo {
+    width: var(--logo-size);
+    height: var(--logo-size);
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--fg) 12%, transparent);
+  }
+</style>

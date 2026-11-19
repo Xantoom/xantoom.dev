@@ -15,7 +15,7 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
     </p>
     <div class="actions">
       <a href="/">
-        <Icon name="arrowLeft" size={16} />
+        <Icon name="arrow-left" size={16} />
         Accueil
       </a>
       <a href="/en/" lang="en">
@@ -27,7 +27,7 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 
 <style>
   .wrap {
-    padding-block: clamp(64px, 12vw, 160px);
+    padding-block: clamp(4rem, 12vw, 10rem);
     text-align: center;
   }
 
@@ -42,21 +42,21 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
     &::after {
       content: "";
       display: block;
-      width: 72px;
-      height: 6px;
-      margin: 16px auto 0;
+      width: 4.5rem;
+      height: 0.375rem;
+      margin: 1rem auto 0;
       border-radius: 6px;
       background: var(--brand-gradient);
     }
   }
 
   h1 {
-    margin-top: 12px;
+    margin-top: 0.75rem;
     font-size: 1.75rem;
   }
 
   p {
-    margin-top: 8px;
+    margin-top: 0.5rem;
     color: var(--fg-muted);
   }
 
@@ -68,15 +68,15 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 32px;
+    gap: 0.625rem;
+    margin-top: 2rem;
 
     & a {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      height: 40px;
-      padding-inline: 16px;
+      gap: 0.375rem;
+      height: 2.5rem;
+      padding-inline: 1rem;
       border-radius: 999px;
       border: 1px solid var(--line-strong);
       text-decoration: none;

@@ -1,13 +1,17 @@
 name: CI
 
-# Every push and pull request is verified. Production is deployed only from main,
-# only after every check passed, and with the exact build that was verified.
+# Every push and pull request is verified. Production is deployed only from main
+# (push, manual run or the daily rebuild), only after every check passed, and with
+# the exact build that was verified.
 
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  # Daily rebuild so the release numbers shown on project pages stay current.
+  schedule:
+    - cron: "17 5 * * *"
 
 permissions:
   contents: read
@@ -42,6 +46,8 @@ jobs:
 
       - name: Build
         run: bun run build
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Keep the build for deployment
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'

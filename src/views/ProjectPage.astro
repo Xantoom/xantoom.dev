@@ -4,9 +4,11 @@ import Icon from "~/components/Icon.astro";
 import PostList from "~/components/PostList.astro";
 import ProjectLogo from "~/components/ProjectLogo.astro";
 import { localePath, type Locale } from "~/i18n/config";
-import { useTranslations } from "~/i18n/ui";
+import { formatDate, useTranslations } from "~/i18n/ui";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { entryLocale, entrySlug, getPosts, projectUrl, type Project } from "~/lib/content";
+import { latestRelease } from "~/lib/github";
+import { PLATFORMS } from "~/lib/platforms";
 import { SITE } from "~/lib/site";
 import "~/styles/prose.css";
 
@@ -20,6 +22,7 @@ const slug = entrySlug(project);
 const t = useTranslations(locale);
 const { Content } = await render(project);
 const data = project.data;
+const release = await latestRelease(data.repo);
 
 const translations = await getCollection("projects", (p) => entrySlug(p) === slug);
 const alternates = Object.fromEntries(translations.map((p) => [entryLocale(p), projectUrl(p)]));
@@ -31,7 +34,8 @@ const jsonLd = {
   name: data.name,
   description: data.description,
   applicationCategory: "MultimediaApplication",
-  operatingSystem: data.platforms.join(", "),
+  operatingSystem: data.platforms.map((p) => PLATFORMS[p].en).join(", "),
+  softwareVersion: release?.version,
   url: data.url ?? data.repo,
   license: data.license,
   isAccessibleForFree: true,
@@ -51,7 +55,7 @@ const jsonLd = {
 >
   <div class="container page" style={`--p-a:${data.colors[0]};--p-b:${data.colors[1]}`}>
     <a class="back" href={localePath(locale, "projects")}>
-      <Icon name="arrowLeft" size={16} />
+      <Icon name="arrow-left" size={16} />
       {t("project.all")}
     </a>
 
@@ -67,33 +71,65 @@ const jsonLd = {
           {data.url && (
             <a class="primary" href={data.url} rel="noopener">
               {t("project.visit")} {new URL(data.url).host}
-              <Icon name="arrowUpRight" size={16} />
+              <Icon name="arrow-up-right" size={16} />
+            </a>
+          )}
+          {!data.url && release && (
+            <a class="primary" href={release.url} rel="noopener">
+              <Icon name="download" size={16} />
+              {t("project.download")}
             </a>
           )}
           <a class="secondary" href={data.repo} rel="noopener">
-            <Icon name="github" size={16} />
-            {t("project.source")}
+            <Icon name="si:github" size={16} />
+            GitHub
           </a>
         </div>
       </div>
     </header>
 
     <dl class="facts">
+      {release && (
+        <div>
+          <dt>
+            <Icon name="tag" size={16} />
+            {t("project.release")}
+          </dt>
+          <dd>
+            <a href={release.url} rel="noopener" class="mono">
+              v{release.version}
+            </a>
+            <span class="sub">{formatDate(release.date, locale, "short")}</span>
+          </dd>
+        </div>
+      )}
       <div>
-        <dt class="label">{t("project.platforms")}</dt>
-        <dd>{data.platforms.join(" · ")}</dd>
+        <dt>
+          <Icon name="monitor-smartphone" size={16} />
+          {t("project.platforms")}
+        </dt>
+        <dd class="platforms">
+          {data.platforms.map((platform) => (
+            <span>
+              <Icon name={PLATFORMS[platform].icon} size={16} />
+              {PLATFORMS[platform][locale]}
+            </span>
+          ))}
+        </dd>
       </div>
       <div>
-        <dt class="label">{t("project.license")}</dt>
-        <dd>{data.license}</dd>
+        <dt>
+          <Icon name="scale" size={16} />
+          {t("project.license")}
+        </dt>
+        <dd class="mono">{data.license}</dd>
       </div>
       <div>
-        <dt class="label">{t("project.stack")}</dt>
+        <dt>
+          <Icon name="code" size={16} />
+          {t("project.stack")}
+        </dt>
         <dd>{data.stack.join(" · ")}</dd>
-      </div>
-      <div>
-        <dt class="label">{t("project.status")}</dt>
-        <dd>{t(`project.status.${data.status}`)}</dd>
       </div>
     </dl>
 
@@ -101,7 +137,10 @@ const jsonLd = {
       <h2 id="features-title">{t("project.features")}</h2>
       <ul>
         {data.features.map((feature) => (
-          <li set:html={feature} />
+          <li>
+            <Icon name="check" size={18} />
+            <span set:html={feature} />
+          </li>
         ))}
       </ul>
     </section>
@@ -121,14 +160,14 @@ const jsonLd = {
 
 <style>
   .page {
-    max-width: calc(980px + 2 * var(--gutter));
+    max-width: calc(61.25rem + 2 * var(--gutter));
   }
 
   .back {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    margin-top: clamp(32px, 6vw, 64px);
+    gap: 0.375rem;
+    margin-top: clamp(2rem, 6vw, 4rem);
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--fg-muted);
@@ -142,16 +181,16 @@ const jsonLd = {
   .hero {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
-    gap: 28px;
+    gap: 1.75rem;
     align-items: start;
-    margin-top: 28px;
+    margin-top: 1.75rem;
   }
 
   .mark {
     display: grid;
     place-items: center;
-    width: 120px;
-    height: 120px;
+    width: 7.5rem;
+    height: 7.5rem;
     border-radius: 28px;
     border: 1px solid var(--line);
     background:
@@ -176,13 +215,13 @@ const jsonLd = {
   }
 
   .tagline {
-    margin-top: 6px;
+    margin-top: 0.375rem;
     font-size: 1.25rem;
     font-weight: 600;
   }
 
   .desc {
-    margin-top: 12px;
+    margin-top: 0.75rem;
     max-width: 60ch;
     color: var(--fg-muted);
     font-size: 1.0625rem;
@@ -191,15 +230,15 @@ const jsonLd = {
   .actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 24px;
+    gap: 0.625rem;
+    margin-top: 1.5rem;
 
     & a {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      height: 42px;
-      padding-inline: 18px;
+      gap: 0.5rem;
+      height: 2.625rem;
+      padding-inline: 1.125rem;
       border-radius: 999px;
       font-weight: 600;
       font-size: 0.9375rem;
@@ -235,45 +274,90 @@ const jsonLd = {
 
   .facts {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
     gap: 1px;
-    margin-top: 48px;
+    margin-top: 3rem;
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     background: var(--line);
     overflow: hidden;
 
     & div {
-      padding: 16px 18px;
+      padding: 1.125rem 1.25rem;
       background: var(--surface);
     }
 
+    & dt {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      color: var(--fg-faint);
+    }
+
     & dd {
-      margin-top: 6px;
-      font-weight: 500;
+      margin-top: 0.5rem;
+      font-weight: 550;
+    }
+
+    & a {
+      text-decoration: none;
+
+      &:hover {
+        color: var(--accent);
+      }
+    }
+  }
+
+  .mono {
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+  }
+
+  .sub {
+    margin-left: 0.5rem;
+    font-weight: 400;
+    font-size: 0.875rem;
+    color: var(--fg-faint);
+  }
+
+  .platforms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem 1rem;
+
+    & span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4375rem;
     }
   }
 
   .features {
-    margin-top: 56px;
+    margin-top: 4rem;
 
     & h2 {
       font-size: 1.5rem;
-      margin-bottom: 16px;
+      margin-bottom: 1.5rem;
     }
 
     & ul {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 0 32px;
+      grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+      gap: 1.25rem 3rem;
       padding: 0;
       list-style: none;
     }
 
     & li {
-      padding: 12px 0;
-      border-top: 1px solid var(--line);
+      display: flex;
+      gap: 0.75rem;
       color: var(--fg-muted);
+    }
+
+    & li :global(.icon) {
+      margin-top: 0.1875rem;
+      color: var(--p-a);
     }
 
     & li :global(strong) {
@@ -283,15 +367,15 @@ const jsonLd = {
   }
 
   .prose {
-    margin-top: 48px;
+    margin-top: 3rem;
   }
 
   .articles {
-    margin-top: 64px;
+    margin-top: 4rem;
 
     & h2 {
       font-size: 1.5rem;
-      margin-bottom: 16px;
+      margin-bottom: 1rem;
     }
   }
 
@@ -301,8 +385,8 @@ const jsonLd = {
     }
 
     .mark {
-      width: 96px;
-      height: 96px;
+      width: 6rem;
+      height: 6rem;
       border-radius: 22px;
     }
   }

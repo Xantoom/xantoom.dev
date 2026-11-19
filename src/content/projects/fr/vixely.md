@@ -1,7 +1,7 @@
 ---
 name: Vixely
 tagline: Édite vidéos, images et GIF dans ton navigateur.
-description: Un éditeur de médias 100 % local et gratuit. Rien n'est envoyé sur un serveur, il n'y a même pas de serveur. Sans compte, sans inscription.
+description: Un éditeur de vidéos, d'images et de GIF qui tourne entièrement dans ton navigateur. Tes fichiers ne sont envoyés nulle part, et il n'y a pas de compte à créer.
 status: stable
 order: 1
 logo: vixely
@@ -9,7 +9,7 @@ colors: ["#a78bfa", "#7c3aed"]
 url: https://vixely.app/
 repo: https://github.com/Xantoom/Vixely
 license: MIT
-platforms: [Navigateur (Chrome, Edge, Firefox, Safari)]
+platforms: [web]
 stack: [React 19, TypeScript, TanStack Router, Zustand, WebCodecs, WebGL2]
 features:
   - "<strong>Vidéo</strong> : couper, recadrer, redimensionner, corriger les couleurs, changer de piste audio ou de sous-titres."
@@ -20,9 +20,9 @@ features:
   - "<strong>Local</strong> : tes fichiers ne quittent jamais ton appareil, et l'app marche hors ligne après le premier chargement."
 ---
 
-Vixely est né d'une frustration simple : pour couper une vidéo ou alléger un GIF, la plupart des outils en ligne demandent d'envoyer ses fichiers sur un serveur, de créer un compte, ou de payer pour retirer un filigrane.
+Pour couper une vidéo ou alléger un GIF, la plupart des outils en ligne demandent d'envoyer tes fichiers sur un serveur, de créer un compte ou de payer pour retirer un filigrane.
 
-Vixely fait tout dans le navigateur, grâce aux API natives **WebCodecs** (décodage et encodage matériels) et **WebGL2** (aperçu en temps réel). Pas de FFmpeg, pas de backend : l'app est un site statique.
+Vixely fait tout dans ton navigateur, avec les API **WebCodecs** (décodage et encodage matériels) et **WebGL2** (aperçu en temps réel). Pas de FFmpeg, pas de backend : l'app est un site statique.
 
 ## Formats pris en charge
 

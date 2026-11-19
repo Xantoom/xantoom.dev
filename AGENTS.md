@@ -96,6 +96,10 @@ Code blocks are highlighted by Shiki at build time, with light and dark themes.
 `src/content/projects/<locale>/<slug>.md`, plus a logo in `src/assets/projects/<logo>.svg`
 (or `<logo>-light.svg` and `<logo>-dark.svg`). `order` sets the position in lists,
 `colors` tints the project tile and its page.
+`platforms` takes keys from `src/lib/platforms.ts` (`web`, `windows`, `macos`, `linux`,
+`docker`), each shown with its icon. The latest GitHub release of `repo` is fetched at
+build time (`src/lib/github.ts`) and shown as the version; CI rebuilds daily to keep it
+current. A repository without releases simply shows no version.
 
 ### Fixed pages
 
@@ -126,7 +130,14 @@ About, legal notice and privacy policy are Markdown in `src/content/pages/<local
 - **Accessibility:** WCAG AA contrast in both themes, visible focus, keyboard support,
   `prefers-reduced-motion` respected for every animation.
 - **Design:** use the tokens in `global.css`, never raw colours in components (except
-  project brand colours from content). Both themes must be checked for every UI change.
+  project brand colours from content).
+- **Sizes:** use `rem`, not `px` (except 1–2px borders, shadows and media queries). The root
+  font size grows slightly on large screens, and everything in `rem` scales with it.
+- **Icons:** `<Icon name="…" />` inlines icons at build time: Lucide names (`"arrow-right"`),
+  `"si:…"` for brands (Simple Icons), `"flag:…"` for flags (Circle Flags). Prefer an icon
+  with a `label`/`title` over a short text label when the icon is clear. Never use emoji
+  or Unicode symbols as icons.
+- **Copy:** plain, short and explanatory. No marketing tone, no slogans. Both themes must be checked for every UI change.
   Avoid generic "AI-looking" UI: no gradient text, no glassmorphism cards, no emoji icons,
   no decorative blobs.
 - **i18n:** every visible string goes through `useTranslations()`; never hardcode French

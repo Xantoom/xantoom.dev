@@ -1,11 +1,14 @@
 ---
 import Icon from "~/components/Icon.astro";
+import Logo from "~/components/Logo.astro";
 import PostList from "~/components/PostList.astro";
-import ProjectList from "~/components/ProjectList.astro";
+import ProjectCard from "~/components/ProjectCard.astro";
+import ProjectLogo from "~/components/ProjectLogo.astro";
 import { homePath, localePath, LOCALES, type Locale } from "~/i18n/config";
-import { useTranslations } from "~/i18n/ui";
+import { formatDate, useTranslations } from "~/i18n/ui";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { getPosts, getProjects } from "~/lib/content";
+import { getPosts, getProjects, projectUrl } from "~/lib/content";
+import { latestRelease } from "~/lib/github";
 import { SITE } from "~/lib/site";
 
 interface Props {
@@ -17,11 +20,18 @@ const t = useTranslations(locale);
 const posts = (await getPosts(locale)).slice(0, 5);
 const projects = await getProjects(locale);
 const alternates = Object.fromEntries(LOCALES.map((l) => [l, homePath(l)]));
+const rss = locale === "fr" ? "/rss.xml" : `/${locale}/rss.xml`;
 
-const headline = {
-  fr: ["Des apps légères,", "des guides utiles."],
-  en: ["Lightweight apps,", "useful guides."],
-}[locale];
+// Most recent release across all apps, shown under the intro.
+const releases = await Promise.all(
+  projects.map(async (project) => ({ project, release: await latestRelease(project.data.repo) })),
+);
+const newest = releases
+  .filter((r) => r.release)
+  .toSorted((a, b) => b.release!.date.valueOf() - a.release!.date.valueOf())[0];
+
+// Apps placed around the avatar: angle on the orbit, in degrees.
+const orbit = [-38, 62, 172];
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -40,104 +50,334 @@ const jsonLd = {
   alternates={alternates}
   jsonLd={jsonLd}
 >
-  <section class="container intro">
-    <h1>
-      <span>{headline[0]}</span>
-      <span class="second">{headline[1]}</span>
-    </h1>
-    <p class="lede">{t("home.lede")}</p>
+  <section class="container hero">
+    <div class="intro">
+      <h1>{t("home.hello")}</h1>
+      <p class="lede">{t("home.lede")}</p>
+
+      <ul class="links">
+        <li>
+          <a href={SITE.github} rel="me noopener" title="GitHub">
+            <Icon name="si:github" size={18} label="GitHub" />
+          </a>
+        </li>
+        <li>
+          <a href={rss} title={t("nav.rss")}>
+            <Icon name="rss" size={18} label={t("nav.rss")} />
+          </a>
+        </li>
+        <li>
+          <a href={`mailto:${SITE.email}`} title={SITE.email}>
+            <Icon name="mail" size={18} label={SITE.email} />
+          </a>
+        </li>
+      </ul>
+
+      {newest && (
+        <a class="release" href={newest.release!.url} rel="noopener">
+          <span class="pulse" aria-hidden="true" />
+          <span>
+            {t("home.newRelease")} <strong>{newest.project.data.name}</strong>{" "}
+            <span class="mono">v{newest.release!.version}</span>
+          </span>
+          <span class="date">{formatDate(newest.release!.date, locale, "short")}</span>
+          <Icon name="arrow-up-right" size={14} />
+        </a>
+      )}
+    </div>
+
+    <div class="orbit" aria-hidden="true">
+      <div class="ring" />
+      <div class="me">
+        <Logo size={9} eager />
+      </div>
+      {projects.slice(0, orbit.length).map((project, i) => (
+        <a
+          class="app"
+          href={projectUrl(project)}
+          tabindex="-1"
+          style={`--angle:${orbit[i]}deg;--delay:${120 + i * 90}ms;--p-a:${project.data.colors[0]}`}
+          title={project.data.name}
+        >
+          <ProjectLogo logo={project.data.logo} size={34} />
+        </a>
+      ))}
+    </div>
   </section>
 
-  <section class="container block" aria-labelledby="projects-title">
+  <section class="container block" aria-labelledby="apps-title">
     <div class="block-head">
-      <h2 id="projects-title">{t("home.projects")}</h2>
+      <h2 id="apps-title">{t("home.projects")}</h2>
       <a class="more" href={localePath(locale, "projects")}>
         {t("home.allProjects")}
-        <Icon name="arrowRight" size={16} />
+        <Icon name="arrow-right" size={16} />
       </a>
     </div>
-    <ProjectList projects={projects} locale={locale} />
+    <div class="bento">
+      {projects.map((project, i) => (
+        <ProjectCard project={project} locale={locale} large={i === 0} />
+      ))}
+    </div>
   </section>
 
   <section class="container block" aria-labelledby="posts-title">
     <div class="block-head">
       <h2 id="posts-title">{t("home.latest")}</h2>
-      <a class="more" href={localePath(locale, "blog")}>
-        {t("home.allPosts")}
-        <Icon name="arrowRight" size={16} />
-      </a>
+      {posts.length > 0 && (
+        <a class="more" href={localePath(locale, "blog")}>
+          {t("home.allPosts")}
+          <Icon name="arrow-right" size={16} />
+        </a>
+      )}
     </div>
     {posts.length > 0 ? (
       <PostList posts={posts} locale={locale} headingLevel={3} />
     ) : (
-      <p class="empty">{t("blog.none")}</p>
+      <div class="empty">
+        <Icon name="pen-line" size={22} />
+        <p>{t("blog.none")}</p>
+        <a href={rss}>
+          <Icon name="rss" size={16} />
+          {t("blog.follow")}
+        </a>
+      </div>
     )}
   </section>
 </BaseLayout>
 
 <style>
-  .intro {
-    padding-top: clamp(56px, 10vw, 128px);
-    padding-bottom: clamp(48px, 7vw, 88px);
+  @property --angle-now {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+  }
+
+  @property --dist {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 3rem;
+    padding-top: clamp(3rem, 8vw, 6.5rem);
+    padding-bottom: clamp(2.5rem, 6vw, 5rem);
   }
 
   h1 {
-    font-size: clamp(2.5rem, 6.4vw, 4.75rem);
+    font-size: clamp(2.5rem, 5.6vw, 4.5rem);
     line-height: 1.02;
     letter-spacing: -0.035em;
     font-weight: 800;
-
-    & span {
-      display: block;
-    }
-  }
-
-  .second {
-    color: var(--fg-faint);
-    animation: rise 700ms var(--ease-out) 80ms both;
-  }
-
-  h1 span:first-child {
     animation: rise 700ms var(--ease-out) both;
+  }
+
+  .lede {
+    margin-top: 1.5rem;
+    max-width: 34rem;
+    font-size: clamp(1.125rem, 1.5vw, 1.3125rem);
+    line-height: 1.55;
+    color: var(--fg-muted);
+    animation: rise 700ms var(--ease-out) 80ms both;
   }
 
   @keyframes rise {
     from {
       opacity: 0;
-      transform: translateY(14px);
+      transform: translateY(0.875rem);
       filter: blur(6px);
     }
   }
 
-  .lede {
-    margin-top: 28px;
-    max-width: 56ch;
-    font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
-    line-height: 1.6;
-    color: var(--fg-muted);
+  .links {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    padding: 0;
+    list-style: none;
     animation: rise 700ms var(--ease-out) 160ms both;
+
+    & a {
+      display: grid;
+      place-items: center;
+      width: 2.75rem;
+      height: 2.75rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--fg-muted);
+      transition:
+        color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out),
+        transform var(--dur) var(--ease-out);
+
+      &:hover {
+        color: var(--fg);
+        border-color: var(--line-strong);
+        transform: translateY(-2px);
+      }
+    }
+  }
+
+  .release {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-top: 1.5rem;
+    padding: 0.5rem 0.875rem 0.5rem 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    color: var(--fg-muted);
+    text-decoration: none;
+    animation: rise 700ms var(--ease-out) 240ms both;
+    transition: border-color var(--dur-fast) var(--ease-out);
+
+    &:hover {
+      border-color: var(--line-strong);
+      color: var(--fg);
+    }
+
+    & strong {
+      color: var(--fg);
+      font-weight: 600;
+    }
+
+    & .mono {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+    }
+  }
+
+  .release > span {
+    white-space: nowrap;
+  }
+
+  .date {
+    color: var(--fg-faint);
+
+    @media (max-width: 480px) {
+      display: none;
+    }
+  }
+
+  .pulse {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: #2fbf71;
+    box-shadow: 0 0 0 3px rgb(47 191 113 / 0.2);
+  }
+
+  /* Avatar with the apps on an orbit around it. */
+  .orbit {
+    --size: 26rem;
+    --radius: calc(var(--size) / 2 - 2.25rem);
+    position: relative;
+    justify-self: center;
+    width: var(--size);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+  }
+
+  .ring {
+    position: absolute;
+    inset: 2.25rem;
+    border: 1px dashed var(--line-strong);
+    border-radius: 50%;
+    animation: fade 900ms var(--ease-out) both;
+  }
+
+  .ring::after {
+    content: "";
+    position: absolute;
+    inset: 22%;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+      scale: 0.9;
+    }
+  }
+
+  .me {
+    position: relative;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 0.5rem var(--bg),
+      0 1.5rem 3rem -1.5rem rgb(0 0 0 / 0.45);
+    animation: fade 900ms var(--ease-out) both;
+  }
+
+  .app {
+    --angle-now: var(--angle);
+    --dist: var(--radius);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 4rem;
+    height: 4rem;
+    margin: -2rem 0 0 -2rem;
+    border: 1px solid var(--line);
+    border-radius: 1.125rem;
+    background:
+      linear-gradient(140deg, color-mix(in srgb, var(--p-a) 22%, transparent), transparent 70%),
+      var(--raised);
+    box-shadow: var(--shadow);
+    transform: rotate(var(--angle-now)) translateX(var(--dist)) rotate(calc(-1 * var(--angle-now)));
+    animation: launch 1100ms var(--ease-out) var(--delay) both;
+    transition:
+      scale var(--dur) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+
+    &:hover {
+      scale: 1.08;
+      border-color: color-mix(in srgb, var(--p-a) 60%, var(--line));
+    }
+  }
+
+  /* Apps leave from behind the avatar and travel along the orbit to their place. */
+  @keyframes launch {
+    from {
+      --angle-now: calc(var(--angle) - 140deg);
+      --dist: 0px;
+      opacity: 0;
+    }
+    30% {
+      opacity: 1;
+    }
   }
 
   .block {
-    margin-top: clamp(40px, 6vw, 72px);
+    margin-top: clamp(3.5rem, 7vw, 6rem);
   }
 
   .block-head {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   h2 {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
+    letter-spacing: -0.025em;
   }
 
   .more {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 0.375rem;
     font-size: 0.9375rem;
     font-weight: 500;
     color: var(--fg-muted);
@@ -157,9 +397,62 @@ const jsonLd = {
     }
   }
 
+  /* First app large on the left, the others stacked on the right. */
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+
+    & > :global(.large) {
+      grid-row: span 2;
+    }
+  }
+
   .empty {
-    padding: 32px 0;
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+    padding: 2rem;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius-lg);
     color: var(--fg-muted);
-    border-top: 1px solid var(--line);
+
+    & a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  @media (max-width: 900px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+
+    .orbit {
+      --size: 19rem;
+      grid-row: 1;
+    }
+
+    .bento {
+      grid-template-columns: 1fr;
+
+      & > :global(.large) {
+        grid-row: auto;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .app {
+      animation: none;
+    }
   }
 </style>

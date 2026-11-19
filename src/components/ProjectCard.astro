@@ -1,0 +1,265 @@
+---
+import type { Locale } from "~/i18n/config";
+import { useTranslations } from "~/i18n/ui";
+import { projectUrl, type Project } from "~/lib/content";
+import { latestRelease } from "~/lib/github";
+import { PLATFORMS } from "~/lib/platforms";
+import Icon from "./Icon.astro";
+import ProjectLogo from "./ProjectLogo.astro";
+
+/** One app as a card: logo, version, tagline, platforms and license. */
+interface Props {
+  project: Project;
+  locale: Locale;
+  /** Large cards also list the first features. */
+  large?: boolean;
+  headingLevel?: 2 | 3;
+}
+
+const { project, locale, large = false, headingLevel = 3 } = Astro.props;
+const t = useTranslations(locale);
+const data = project.data;
+const release = await latestRelease(data.repo);
+const Heading = `h${headingLevel}` as "h2" | "h3";
+---
+
+<article class:list={["card", { large }]} style={`--p-a:${data.colors[0]};--p-b:${data.colors[1]}`}>
+  <div class="top">
+    <span class="tile">
+      <ProjectLogo logo={data.logo} size={large ? 52 : 40} />
+    </span>
+    <div class="title">
+      <Heading class="name">
+        <a href={projectUrl(project)}>{data.name}</a>
+      </Heading>
+      {release ? (
+        <span class="chip" title={t("project.release")}>
+          <Icon name="tag" size={13} />v{release.version}
+        </span>
+      ) : (
+        data.status !== "stable" && (
+          <span class="chip dashed">{t(`project.status.${data.status}`)}</span>
+        )
+      )}
+    </div>
+    <Icon name="arrow-up-right" class="arrow" size={20} />
+  </div>
+
+  <p class="tagline">{data.tagline}</p>
+
+  {large && (
+    <ul class="features">
+      {data.features.slice(0, 3).map((feature) => (
+        <li>
+          <Icon name="check" size={16} />
+          <span set:html={feature} />
+        </li>
+      ))}
+    </ul>
+  )}
+
+  <ul class="meta">
+    {data.platforms.map((platform) => (
+      <li title={PLATFORMS[platform][locale]}>
+        <Icon name={PLATFORMS[platform].icon} size={16} label={PLATFORMS[platform][locale]} />
+      </li>
+    ))}
+    <li class="license" title={t("project.license")}>
+      <Icon name="scale" size={15} />
+      {data.license}
+    </li>
+  </ul>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(
+        120% 90% at 0% 0%,
+        color-mix(in srgb, var(--p-a) 16%, transparent),
+        transparent 60%
+      ),
+      var(--surface);
+    transition:
+      border-color var(--dur) var(--ease-out),
+      transform var(--dur) var(--ease-out),
+      box-shadow var(--dur) var(--ease-out);
+
+    &:hover {
+      border-color: color-mix(in srgb, var(--p-a) 50%, var(--line));
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    &:has(a:focus-visible) {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+  }
+
+  .large {
+    padding: 2rem;
+    gap: 1.25rem;
+  }
+
+  .top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .tile {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    flex: none;
+    border-radius: 0.875rem;
+    border: 1px solid var(--line);
+    background: var(--raised);
+    transition: transform var(--dur) var(--ease-out);
+
+    .large & {
+      width: 4.5rem;
+      height: 4.5rem;
+      border-radius: 1.125rem;
+    }
+  }
+
+  .card:hover .tile {
+    transform: rotate(-6deg) scale(1.04);
+  }
+
+  .title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem 0.75rem;
+    min-width: 0;
+  }
+
+  .name {
+    font-size: 1.25rem;
+
+    .large & {
+      font-size: 1.625rem;
+    }
+
+    & a {
+      text-decoration: none;
+    }
+
+    /* The whole card is the link target. */
+    & a::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
+
+    & a:focus-visible {
+      outline: none;
+    }
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3125rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg-muted);
+    background: color-mix(in srgb, var(--p-a) 14%, var(--raised));
+  }
+
+  .chip.dashed {
+    background: transparent;
+    border: 1px dashed var(--line-strong);
+    font-family: var(--font-sans);
+  }
+
+  .top > :global(.arrow) {
+    margin-left: auto;
+    align-self: flex-start;
+    color: var(--fg-faint);
+    transition:
+      transform var(--dur) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+
+  .card:hover :global(.arrow) {
+    color: var(--fg);
+    transform: translate(2px, -2px);
+  }
+
+  .tagline {
+    color: var(--fg-muted);
+    font-size: 1rem;
+
+    .large & {
+      font-size: 1.125rem;
+      color: var(--fg);
+    }
+  }
+
+  .features {
+    display: grid;
+    gap: 0.625rem;
+    padding: 0;
+    list-style: none;
+    color: var(--fg-muted);
+    font-size: 0.9375rem;
+
+    & li {
+      display: flex;
+      gap: 0.625rem;
+      align-items: baseline;
+    }
+
+    & :global(.icon) {
+      position: relative;
+      top: 0.1875rem;
+      color: var(--p-a);
+    }
+
+    & :global(strong) {
+      color: var(--fg);
+      font-weight: 600;
+    }
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.875rem;
+    margin-top: auto;
+    padding: 1rem 0 0;
+    border-top: 1px solid var(--line);
+    list-style: none;
+    color: var(--fg-faint);
+
+    & li {
+      display: inline-flex;
+      align-items: center;
+    }
+  }
+
+  .license {
+    gap: 0.375rem;
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+</style>

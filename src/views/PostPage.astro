@@ -7,7 +7,7 @@ import Figure from "~/components/mdx/Figure.astro";
 import Settings from "~/components/mdx/Settings.astro";
 import Video from "~/components/mdx/Video.astro";
 import YouTube from "~/components/mdx/YouTube.astro";
-import ProjectList from "~/components/ProjectList.astro";
+import ProjectCard from "~/components/ProjectCard.astro";
 import Toc from "~/components/Toc.astro";
 import { localePath, LOCALE_META, type Locale } from "~/i18n/config";
 import { categoryLabel, formatDate, useTranslations } from "~/i18n/ui";
@@ -82,7 +82,7 @@ const jsonLd = {
   <div class="container layout">
     <header class="post-head">
       <a class="back" href={localePath(locale, "blog")}>
-        <Icon name="arrowLeft" size={16} />
+        <Icon name="arrow-left" size={16} />
         {t("post.back")}
       </a>
       <h1>{post.data.title}</h1>
@@ -91,26 +91,30 @@ const jsonLd = {
         <li>
           <span class="tag">{categoryLabel(post.data.category, locale)}</span>
         </li>
-        <li>
+        <li title={t("post.published")}>
+          <Icon name="calendar" size={15} />
           <time datetime={post.data.pubDate.toISOString()}>
             {formatDate(post.data.pubDate, locale)}
           </time>
         </li>
         {post.data.updatedDate && (
-          <li>
-            {t("post.updated")}{" "}
+          <li title={t("post.updated")}>
+            <Icon name="refresh-cw" size={15} />
+            <span class="sr-only">{t("post.updated")}</span>
             <time datetime={post.data.updatedDate.toISOString()}>
               {formatDate(post.data.updatedDate, locale)}
             </time>
           </li>
         )}
-        <li>
+        <li title={t("post.readingTime")}>
+          <Icon name="clock" size={15} />
+          <span class="sr-only">{t("post.readingTime")} :</span>
           {minutes} {t("post.minRead")}
         </li>
         {otherLocale && (
           <li>
             <a href={alternates[otherLocale]} hreflang={otherLocale} lang={otherLocale}>
-              <Icon name="globe" size={14} />
+              <Icon name={`flag:${LOCALE_META[otherLocale].flag}`} size={16} />
               {t("post.translation")}
             </a>
           </li>
@@ -145,7 +149,9 @@ const jsonLd = {
             <h2 id="related-title" class="label">
               {t("post.related")}
             </h2>
-            <ProjectList projects={related} locale={locale} />
+            {related.map((project) => (
+              <ProjectCard project={project} locale={locale} />
+            ))}
           </section>
         )}
         {(newer || older) && (
@@ -153,7 +159,7 @@ const jsonLd = {
             {older ? (
               <a class="prev" href={postUrl(older)}>
                 <span class="label">
-                  <Icon name="arrowLeft" size={14} />
+                  <Icon name="arrow-left" size={14} />
                   {t("post.prev")}
                 </span>
                 <span class="pager-title">{older.data.title}</span>
@@ -165,7 +171,7 @@ const jsonLd = {
               <a class="next" href={postUrl(newer)}>
                 <span class="label">
                   {t("post.next")}
-                  <Icon name="arrowRight" size={14} />
+                  <Icon name="arrow-right" size={14} />
                 </span>
                 <span class="pager-title">{newer.data.title}</span>
               </a>
@@ -190,16 +196,16 @@ const jsonLd = {
   }
 
   .post-head {
-    padding-top: clamp(32px, 6vw, 72px);
-    padding-bottom: 32px;
-    max-width: 860px;
+    padding-top: clamp(2rem, 6vw, 4.5rem);
+    padding-bottom: 2rem;
+    max-width: 53.75rem;
   }
 
   .back {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 28px;
+    gap: 0.375rem;
+    margin-bottom: 1.75rem;
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--fg-muted);
@@ -226,7 +232,7 @@ const jsonLd = {
   }
 
   .lede {
-    margin-top: 18px;
+    margin-top: 1.125rem;
     max-width: 62ch;
     font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
     color: var(--fg-muted);
@@ -236,17 +242,23 @@ const jsonLd = {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px 18px;
-    margin-top: 24px;
+    gap: 0.5rem 1.125rem;
+    margin-top: 1.5rem;
     padding: 0;
     list-style: none;
     font-size: 0.875rem;
     color: var(--fg-faint);
 
+    & li {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4375rem;
+    }
+
     & a {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 0.3125rem;
       color: var(--accent);
       text-decoration: none;
 
@@ -258,39 +270,39 @@ const jsonLd = {
 
   .cover {
     width: 100%;
-    max-width: 980px;
+    max-width: 61.25rem;
     height: auto;
-    margin-bottom: 40px;
+    margin-bottom: 2.5rem;
     border-radius: var(--radius-lg);
     border: 1px solid var(--line);
   }
 
   .side {
-    margin-bottom: 32px;
+    margin-bottom: 2rem;
   }
 
   .post-foot {
-    margin-top: 64px;
+    margin-top: 4rem;
     max-width: var(--measure);
     display: grid;
-    gap: 40px;
+    gap: 2.5rem;
   }
 
   .related h2 {
-    margin-bottom: 12px;
+    margin-bottom: 0.75rem;
   }
 
   .pager {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    padding-top: 32px;
+    gap: 0.75rem;
+    padding-top: 2rem;
     border-top: 1px solid var(--line);
 
     & a {
       display: grid;
-      gap: 6px;
-      padding: 16px 18px;
+      gap: 0.375rem;
+      padding: 1rem 1.125rem;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       text-decoration: none;
@@ -307,7 +319,7 @@ const jsonLd = {
     & .label {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 0.375rem;
     }
 
     & .next {
@@ -324,21 +336,21 @@ const jsonLd = {
   @media (min-width: 1100px) {
     .body {
       display: grid;
-      grid-template-columns: 220px minmax(0, var(--measure));
-      column-gap: 64px;
+      grid-template-columns: 13.75rem minmax(0, var(--measure));
+      column-gap: 4rem;
       align-items: start;
     }
 
     .post-head,
     .cover {
-      margin-left: calc(220px + 64px);
+      margin-left: calc(13.75rem + 4rem);
     }
 
     .side {
       grid-row: 1 / span 2;
       position: sticky;
-      top: calc(var(--header-h) + 32px);
-      max-height: calc(100dvh - var(--header-h) - 64px);
+      top: calc(var(--header-h) + 2rem);
+      max-height: calc(100dvh - var(--header-h) - 4rem);
       overflow-y: auto;
       overscroll-behavior: contain;
       margin: 0;

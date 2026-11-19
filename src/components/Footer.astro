@@ -27,15 +27,13 @@ const year = new Date().getFullYear();
         <a href={localePath(locale, "privacy")}>{t("footer.privacy")}</a>
       </li>
       <li>
-        <a href={rss}>
-          <Icon name="rss" size={15} />
-          RSS
+        <a href={rss} title={t("nav.rss")}>
+          <Icon name="rss" size={16} label={t("nav.rss")} />
         </a>
       </li>
       <li>
-        <a href={SITE.repo} rel="noopener">
-          <Icon name="github" size={15} />
-          {t("footer.source")}
+        <a href={SITE.repo} rel="noopener" title={t("footer.source")}>
+          <Icon name="si:github" size={16} label={t("footer.source")} />
         </a>
       </li>
     </ul>
@@ -44,7 +42,7 @@ const year = new Date().getFullYear();
 
 <style>
   .footer {
-    margin-top: clamp(64px, 10vw, 120px);
+    margin-top: clamp(4rem, 10vw, 7.5rem);
     border-top: 1px solid var(--line);
     font-size: 0.875rem;
     color: var(--fg-faint);
@@ -55,14 +53,14 @@ const year = new Date().getFullYear();
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 12px 24px;
-    padding-block: 28px;
+    gap: 0.75rem 1.5rem;
+    padding-block: 1.75rem;
   }
 
   .links {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 20px;
+    gap: 0.375rem 1.25rem;
     list-style: none;
     padding: 0;
   }
@@ -70,7 +68,7 @@ const year = new Date().getFullYear();
   a {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 0.375rem;
     color: var(--fg-muted);
     text-decoration: none;
 

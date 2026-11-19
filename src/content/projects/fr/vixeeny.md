@@ -8,7 +8,7 @@ logo: vixeeny
 colors: ["#8d909c", "#4b4e58"]
 repo: https://github.com/Xantoom/Vixeeny
 license: GPL-3.0
-platforms: [Windows, macOS, Linux]
+platforms: [windows, macos, linux]
 stack: [Rust]
 features:
   - "<strong>Plein écran, zone ou fenêtre</strong>, compatible avec toutes les API graphiques (DirectX, Vulkan, OpenGL, Metal), sans injection dans les jeux."
