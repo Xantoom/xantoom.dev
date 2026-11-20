@@ -1,14 +1,13 @@
 ---
-import Icon from "~/components/Icon.astro";
 import Logo from "~/components/Logo.astro";
 import PostList from "~/components/PostList.astro";
-import ProjectCard from "~/components/ProjectCard.astro";
 import ProjectLogo from "~/components/ProjectLogo.astro";
 import { homePath, localePath, LOCALES, type Locale } from "~/i18n/config";
 import { useTranslations } from "~/i18n/ui";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { entrySlug, getPosts, getProjects, projectUrl } from "~/lib/content";
+import { getPosts, getProjects, projectUrl } from "~/lib/content";
 import { latestRelease } from "~/lib/github";
+import { PLATFORMS } from "~/lib/platforms";
 import { SITE } from "~/lib/site";
 
 interface Props {
@@ -20,21 +19,29 @@ const t = useTranslations(locale);
 const posts = (await getPosts(locale)).slice(0, 5);
 const projects = await getProjects(locale);
 const alternates = Object.fromEntries(LOCALES.map((l) => [l, homePath(l)]));
-const lede = t("home.lede").split(/(\{apps\}|\{topics\})/);
 const rss = locale === "fr" ? "/rss.xml" : `/${locale}/rss.xml`;
 
-// Latest release of each app, shown in the orbit tooltips.
-const releases = await Promise.all(
-  projects.map(async (project) => ({ project, release: await latestRelease(project.data.repo) })),
+// Apps placed around the avatar: angle on the orbit in degrees (0 is right, 90 is down).
+const angles = [-40, 42, 180];
+
+// Each app on the orbit: its place, and a short second line (version, status or platform).
+const apps = await Promise.all(
+  projects.slice(0, angles.length).map(async (project, i) => {
+    const release = await latestRelease(project.data.repo);
+    const angle = angles[i]!;
+    const meta = release
+      ? `v${release.version}`
+      : project.data.status !== "stable"
+        ? t(`project.status.${project.data.status}`)
+        : PLATFORMS[project.data.platforms[0]!][locale];
+    return {
+      project,
+      angle,
+      meta,
+      side: Math.cos((angle * Math.PI) / 180) < 0 ? "left" : "right",
+    };
+  }),
 );
-
-// Apps placed around the avatar: angle on the orbit, in degrees.
-const orbit = [-38, 62, 172];
-
-/** Side of the tile where its tooltip opens: above for the upper half, below otherwise. */
-function side(angle: number): "top" | "bottom" {
-  return Math.sin((angle * Math.PI) / 180) < 0 ? "top" : "bottom";
-}
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -54,229 +61,79 @@ const jsonLd = {
   jsonLd={jsonLd}
 >
   <section class="container hero">
-    <div class="intro">
-      <h1>{t("home.hello")}</h1>
-      <p class="lede">
-        {lede.map((part) =>
-          part === "{apps}" ? (
-            projects.map((project, i) => (
-              <>
-                {i > 0 && (i === projects.length - 1 ? ` ${t("home.and")} ` : ", ")}
-                <a
-                  class="app-link"
-                  href={projectUrl(project)}
-                  data-app={entrySlug(project)}
-                  style={`--p-a:${project.data.colors[0]}`}
-                >
-                  <ProjectLogo logo={project.data.logo} size={22} />
-                  {project.data.name}
-                </a>
-              </>
-            ))
-          ) : part === "{topics}" ? (
-            <a class="topics" href={localePath(locale, "blog")}>
-              {t("home.topics")}
-            </a>
-          ) : (
-            part
-          ),
-        )}
-      </p>
-    </div>
-
-    <div class="orbit" aria-hidden="true">
-      <div class="ring" />
+    <nav class="orbit" aria-label={t("nav.projects")}>
+      <div class="ring" aria-hidden="true"></div>
       <div class="me">
         <Logo size={13} eager />
       </div>
-      {releases.slice(0, orbit.length).map(({ project, release }, i) => (
-        <a
-          class="app"
-          href={projectUrl(project)}
-          data-app={entrySlug(project)}
-          tabindex="-1"
-          data-place={side(orbit[i]!)}
-          style={`--angle:${orbit[i]}deg;--delay:${120 + i * 90}ms;--p-a:${project.data.colors[0]}`}
-        >
-          <span class="tile">
-            <ProjectLogo logo={project.data.logo} size={48} />
-          </span>
-          <span class="tip">
-            <span class="tip-head">
-              <strong>{project.data.name}</strong>
-              {release && <span class="tip-version">v{release.version}</span>}
-            </span>
-            <span class="tip-text">{project.data.tagline}</span>
-          </span>
-        </a>
-      ))}
-    </div>
+      <ul>
+        {apps.map(({ project, angle, meta, side }, i) => (
+          <li
+            class="app"
+            data-side={side}
+            style={`--angle:${angle}deg;--delay:${160 + i * 110}ms;--p-a:${project.data.colors[0]}`}
+          >
+            <a href={projectUrl(project)}>
+              <span class="tile">
+                <ProjectLogo logo={project.data.logo} size={48} />
+              </span>
+              <span class="legend">
+                <span class="name">{project.data.name}</span>
+                <span class="meta">{meta}</span>
+                <span class="more">
+                  <span>{project.data.tagline}</span>
+                </span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <h1>{t("home.hello")}</h1>
   </section>
 
-  <section class="container block" aria-labelledby="apps-title">
-    <div class="block-head">
-      <h2 id="apps-title">{t("home.projects")}</h2>
-      <a class="more" href={localePath(locale, "projects")}>
-        {t("home.allProjects")}
-        <Icon name="arrow-right" size={16} />
-      </a>
-    </div>
-    <div class="bento">
-      {projects.map((project, i) => (
-        <ProjectCard project={project} locale={locale} large={i === 0} />
-      ))}
-    </div>
-  </section>
-
-  <section class="container block" aria-labelledby="posts-title">
-    <div class="block-head">
+  <section class="container posts" aria-labelledby="posts-title">
+    <div class="posts-head">
       <h2 id="posts-title">{t("home.latest")}</h2>
-      {posts.length > 0 && (
-        <a class="more" href={localePath(locale, "blog")}>
-          {t("home.allPosts")}
-          <Icon name="arrow-right" size={16} />
-        </a>
-      )}
+      {posts.length > 0 && <a href={localePath(locale, "blog")}>{t("home.allPosts")}</a>}
     </div>
     {posts.length > 0 ? (
       <PostList posts={posts} locale={locale} headingLevel={3} />
     ) : (
-      <div class="empty">
-        <Icon name="pen-line" size={22} />
-        <p>{t("blog.none")}</p>
-        <a href={rss}>
-          <Icon name="rss" size={16} />
-          {t("blog.follow")}
-        </a>
-      </div>
+      <p class="empty">
+        {t("blog.none")} <a href={rss}>{t("blog.follow")}</a>
+      </p>
     )}
   </section>
 </BaseLayout>
 
-<script>
-  // Hovering or focusing an app name in the intro lights up the same app on the orbit.
-  for (const link of document.querySelectorAll<HTMLElement>(".app-link[data-app]")) {
-    const app = document.querySelector(`.orbit .app[data-app="${link.dataset.app}"]`);
-    if (!app) continue;
-    const on = () => app.classList.add("lit");
-    const off = () => app.classList.remove("lit");
-    link.addEventListener("pointerenter", on);
-    link.addEventListener("pointerleave", off);
-    link.addEventListener("focus", on);
-    link.addEventListener("blur", off);
-  }
-
-  // Keep each orbit tooltip inside the visible area: flip it above or below the tile,
-  // and slide it sideways, from the room available when the pointer arrives.
-  const header = document.querySelector<HTMLElement>(".header");
-  for (const app of document.querySelectorAll<HTMLElement>(".orbit .app")) {
-    const tip = app.querySelector<HTMLElement>(".tip");
-    const hero = app.closest<HTMLElement>(".hero");
-    if (!tip || !hero) continue;
-    const preferred = app.dataset.place;
-
-    app.addEventListener("pointerenter", () => {
-      const margin = 12;
-      const gap = 12;
-      const tile = app.getBoundingClientRect();
-      const bounds = hero.getBoundingClientRect();
-      const top = Math.max(header?.getBoundingClientRect().bottom ?? 0, 0) + margin;
-      const bottom = window.innerHeight - margin;
-      const { offsetWidth: width, offsetHeight: height } = tip;
-
-      const fitsAbove = tile.top - gap - height >= top;
-      const fitsBelow = tile.bottom + gap + height <= bottom;
-      let place = preferred;
-      if (place === "top" && !fitsAbove && fitsBelow) place = "bottom";
-      if (place === "bottom" && !fitsBelow && fitsAbove) place = "top";
-      app.dataset.place = place;
-
-      const left = Math.max(bounds.left, 0) + margin;
-      const right = Math.min(bounds.right, window.innerWidth) - margin;
-      const start = tile.left + tile.width / 2 - width / 2;
-      const shifted = Math.min(Math.max(start, left), right - width);
-      tip.style.setProperty("--dx", `${shifted - start}px`);
-    });
-  }
-</script>
-
 <style>
   .hero {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 3rem;
-    padding-top: clamp(1rem, 3vw, 2.5rem);
-    padding-bottom: clamp(1.5rem, 4vw, 3rem);
-    /* Tooltips near the edge never widen the page. */
-    overflow-x: clip;
+    justify-items: center;
+    padding-top: clamp(0.5rem, 2vw, 1.5rem);
   }
 
-  h1 {
-    font-size: clamp(2.5rem, 5.6vw, 4.5rem);
-    line-height: 1.02;
-    letter-spacing: -0.035em;
-    font-weight: 800;
-  }
-
-  .lede {
-    margin-top: 1.75rem;
-    max-width: 36rem;
-    font-size: clamp(1.25rem, 1.9vw, 1.625rem);
-    line-height: 1.6;
-    letter-spacing: -0.01em;
-    color: var(--fg-muted);
-  }
-
-  /* App names sit in the sentence with their logo; hovering one lights up
-     the same app on the orbit. */
-  .app-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    margin-inline: -0.25rem;
-    padding: 0 0.25rem;
-    border-radius: 0.375rem;
-    vertical-align: bottom;
-    color: var(--fg);
-    font-weight: 650;
-    white-space: nowrap;
-    transition: background-color var(--dur-fast) var(--ease-out);
-
-    &:hover {
-      background: color-mix(in srgb, var(--p-a) 16%, transparent);
-    }
-
-    & :global(svg) {
-      width: 1.05em;
-      height: 1.05em;
-    }
-  }
-
-  .topics {
-    color: var(--fg);
-    font-weight: 650;
-    transition: color var(--dur-fast) var(--ease-out);
-
-    &:hover {
-      color: var(--accent);
-    }
-  }
-
-  /* Avatar with the apps on an orbit around it. */
+  /* The avatar with the apps on an orbit around it. Everything scales from --size;
+     no percentages, because --size also feeds the transforms of the tiles. */
   .orbit {
-    /* Everything in the orbit scales from --size. */
-    --size: 36rem;
-    --tile: calc(var(--size) * 0.15);
+    /* Large, but the heading under it stays in the first screen. */
+    --size: clamp(22rem, 100svh - 19rem, 34rem);
+    --tile: calc(var(--size) * 0.155);
     --inset: calc(var(--tile) * 0.55);
-    --avatar: calc(var(--size) * 0.36);
+    --avatar: calc(var(--size) * 0.38);
     --orbit-r: calc(var(--size) / 2 - var(--inset));
     position: relative;
-    justify-self: center;
-    width: var(--size);
-    aspect-ratio: 1;
     display: grid;
     place-items: center;
+    width: var(--size);
+    aspect-ratio: 1;
+
+    & ul {
+      display: contents;
+      list-style: none;
+    }
   }
 
   .ring {
@@ -284,7 +141,7 @@ const jsonLd = {
     inset: var(--inset);
     border: 1px dashed var(--line-strong);
     border-radius: 50%;
-    animation: fade 900ms var(--ease-out) both;
+    animation: appear 900ms var(--ease-out) both;
   }
 
   .ring::after {
@@ -295,33 +152,27 @@ const jsonLd = {
     border-radius: 50%;
   }
 
-  @keyframes fade {
-    from {
-      opacity: 0;
-      scale: 0.9;
-    }
-  }
-
   .me {
-    position: relative;
     border-radius: 50%;
     box-shadow:
       0 0 0 0.625rem var(--bg),
       0 1.5rem 3rem -1.5rem rgb(0 0 0 / 0.45);
-    animation: fade 900ms var(--ease-out) both;
+    animation: appear 900ms var(--ease-out) both;
+
+    & :global(.logo) {
+      width: var(--avatar);
+      height: var(--avatar);
+    }
+  }
+
+  @keyframes appear {
+    from {
+      opacity: 0;
+      scale: 0.92;
+    }
   }
 
   /* Each app sits on the orbit: rotate to its angle, move out, rotate back upright. */
-  .me :global(.logo) {
-    width: var(--avatar);
-    height: var(--avatar);
-  }
-
-  .tile :global(svg) {
-    width: calc(var(--tile) * 0.58);
-    height: calc(var(--tile) * 0.58);
-  }
-
   .app {
     position: absolute;
     top: 50%;
@@ -332,13 +183,25 @@ const jsonLd = {
     transform: rotate(var(--angle)) translateX(var(--orbit-r)) rotate(calc(-1 * var(--angle)));
     animation: launch 1100ms var(--ease-out) var(--delay) both;
 
-    &:hover {
+    &:hover,
+    &:focus-within {
       z-index: 2;
+    }
+
+    & a {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: calc(var(--tile) * 0.28);
+    }
+
+    & a:focus-visible {
+      outline: none;
     }
   }
 
-  /* Apps leave from behind the avatar and travel along the orbit to their place.
-     Only transform and opacity change, so the compositor runs it. */
+  /* The apps leave from behind the avatar and travel along the orbit to their place:
+     the page's one entrance. Only transform and opacity change. */
   @keyframes launch {
     from {
       transform: rotate(calc(var(--angle) - 140deg)) translateX(0)
@@ -356,7 +219,7 @@ const jsonLd = {
     width: 100%;
     height: 100%;
     border: 1px solid var(--line);
-    border-radius: calc(var(--tile) * 0.28);
+    border-radius: inherit;
     background:
       linear-gradient(140deg, color-mix(in srgb, var(--p-a) 22%, transparent), transparent 70%),
       var(--raised);
@@ -365,147 +228,133 @@ const jsonLd = {
       scale var(--dur) var(--ease-out),
       border-color var(--dur-fast) var(--ease-out);
 
-    .app:hover &,
-    .app.lit & {
-      scale: 1.08;
+    & :global(svg) {
+      width: calc(var(--tile) * 0.58);
+      height: calc(var(--tile) * 0.58);
+    }
+
+    a:hover &,
+    a:focus-visible & {
+      scale: 1.06;
       border-color: var(--p-a);
     }
+
+    a:focus-visible & {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
   }
 
-  /* Tooltip: opens on the side facing away from the avatar. */
-  .tip {
-    --shift-y: 0;
+  /* Name and version written next to each tile, on the side away from the avatar.
+     The one-line description opens under them on hover or keyboard focus. */
+  .legend {
     position: absolute;
+    top: 50%;
     display: grid;
-    gap: 0.25rem;
-    padding: 0.625rem 0.875rem 0.75rem;
-    border: 1px solid var(--p-a);
-    border-radius: var(--radius);
-    background: var(--raised);
-    box-shadow: var(--shadow);
-    text-align: left;
-    pointer-events: none;
-    opacity: 0;
-    translate: 0 var(--shift-y);
-    transition:
-      opacity var(--dur-fast) var(--ease-out),
-      translate var(--dur) var(--ease-out);
+    width: 14rem;
+    translate: 0 -1.5rem;
+    animation: label-in 500ms var(--ease-out) calc(var(--delay) + 700ms) both;
 
-    .app:hover & {
-      opacity: 1;
-      translate: 0 0;
-      transition-delay: 60ms;
+    [data-side="right"] & {
+      left: calc(100% + 1rem);
     }
 
-    [data-place="top"] & {
-      bottom: calc(100% + 0.75rem);
-      left: 50%;
-      margin-left: calc(-7.5rem + var(--dx, 0px));
-      width: 15rem;
-      --shift-y: 0.375rem;
-    }
-
-    [data-place="bottom"] & {
-      top: calc(100% + 0.75rem);
-      left: 50%;
-      margin-left: calc(-7.5rem + var(--dx, 0px));
-      width: 15rem;
-      --shift-y: -0.375rem;
+    [data-side="left"] & {
+      right: calc(100% + 1rem);
+      text-align: right;
     }
   }
 
-  .tip-head {
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
+  @keyframes label-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .name {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
     color: var(--fg);
-    font-size: 0.9375rem;
   }
 
-  .tip-version {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
+  .meta {
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
     color: var(--fg-faint);
   }
 
-  .tip-text {
-    font-size: 0.8125rem;
-    line-height: 1.45;
-    color: var(--fg-muted);
-  }
+  .more {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows var(--dur) var(--ease-out),
+      opacity var(--dur) var(--ease-out);
 
-  /* No hover on touch screens: the tiles are plain links there. */
-  @media (hover: none) {
-    .tip {
-      display: none;
+    & span {
+      overflow: hidden;
+      padding-top: 0.375rem;
+      font-size: 0.875rem;
+      line-height: 1.45;
+      color: var(--fg-muted);
+    }
+
+    a:hover &,
+    a:focus-visible & {
+      grid-template-rows: 1fr;
+      opacity: 1;
     }
   }
 
-  .block {
-    margin-top: clamp(3.5rem, 7vw, 6rem);
+  h1 {
+    max-width: 40rem;
+    margin-top: clamp(0.5rem, 2vw, 1.25rem);
+    font-size: clamp(1.375rem, 2.4vw, 2rem);
+    font-weight: 650;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    text-align: center;
   }
 
-  .block-head {
+  .posts {
+    margin-top: clamp(4rem, 9vw, 7rem);
+  }
+
+  .posts-head {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
+    gap: 0.5rem 1rem;
+    margin-bottom: 1.25rem;
 
-  h2 {
-    font-size: 1.75rem;
-    letter-spacing: -0.025em;
-  }
-
-  .more {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    font-size: 0.9375rem;
-    font-weight: 500;
-    color: var(--fg-muted);
-    text-decoration: none;
-    transition: color var(--dur-fast) var(--ease-out);
-
-    & :global(.icon) {
-      transition: transform var(--dur) var(--ease-out);
+    & h2 {
+      font-size: 1.5rem;
+      letter-spacing: -0.02em;
     }
 
-    &:hover {
-      color: var(--accent);
-    }
+    & a {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--fg-muted);
+      transition: color var(--dur-fast) var(--ease-out);
 
-    &:hover :global(.icon) {
-      transform: translateX(3px);
-    }
-  }
-
-  /* First app large on the left, the others stacked on the right. */
-  .bento {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.25rem;
-
-    & > :global(.large) {
-      grid-row: span 2;
+      &:hover {
+        color: var(--accent);
+      }
     }
   }
 
   .empty {
-    display: grid;
-    justify-items: start;
-    gap: 0.75rem;
-    padding: 2rem;
-    border: 1px dashed var(--line-strong);
-    border-radius: var(--radius-lg);
+    padding-block: 1.25rem;
+    border-block: 1px solid var(--line);
     color: var(--fg-muted);
 
     & a {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 500;
+      font-weight: 550;
       color: var(--accent);
 
       &:hover {
@@ -514,39 +363,79 @@ const jsonLd = {
     }
   }
 
-  @media (max-width: 1100px) {
+  /* Without room on the sides, names go under the tiles and the description stays
+     on the app page. */
+  @media (max-width: 68rem) {
     .orbit {
-      --size: 29rem;
+      --size: min(30rem, 100vw - 2 * var(--gutter) - 2rem);
+      margin-bottom: 2.5rem;
+    }
+
+    .legend {
+      top: calc(100% + 0.5rem);
+      left: 50%;
+      width: max-content;
+      translate: -50% 0;
+      text-align: center;
+
+      [data-side="right"] &,
+      [data-side="left"] & {
+        left: 50%;
+        right: auto;
+        text-align: center;
+      }
+    }
+
+    .name {
+      font-size: 0.9375rem;
+    }
+
+    .meta {
+      font-size: 0.75rem;
+    }
+
+    .more {
+      display: none;
     }
   }
 
-  @media (max-width: 900px) {
+  /* Wide screens: the orbit on the left, the sentence on the right. The orbit's sides
+     keep room for the names (--legend-room), so they never run into the text. */
+  @media (min-width: 75rem) {
     .hero {
-      grid-template-columns: 1fr;
+      --legend-room: 9rem;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      justify-items: start;
+      column-gap: var(--legend-room);
+      padding-left: var(--legend-room);
+      padding-top: clamp(1rem, 3vw, 2.5rem);
     }
 
     .orbit {
-      /* No percentages: --size also feeds transforms on the tiles. */
-      --size: min(30rem, 100vw - 2 * var(--gutter) - 1rem);
-      grid-row: 1;
+      --size: max(24rem, min(32rem, 100svh - 9rem, 100vw - 46rem));
     }
 
-    .bento {
-      grid-template-columns: 1fr;
+    .legend {
+      width: calc(var(--legend-room) - 1rem);
+    }
 
-      & > :global(.large) {
-        grid-row: auto;
-      }
+    h1 {
+      max-width: 30rem;
+      margin-top: 0;
+      font-size: clamp(1.75rem, 2.2vw, 2.25rem);
+      line-height: 1.25;
+      text-align: left;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .app {
+    .app,
+    .legend {
       animation: none;
     }
 
-    .tip {
-      translate: none;
+    .more {
       transition: opacity var(--dur-fast) linear;
     }
   }

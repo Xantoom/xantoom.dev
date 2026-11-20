@@ -35,7 +35,7 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
       >
         <a href={postUrl(post)}>
           <div class="meta">
-            <time class="mono" datetime={post.data.pubDate.toISOString()}>
+            <time class="date" datetime={post.data.pubDate.toISOString()}>
               {formatDate(post.data.pubDate, locale, "short")}
             </time>
             <span class="tag">{categoryLabel(post.data.category, locale)}</span>
@@ -59,7 +59,6 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
               loading="eager"
             />
           )}
-          <Icon name="arrow-right" class="arrow" />
         </a>
       </li>
     );
@@ -67,6 +66,10 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
 </ol>
 
 <style>
+  .date {
+    font-variant-numeric: tabular-nums;
+  }
+
   .posts {
     list-style: none;
     padding: 0;
@@ -84,7 +87,7 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
   a {
     position: relative;
     display: grid;
-    grid-template-columns: 9.375rem minmax(0, 1fr) 1.5rem;
+    grid-template-columns: 9.375rem minmax(0, 1fr);
     gap: 0.5rem 2rem;
     align-items: start;
     padding: 1.5rem 0;
@@ -127,26 +130,9 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
     color: var(--fg-faint);
   }
 
-  .arrow {
-    margin-top: 0.375rem;
-    color: var(--fg-faint);
-    transition:
-      transform var(--dur) var(--ease-out),
-      color var(--dur-fast) var(--ease-out);
-  }
-
-  a:hover .title {
-    color: var(--accent);
-  }
-
-  a:hover .arrow {
-    color: var(--accent);
-    transform: translateX(0.25rem);
-  }
-
   /* Lead row: the newest post reads first. */
   .lead a {
-    grid-template-columns: 9.375rem minmax(0, 1fr) auto 1.5rem;
+    grid-template-columns: 9.375rem minmax(0, 1fr) auto;
     padding: 2.25rem 0 2.5rem;
   }
 
@@ -176,7 +162,7 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
 
   @media (min-width: 901px) {
     :global(.filtered) .lead a {
-      grid-template-columns: 9.375rem minmax(0, 1fr) 1.5rem;
+      grid-template-columns: 9.375rem minmax(0, 1fr);
     }
   }
 
@@ -196,7 +182,7 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
   @media (max-width: 900px) {
     a,
     .lead a {
-      grid-template-columns: minmax(0, 1fr) 1.5rem;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .meta {

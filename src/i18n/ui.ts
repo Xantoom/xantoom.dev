@@ -17,15 +17,10 @@ const fr = {
   "theme.light": "Clair",
   "theme.dark": "Sombre",
 
-  "home.hello": "Développeur web.",
-  // {apps} and {topics} become links in the sentence.
-  "home.lede": "Je développe {apps}, des applications open source, et j'écris sur {topics}.",
-  "home.topics": "les réglages de jeux, l'optimisation et le matériel",
-  "home.and": "et",
-  "home.latest": "Articles",
-  "home.allPosts": "Tout voir",
-  "home.projects": "Apps",
-  "home.allProjects": "Tout voir",
+  "home.hello":
+    "Je développe des applications open source et j'écris sur les jeux vidéo, l'optimisation et le matériel.",
+  "home.latest": "Derniers articles",
+  "home.allPosts": "Tous les articles",
 
   "blog.title": "Blog",
   "blog.description": "Guides, réglages de jeux, optimisation et explications.",
@@ -110,14 +105,9 @@ const en: Record<UIKey, string> = {
   "theme.light": "Light",
   "theme.dark": "Dark",
 
-  "home.hello": "Web developer.",
-  "home.lede": "I build {apps}, open source apps, and write about {topics}.",
-  "home.topics": "game settings, optimization and hardware",
-  "home.and": "and",
-  "home.latest": "Posts",
-  "home.allPosts": "See all",
-  "home.projects": "Apps",
-  "home.allProjects": "See all",
+  "home.hello": "I build open source apps and write about video games, optimization and hardware.",
+  "home.latest": "Latest posts",
+  "home.allPosts": "All posts",
 
   "blog.title": "Blog",
   "blog.description": "Guides, game settings, optimization and explainers.",

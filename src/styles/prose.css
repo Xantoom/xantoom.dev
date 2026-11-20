@@ -137,9 +137,7 @@
     & th {
       font-weight: 600;
       color: var(--fg-muted);
-      font-size: 0.8125rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      font-size: 0.875rem;
       border-bottom-color: var(--line-strong);
     }
 

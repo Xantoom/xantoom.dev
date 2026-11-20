@@ -155,7 +155,7 @@ const jsonLd = {
           </section>
         )}
         {(newer || older) && (
-          <nav class="pager" aria-label="Articles">
+          <nav class="pager" aria-label={t("blog.title")}>
             {older ? (
               <a class="prev" href={postUrl(older)}>
                 <span class="label">
