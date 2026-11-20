@@ -33,6 +33,11 @@ const newest = releases
 // Apps placed around the avatar: angle on the orbit, in degrees.
 const orbit = [-38, 62, 172];
 
+/** Side of the tile where its tooltip opens: above for the upper half, below otherwise. */
+function side(angle: number): "top" | "bottom" {
+  return Math.sin((angle * Math.PI) / 180) < 0 ? "top" : "bottom";
+}
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
@@ -91,15 +96,24 @@ const jsonLd = {
       <div class="me">
         <Logo size={9} eager />
       </div>
-      {projects.slice(0, orbit.length).map((project, i) => (
+      {releases.slice(0, orbit.length).map(({ project, release }, i) => (
         <a
           class="app"
           href={projectUrl(project)}
           tabindex="-1"
+          data-side={side(orbit[i]!)}
           style={`--angle:${orbit[i]}deg;--delay:${120 + i * 90}ms;--p-a:${project.data.colors[0]}`}
-          title={project.data.name}
         >
-          <ProjectLogo logo={project.data.logo} size={34} />
+          <span class="tile">
+            <ProjectLogo logo={project.data.logo} size={34} />
+          </span>
+          <span class="tip">
+            <span class="tip-head">
+              <strong>{project.data.name}</strong>
+              {release && <span class="tip-version">v{release.version}</span>}
+            </span>
+            <span class="tip-text">{project.data.tagline}</span>
+          </span>
         </a>
       ))}
     </div>
@@ -146,18 +160,6 @@ const jsonLd = {
 </BaseLayout>
 
 <style>
-  @property --angle-now {
-    syntax: "<angle>";
-    inherits: false;
-    initial-value: 0deg;
-  }
-
-  @property --dist {
-    syntax: "<length>";
-    inherits: false;
-    initial-value: 0px;
-  }
-
   .hero {
     display: grid;
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
@@ -165,6 +167,8 @@ const jsonLd = {
     gap: 3rem;
     padding-top: clamp(3rem, 8vw, 6.5rem);
     padding-bottom: clamp(2.5rem, 6vw, 5rem);
+    /* Tooltips near the edge never widen the page. */
+    overflow-x: clip;
   }
 
   h1 {
@@ -172,7 +176,6 @@ const jsonLd = {
     line-height: 1.02;
     letter-spacing: -0.035em;
     font-weight: 800;
-    animation: rise 700ms var(--ease-out) both;
   }
 
   .lede {
@@ -181,14 +184,12 @@ const jsonLd = {
     font-size: clamp(1.125rem, 1.5vw, 1.3125rem);
     line-height: 1.55;
     color: var(--fg-muted);
-    animation: rise 700ms var(--ease-out) 80ms both;
   }
 
   @keyframes rise {
     from {
       opacity: 0;
-      transform: translateY(0.875rem);
-      filter: blur(6px);
+      transform: translateY(0.75rem);
     }
   }
 
@@ -198,7 +199,7 @@ const jsonLd = {
     margin-top: 2rem;
     padding: 0;
     list-style: none;
-    animation: rise 700ms var(--ease-out) 160ms both;
+    animation: rise 600ms var(--ease-out) 100ms both;
 
     & a {
       display: grid;
@@ -233,7 +234,7 @@ const jsonLd = {
     font-size: 0.875rem;
     color: var(--fg-muted);
     text-decoration: none;
-    animation: rise 700ms var(--ease-out) 240ms both;
+    animation: rise 600ms var(--ease-out) 180ms both;
     transition: border-color var(--dur-fast) var(--ease-out);
 
     &:hover {
@@ -268,14 +269,14 @@ const jsonLd = {
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 50%;
-    background: #2fbf71;
-    box-shadow: 0 0 0 3px rgb(47 191 113 / 0.2);
+    background: var(--ok);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 20%, transparent);
   }
 
   /* Avatar with the apps on an orbit around it. */
   .orbit {
     --size: 26rem;
-    --radius: calc(var(--size) / 2 - 2.25rem);
+    --orbit-r: calc(var(--size) / 2 - 2.25rem);
     position: relative;
     justify-self: center;
     width: var(--size);
@@ -316,44 +317,123 @@ const jsonLd = {
     animation: fade 900ms var(--ease-out) both;
   }
 
+  /* Each app sits on the orbit: rotate to its angle, move out, rotate back upright. */
   .app {
-    --angle-now: var(--angle);
-    --dist: var(--radius);
     position: absolute;
     top: 50%;
     left: 50%;
-    display: grid;
-    place-items: center;
     width: 4rem;
     height: 4rem;
     margin: -2rem 0 0 -2rem;
+    transform: rotate(var(--angle)) translateX(var(--orbit-r)) rotate(calc(-1 * var(--angle)));
+    animation: launch 1100ms var(--ease-out) var(--delay) both;
+
+    &:hover {
+      z-index: 2;
+    }
+  }
+
+  /* Apps leave from behind the avatar and travel along the orbit to their place.
+     Only transform and opacity change, so the compositor runs it. */
+  @keyframes launch {
+    from {
+      transform: rotate(calc(var(--angle) - 140deg)) translateX(0)
+        rotate(calc(140deg - var(--angle)));
+      opacity: 0;
+    }
+    30% {
+      opacity: 1;
+    }
+  }
+
+  .tile {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
     border: 1px solid var(--line);
     border-radius: 1.125rem;
     background:
       linear-gradient(140deg, color-mix(in srgb, var(--p-a) 22%, transparent), transparent 70%),
       var(--raised);
     box-shadow: var(--shadow);
-    transform: rotate(var(--angle-now)) translateX(var(--dist)) rotate(calc(-1 * var(--angle-now)));
-    animation: launch 1100ms var(--ease-out) var(--delay) both;
     transition:
       scale var(--dur) var(--ease-out),
       border-color var(--dur-fast) var(--ease-out);
 
-    &:hover {
+    .app:hover & {
       scale: 1.08;
       border-color: color-mix(in srgb, var(--p-a) 60%, var(--line));
     }
   }
 
-  /* Apps leave from behind the avatar and travel along the orbit to their place. */
-  @keyframes launch {
-    from {
-      --angle-now: calc(var(--angle) - 140deg);
-      --dist: 0px;
-      opacity: 0;
-    }
-    30% {
+  /* Tooltip: opens on the side facing away from the avatar. */
+  .tip {
+    --shift-y: 0;
+    position: absolute;
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.625rem 0.875rem 0.75rem;
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--p-a);
+    border-radius: var(--radius);
+    background: var(--raised);
+    box-shadow: var(--shadow);
+    text-align: left;
+    pointer-events: none;
+    opacity: 0;
+    translate: 0 var(--shift-y);
+    transition:
+      opacity var(--dur-fast) var(--ease-out),
+      translate var(--dur) var(--ease-out);
+
+    .app:hover & {
       opacity: 1;
+      translate: 0 0;
+      transition-delay: 60ms;
+    }
+
+    [data-side="top"] & {
+      bottom: calc(100% + 0.75rem);
+      left: 50%;
+      margin-left: -7.5rem;
+      width: 15rem;
+      --shift-y: 0.375rem;
+    }
+
+    [data-side="bottom"] & {
+      top: calc(100% + 0.75rem);
+      left: 50%;
+      margin-left: -7.5rem;
+      width: 15rem;
+      --shift-y: -0.375rem;
+    }
+  }
+
+  .tip-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    color: var(--fg);
+    font-size: 0.9375rem;
+  }
+
+  .tip-version {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--fg-faint);
+  }
+
+  .tip-text {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--fg-muted);
+  }
+
+  /* No hover on touch screens: the tiles are plain links there. */
+  @media (hover: none) {
+    .tip {
+      display: none;
     }
   }
 
@@ -423,10 +503,9 @@ const jsonLd = {
       gap: 0.5rem;
       font-weight: 500;
       color: var(--accent);
-      text-decoration: none;
 
       &:hover {
-        text-decoration: underline;
+        color: var(--accent-hover);
       }
     }
   }
@@ -453,6 +532,11 @@ const jsonLd = {
   @media (prefers-reduced-motion: reduce) {
     .app {
       animation: none;
+    }
+
+    .tip {
+      translate: none;
+      transition: opacity var(--dur-fast) linear;
     }
   }
 </style>

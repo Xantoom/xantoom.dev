@@ -14,7 +14,8 @@
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "verify": "bun run fmt:check && bun run lint && bun run check && bun run build",
-    "deploy": "astro build && wrangler deploy"
+    "deploy": "astro build && wrangler deploy",
+    "new-post": "bun scripts/new-post.ts"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.1.6",

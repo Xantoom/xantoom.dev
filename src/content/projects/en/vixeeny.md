@@ -1,7 +1,7 @@
 ---
 name: Vixeeny
-tagline: Screen capture and recording, free and open source.
-description: A native screen capture app (images and videos) for Windows, macOS and Linux, written in Rust. 0% CPU at rest. In development.
+tagline: Screen capture and recording for Windows, macOS and Linux.
+description: A native screen capture and video recording app for Windows, macOS and Linux, written in Rust. In development.
 status: wip
 order: 3
 logo: vixeeny
@@ -11,10 +11,14 @@ license: GPL-3.0
 platforms: [windows, macos, linux]
 stack: [Rust]
 features:
-  - "<strong>Full screen, region or window</strong>, works with every graphics API (DirectX, Vulkan, OpenGL, Metal), without injecting into games."
-  - "<strong>Runs in the background</strong> at 0% CPU when idle, with a minimal memory footprint."
-  - "<strong>Every setting</strong>: formats, codecs, containers, NVENC, AMF and QSV hardware encoding."
-  - "<strong>No telemetry</strong>, your captures are never uploaded."
+  - title: "Full screen, region or window"
+    text: "Works with every graphics API (DirectX, Vulkan, OpenGL, Metal), without injecting into games."
+  - title: "Background"
+    text: "0% CPU when idle, minimal memory footprint."
+  - title: "Full control"
+    text: "Formats, codecs, containers, NVENC, AMF and QSV hardware encoding."
+  - title: "No telemetry"
+    text: "Captures are never uploaded."
 ---
 
-Vixeeny is in development. The full plan is public in the GitHub repository.
+Vixeeny is in development. The roadmap is public in the GitHub repository.

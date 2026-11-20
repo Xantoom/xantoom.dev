@@ -1,35 +1,47 @@
 ---
 title: Confidentialité
-description: Ce que xantoom.dev collecte (presque rien) et pourquoi.
-updatedDate: 2026-11-19
+description: Données traitées par xantoom.dev, pourquoi, par qui et pendant combien de temps.
+updatedDate: 2026-11-20
 ---
 
-**En bref : ce site ne dépose aucun cookie, n'utilise aucun outil de mesure d'audience ni aucun traceur, et ne collecte aucune donnée personnelle à des fins de suivi.** Il n'y a donc pas de bandeau de consentement.
+## Responsable du traitement
 
-## Ce qui est stocké sur ton appareil
+Xavier (Xantoom), éditeur du site, joignable à [contact@xantoom.dev](mailto:contact@xantoom.dev).
 
-Si tu choisis un thème (clair ou sombre), ce choix est enregistré dans le stockage local de ton navigateur (`localStorage`, clé `theme`). Il ne quitte jamais ton appareil et n'est lu que par ce site pour afficher le thème choisi. Choisir « Système » l'efface. Ce stockage sert uniquement une fonction que tu as demandée : il n'exige pas de consentement.
+Le site ne dépose pas de cookie, n'utilise pas d'outil de mesure d'audience et n'affiche pas de publicité. Aucun bandeau de consentement n'est donc nécessaire.
+
+## Stockage local
+
+Le choix du thème (clair ou sombre) est enregistré dans le navigateur (`localStorage`, clé `theme`). Cette valeur reste sur l'appareil et n'est lue que pour afficher le thème choisi. Revenir sur « Système » la supprime. Ce stockage est strictement nécessaire à une fonction demandée par le visiteur et n'exige pas de consentement.
 
 ## Hébergement et journaux techniques
 
-Le site est hébergé et distribué par **Cloudflare, Inc.** Pour acheminer les pages et protéger le site contre les attaques, Cloudflare traite des données techniques de connexion (adresse IP, navigateur, page demandée, date). Ces données ne sont pas utilisées par l'éditeur pour te suivre ou te profiler ; seules des statistiques de trafic agrégées et anonymes sont consultables.
+Le site est hébergé et distribué par **Cloudflare, Inc.** Pour acheminer les pages et protéger le site contre les attaques, Cloudflare traite des données de connexion : adresse IP, navigateur, page demandée, date et heure.
 
-- Base légale : intérêt légitime (sécurité et bon fonctionnement du site).
-- Cloudflare peut traiter ces données hors de l'Union européenne, dans le cadre du Data Privacy Framework UE–États-Unis et de clauses contractuelles types.
-- Politique de Cloudflare : [cloudflare.com/privacypolicy](https://www.cloudflare.com/privacypolicy/)
+- Finalité : sécurité et fonctionnement du site.
+- Base légale : intérêt légitime.
+- Accès : l'éditeur ne consulte que des statistiques de trafic agrégées, sans adresse IP.
+- Transferts : Cloudflare peut traiter ces données hors de l'Union européenne, dans le cadre du Data Privacy Framework UE–États-Unis et de clauses contractuelles types.
+- [Politique de confidentialité de Cloudflare](https://www.cloudflare.com/privacypolicy/)
 
-## Polices et ressources
+## Messages envoyés par e-mail
 
-Les polices et toutes les ressources du site sont hébergées sur xantoom.dev : ton navigateur ne contacte aucun service tiers en chargeant une page.
+Les messages adressés à contact@xantoom.dev sont transmis par Cloudflare (Email Routing) vers une boîte Gmail (Google).
 
-## Vidéos YouTube
+- Données : adresse e-mail de l'expéditeur, contenu du message et pièces jointes.
+- Finalité : répondre au message.
+- Base légale : intérêt légitime.
+- Durée de conservation : le temps de l'échange, puis trois ans au plus après le dernier message.
+- Transferts : Google peut traiter ces données hors de l'Union européenne, dans le cadre du Data Privacy Framework UE–États-Unis. [Règles de confidentialité de Google](https://policies.google.com/privacy)
 
-Certains articles peuvent contenir une vidéo YouTube. Rien n'est chargé depuis YouTube tant que tu ne cliques pas sur la vidéo. Après ton clic, le lecteur est chargé depuis `youtube-nocookie.com` (mode de confidentialité renforcée de Google), et la [politique de confidentialité de Google](https://policies.google.com/privacy) s'applique.
+## Ressources tierces
 
-## Liens externes
+Les polices, images et scripts sont servis depuis xantoom.dev. Le chargement d'une page ne contacte aucun autre service.
 
-Les liens vers d'autres sites (GitHub, sites des apps…) mènent à des services qui ont leurs propres règles de confidentialité.
+Une vidéo YouTube intégrée à un article ne se charge qu'au clic, depuis `youtube-nocookie.com`. Google traite alors des données selon ses [règles de confidentialité](https://policies.google.com/privacy).
 
-## Tes droits
+Les liens vers d'autres sites (GitHub, sites des applications) mènent à des services qui appliquent leurs propres règles.
 
-Conformément au RGPD, tu disposes d'un droit d'accès, de rectification, d'effacement, d'opposition et de limitation. Comme ce site ne collecte pas de données personnelles, il n'en détient aucune te concernant. Pour toute question : [contact@xantoom.dev](mailto:contact@xantoom.dev). Tu peux aussi saisir la [CNIL](https://www.cnil.fr/fr/plaintes).
+## Droits
+
+Le RGPD donne un droit d'accès, de rectification, d'effacement, d'opposition et de limitation du traitement. Les demandes sont à envoyer à [contact@xantoom.dev](mailto:contact@xantoom.dev). Une réclamation peut être déposée auprès de la [CNIL](https://www.cnil.fr/fr/plaintes).

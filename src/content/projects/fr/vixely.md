@@ -1,7 +1,7 @@
 ---
 name: Vixely
-tagline: Édite vidéos, images et GIF dans ton navigateur.
-description: Un éditeur de vidéos, d'images et de GIF qui tourne entièrement dans ton navigateur. Tes fichiers ne sont envoyés nulle part, et il n'y a pas de compte à créer.
+tagline: Éditeur de vidéos, d'images et de GIF qui fonctionne dans le navigateur.
+description: Éditeur de vidéos, d'images et de GIF entièrement local, dans le navigateur. Aucun envoi de fichier, aucun compte, utilisable hors ligne.
 status: stable
 order: 1
 logo: vixely
@@ -12,19 +12,23 @@ license: MIT
 platforms: [web]
 stack: [React 19, TypeScript, TanStack Router, Zustand, WebCodecs, WebGL2]
 features:
-  - "<strong>Vidéo</strong> : couper, recadrer, redimensionner, corriger les couleurs, changer de piste audio ou de sous-titres."
-  - "<strong>Image</strong> : recadrage, filtres, luminosité, contraste, saturation et conversion de format."
-  - "<strong>GIF</strong> : couper, éditer image par image, optimiser le poids, exporter en APNG ou WebP animé."
-  - "<strong>Aperçu en temps réel</strong> : chaque réglage est rendu instantanément en WebGL2."
-  - "<strong>Préréglages</strong> d'export pour Discord, TikTok, Twitter, YouTube et Twitch."
-  - "<strong>Local</strong> : tes fichiers ne quittent jamais ton appareil, et l'app marche hors ligne après le premier chargement."
+  - title: "Vidéo"
+    text: "Découpe, recadrage, redimensionnement, correction des couleurs, choix des pistes audio et sous-titres."
+  - title: "Image"
+    text: "Recadrage, filtres, luminosité, contraste, saturation, conversion de format."
+  - title: "GIF"
+    text: "Découpe, édition image par image, réduction du poids, export APNG ou WebP animé."
+  - title: "Aperçu en temps réel"
+    text: "Chaque réglage est rendu immédiatement en WebGL2."
+  - title: "Préréglages d'export"
+    text: "Discord, TikTok, X, YouTube et Twitch."
+  - title: "Traitement local"
+    text: "Les fichiers restent sur l'appareil. L'app fonctionne hors ligne après le premier chargement."
 ---
 
-Pour couper une vidéo ou alléger un GIF, la plupart des outils en ligne demandent d'envoyer tes fichiers sur un serveur, de créer un compte ou de payer pour retirer un filigrane.
+Le décodage et l'encodage passent par **WebCodecs**, accéléré par le matériel, et l'aperçu par **WebGL2**. Ni FFmpeg ni serveur : l'application est un site statique.
 
-Vixely fait tout dans ton navigateur, avec les API **WebCodecs** (décodage et encodage matériels) et **WebGL2** (aperçu en temps réel). Pas de FFmpeg, pas de backend : l'app est un site statique.
-
-## Formats pris en charge
+## Formats
 
 | Type  | Import et export                                  |
 | ----- | ------------------------------------------------- |

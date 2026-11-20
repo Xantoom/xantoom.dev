@@ -11,7 +11,7 @@ import ProjectLogo from "./ProjectLogo.astro";
 interface Props {
   project: Project;
   locale: Locale;
-  /** Large cards also list the first features. */
+  /** Large cards also list the first feature titles. */
   large?: boolean;
   headingLevel?: 2 | 3;
 }
@@ -52,7 +52,7 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
       {data.features.slice(0, 3).map((feature) => (
         <li>
           <Icon name="check" size={16} />
-          <span set:html={feature} />
+          <span>{feature.title}</span>
         </li>
       ))}
     </ul>
@@ -259,7 +259,6 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
   .license {
     gap: 0.375rem;
     margin-left: auto;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
   }
 </style>

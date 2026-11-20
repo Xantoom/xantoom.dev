@@ -2,7 +2,7 @@ import type { Locale } from "./config";
 
 const fr = {
   "site.description":
-    "Guides sur les réglages de jeux, l'optimisation et le matériel, et les apps open source de Xantoom.",
+    "Articles sur les réglages de jeux, l'optimisation et le matériel, et applications open source de Xavier (Xantoom).",
   skip: "Aller au contenu",
   "nav.home": "Accueil",
   "nav.blog": "Blog",
@@ -17,9 +17,9 @@ const fr = {
   "theme.light": "Clair",
   "theme.dark": "Sombre",
 
-  "home.hello": "Salut, moi c'est Xavier.",
+  "home.hello": "Xavier, développeur web.",
   "home.lede":
-    "Je développe des apps gratuites et open source, et j'écris des guides : réglages de jeux, optimisation, matériel.",
+    "Je publie ici mes applications open source et des articles sur les réglages de jeux, l'optimisation et le matériel informatique.",
   "home.newRelease": "Nouvelle version :",
   "home.latest": "Articles",
   "home.allPosts": "Tout voir",
@@ -37,8 +37,8 @@ const fr = {
   "blog.count.one": "article",
   "blog.count.other": "articles",
   "blog.empty": "Aucun article ne correspond.",
-  "blog.none": "Pas encore d'article. Le premier arrive bientôt.",
-  "blog.follow": "Suivre le flux RSS",
+  "blog.none": "Aucun article publié pour l'instant.",
+  "blog.follow": "Flux RSS",
   "post.back": "Blog",
   "post.toc": "Sommaire",
   "post.minRead": "min",
@@ -54,7 +54,7 @@ const fr = {
   "code.copied": "Copié",
 
   "projects.title": "Apps",
-  "projects.description": "Mes apps. Toutes gratuites et open source.",
+  "projects.description": "Applications open source que je développe.",
   "project.visit": "Ouvrir",
   "project.download": "Télécharger",
   "project.source": "Code source",
@@ -62,6 +62,7 @@ const fr = {
   "project.license": "Licence",
   "project.platforms": "Plateformes",
   "project.stack": "Technologies",
+  "project.statusLabel": "Statut",
   "project.status.stable": "Disponible",
   "project.status.beta": "Bêta",
   "project.status.wip": "En développement",
@@ -70,7 +71,7 @@ const fr = {
   "project.all": "Apps",
 
   "video.play": "Lire la vidéo",
-  "video.youtubeNotice": "La vidéo se charge depuis YouTube (youtube-nocookie.com) après ton clic.",
+  "video.youtubeNotice": "Au clic, la vidéo est chargée depuis youtube-nocookie.com (Google).",
 
   "callout.note": "Note",
   "callout.tip": "Astuce",
@@ -82,7 +83,6 @@ const fr = {
 
   "footer.legal": "Mentions légales",
   "footer.privacy": "Confidentialité",
-  "footer.noTracking": "Aucun cookie, aucun traceur.",
   "footer.source": "Code source du site",
 
   "404.title": "Page introuvable",
@@ -94,7 +94,7 @@ export type UIKey = keyof typeof fr;
 
 const en: Record<UIKey, string> = {
   "site.description":
-    "Guides on game settings, optimization and hardware, and Xantoom's open source apps.",
+    "Posts on game settings, optimization and hardware, and open source apps by Xavier (Xantoom).",
   skip: "Skip to content",
   "nav.home": "Home",
   "nav.blog": "Blog",
@@ -109,9 +109,9 @@ const en: Record<UIKey, string> = {
   "theme.light": "Light",
   "theme.dark": "Dark",
 
-  "home.hello": "Hi, I'm Xavier.",
+  "home.hello": "Xavier, web developer.",
   "home.lede":
-    "I build free, open source apps, and I write guides: game settings, optimization, hardware.",
+    "This is where I publish my open source apps and posts about game settings, optimization and PC hardware.",
   "home.newRelease": "New release:",
   "home.latest": "Posts",
   "home.allPosts": "See all",
@@ -129,8 +129,8 @@ const en: Record<UIKey, string> = {
   "blog.count.one": "post",
   "blog.count.other": "posts",
   "blog.empty": "No post matches.",
-  "blog.none": "No posts yet. The first one is coming soon.",
-  "blog.follow": "Follow the RSS feed",
+  "blog.none": "No posts published yet.",
+  "blog.follow": "RSS feed",
   "post.back": "Blog",
   "post.toc": "Contents",
   "post.minRead": "min",
@@ -146,7 +146,7 @@ const en: Record<UIKey, string> = {
   "code.copied": "Copied",
 
   "projects.title": "Apps",
-  "projects.description": "My apps. All free and open source.",
+  "projects.description": "Open source apps I build.",
   "project.visit": "Open",
   "project.download": "Download",
   "project.source": "Source code",
@@ -154,6 +154,7 @@ const en: Record<UIKey, string> = {
   "project.license": "License",
   "project.platforms": "Platforms",
   "project.stack": "Built with",
+  "project.statusLabel": "Status",
   "project.status.stable": "Available",
   "project.status.beta": "Beta",
   "project.status.wip": "In development",
@@ -162,7 +163,7 @@ const en: Record<UIKey, string> = {
   "project.all": "Apps",
 
   "video.play": "Play video",
-  "video.youtubeNotice": "The video loads from YouTube (youtube-nocookie.com) after you click.",
+  "video.youtubeNotice": "On click, the video loads from youtube-nocookie.com (Google).",
 
   "callout.note": "Note",
   "callout.tip": "Tip",
@@ -174,7 +175,6 @@ const en: Record<UIKey, string> = {
 
   "footer.legal": "Legal notice",
   "footer.privacy": "Privacy",
-  "footer.noTracking": "No cookies, no trackers.",
   "footer.source": "Site source code",
 
   "404.title": "Page not found",

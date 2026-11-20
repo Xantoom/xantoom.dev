@@ -1,22 +1,22 @@
 ---
 title: About
-description: Who writes on xantoom.dev, and why.
+description: Xavier, also known as Xantoom, web developer in France. What is published on xantoom.dev.
 ---
 
-Hi, I'm **Xavier**, also known as **Xantoom**. I'm a web developer based in France.
+My name is **Xavier**, also known as **Xantoom**. I'm a web developer based in France.
 
-I build free, open source apps: [Vixely](/en/projects/vixely/) to edit media in the browser, [Vixion](/en/projects/vixion/) to record Twitch streams, and [Vixeeny](/en/projects/vixeeny/) for screen capture.
+## Apps
 
-On this blog I write about what I enjoy:
+I build three open source apps in my spare time:
 
-- **video games** and their best settings;
-- **optimizing** a PC, a system or a piece of software;
-- **hardware** and PC building;
-- **how things work**, explained simply;
-- and sometimes animation, manga and drawing.
+- [Vixely](/en/projects/vixely/), a video, image and GIF editor that runs in the browser;
+- [Vixion](/en/projects/vixion/), a self-hosted Twitch stream recorder;
+- [Vixeeny](/en/projects/vixeeny/), a screen capture app for Windows, macOS and Linux.
 
-## This site
+## Posts
 
-xantoom.dev is a static site: no cookies, no trackers, no ads. Its [source code](https://github.com/Xantoom/xantoom.dev) is public.
+The blog covers video games and their settings, optimizing a PC or a piece of software, hardware, and how the technology I use works.
 
-Get in touch: [contact@xantoom.dev](mailto:contact@xantoom.dev) or [GitHub](https://github.com/Xantoom).
+## Contact
+
+[contact@xantoom.dev](mailto:contact@xantoom.dev) or [GitHub](https://github.com/Xantoom). The [site's source code](https://github.com/Xantoom/xantoom.dev) is public.

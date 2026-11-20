@@ -1,7 +1,7 @@
 ---
 title: Mentions légales
 description: Éditeur et hébergeur du site xantoom.dev.
-updatedDate: 2026-11-19
+updatedDate: 2026-11-20
 ---
 
 ## Éditeur
@@ -20,7 +20,7 @@ Cloudflare, Inc.
 
 ## Propriété intellectuelle
 
-Sauf mention contraire, les articles et leurs images sont publiés sous licence [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.fr) : tu peux les reprendre en citant l'auteur avec un lien vers la page d'origine. Le code source du site est sous licence MIT sur [GitHub](https://github.com/Xantoom/xantoom.dev). Les logos et les noms Xantoom, Vixely, Vixion et Vixeeny ne sont pas couverts par ces licences.
+Sauf mention contraire, les articles et leurs images sont publiés sous licence [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.fr) : ils peuvent être réutilisés à condition de citer l'auteur et de mettre un lien vers la page d'origine. Le code source du site est sous licence MIT sur [GitHub](https://github.com/Xantoom/xantoom.dev). Les logos et les noms Xantoom, Vixely, Vixion et Vixeeny ne sont pas couverts par ces licences.
 
 Les marques et logos cités (jeux, matériel, logiciels) appartiennent à leurs propriétaires respectifs.
 

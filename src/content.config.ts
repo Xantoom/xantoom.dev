@@ -43,7 +43,8 @@ const projects = defineCollection({
     license: z.string(),
     platforms: z.array(z.enum(PLATFORM_KEYS)).min(1),
     stack: z.array(z.string()),
-    features: z.array(z.string()),
+    /** Short title and one sentence each. */
+    features: z.array(z.object({ title: z.string(), text: z.string() })),
   }),
 });
 

@@ -1,7 +1,7 @@
 ---
 title: Legal notice
 description: Publisher and host of xantoom.dev.
-updatedDate: 2026-11-19
+updatedDate: 2026-11-20
 ---
 
 ## Publisher
@@ -20,7 +20,7 @@ Cloudflare, Inc.
 
 ## Intellectual property
 
-Unless stated otherwise, the articles and their images are published under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): you can reuse them if you credit the author with a link to the original page. The site's source code is under the MIT license on [GitHub](https://github.com/Xantoom/xantoom.dev). The Xantoom, Vixely, Vixion and Vixeeny logos and names are not covered by these licenses.
+Unless stated otherwise, the articles and their images are published under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): they may be reused provided the author is credited with a link to the original page. The site's source code is under the MIT license on [GitHub](https://github.com/Xantoom/xantoom.dev). The Xantoom, Vixely, Vixion and Vixeeny logos and names are not covered by these licenses.
 
 Trademarks and logos mentioned (games, hardware, software) belong to their respective owners.
 

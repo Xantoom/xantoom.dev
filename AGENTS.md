@@ -27,6 +27,7 @@ Always use Bun.
 | `bun run check`      | Type check, `.astro` included (`tsc` 7.1 + `@astrojs/ts-content-mapper`)         |
 | `bun run verify`     | Everything CI runs: format check, lint, types, build                             |
 | `bun run deploy`     | Manual build and `wrangler deploy` (normally CI deploys, see below)              |
+| `bun run new-post`   | Create a draft article in both languages (see "Writing an article")              |
 
 Run `bun run verify` before calling a change done. CI runs the same steps on every push
 and pull request; a push to `main` that passes them is deployed to production
@@ -79,6 +80,14 @@ src/content/blog/en/<slug>/index.mdx
 - `##` and `###` headings build the table of contents automatically.
 - `src/content/blog/*/guide-de-style|style-guide` is the reference draft that uses every
   element. Read it before writing a post.
+
+#### Writing an article
+
+1. `bun run new-post <fr-slug> [en-slug] [--category=<key>]` creates both `index.mdx`
+   files as drafts, with the same `translationKey`.
+2. Write the French text, put images next to it, check it with `bun run dev`.
+3. Translate it in the English file.
+4. Remove `draft: true` from both files, run `bun run verify`, push to `main`: CI deploys.
 
 Components available in MDX without importing them:
 
@@ -137,7 +146,9 @@ About, legal notice and privacy policy are Markdown in `src/content/pages/<local
   `"si:…"` for brands (Simple Icons), `"flag:…"` for flags (Circle Flags). Prefer an icon
   with a `label`/`title` over a short text label when the icon is clear. Never use emoji
   or Unicode symbols as icons.
-- **Copy:** plain, short and explanatory. No marketing tone, no slogans. Both themes must be checked for every UI change.
+- **Copy:** plain, short and explanatory. No marketing tone, no slogans, no claims that
+  only restate a default (e.g. "no cookies" outside the privacy page). Never address the
+  reader ("tu", "vous", "you"): write impersonally; the author may speak as "je"/"I". Both themes must be checked for every UI change.
   Avoid generic "AI-looking" UI: no gradient text, no glassmorphism cards, no emoji icons,
   no decorative blobs.
 - **i18n:** every visible string goes through `useTranslations()`; never hardcode French

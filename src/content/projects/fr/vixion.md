@@ -1,7 +1,7 @@
 ---
 name: Vixion
-tagline: Enregistre les chaînes Twitch que tu suis, chat compris.
-description: Une app auto-hébergée qui enregistre chaque live des chaînes choisies, avec le chat, et les rejoue dans ton navigateur.
+tagline: Enregistreur de lives Twitch auto-hébergé, chat compris.
+description: Application auto-hébergée qui enregistre chaque live des chaînes Twitch choisies, avec le chat, et les rejoue dans le navigateur.
 status: stable
 order: 2
 logo: vixion
@@ -9,18 +9,24 @@ colors: ["#e5322d", "#ff7a59"]
 repo: https://github.com/Xantoom/Vixion
 license: AGPL-3.0
 platforms: [docker]
-stack: [Rust, binaire statique, Docker]
+stack: [Rust, Docker]
 features:
-  - "<strong>Enregistre chaque live</strong> des chaînes ajoutées, en qualité source, dès qu'elles passent en direct. HEVC et AV1 sont gardés tels quels."
-  - "<strong>Enregistre le chat</strong> et le rejoue synchronisé avec la vidéo : badges et emotes Twitch, 7TV, BetterTTV et FrankerFaceZ."
-  - "<strong>Lecture</strong> : vidéo et chat côte à côte, reprise là où tu t'étais arrêté, compresseur audio."
-  - "<strong>Gère l'espace disque</strong> : les enregistrements expirent après 14 jours sauf si tu les gardes, les plus anciens partent en premier."
-  - "<strong>Plusieurs utilisateurs</strong> avec des rôles et des permissions."
-  - "<strong>Léger</strong> : un binaire statique de quelques Mo, quelques Mo de mémoire au repos."
+  - title: "Enregistrement automatique"
+    text: "Chaque live des chaînes suivies, en qualité source. Les flux HEVC et AV1 sont conservés tels quels."
+  - title: "Chat"
+    text: "Enregistré et rejoué en synchronisation, avec les badges et emotes Twitch, 7TV, BetterTTV et FrankerFaceZ."
+  - title: "Lecteur"
+    text: "Vidéo et chat côte à côte, reprise de lecture, compresseur audio."
+  - title: "Espace disque"
+    text: "Les enregistrements expirent après 14 jours sauf s'ils sont conservés. Les plus anciens partent en premier."
+  - title: "Multi-utilisateur"
+    text: "Rôles et permissions par compte."
+  - title: "Léger"
+    text: "Un binaire statique de quelques Mo, quelques Mo de mémoire au repos."
 ---
 
-Vixion tourne dans un seul conteneur Docker, sur un PC Linux, un NAS ou un serveur. Tu ajoutes une chaîne depuis la barre de recherche, et elle est enregistrée à chaque fois qu'elle passe en live.
+Vixion tourne dans un conteneur Docker unique, sur un PC Linux, un NAS ou un serveur. Une chaîne ajoutée depuis la recherche est enregistrée à chacun de ses lives.
 
-Interface en français et en anglais, sur téléphone, tablette, ordinateur et TV.
+L'interface est disponible en français et en anglais, sur téléphone, tablette, ordinateur et TV.
 
-Vixion n'est pas affilié à Twitch. N'enregistre que ce que tu as le droit de conserver.
+Vixion n'est pas affilié à Twitch.

@@ -1,35 +1,47 @@
 ---
 title: Privacy
-description: What xantoom.dev collects (almost nothing) and why.
-updatedDate: 2026-11-19
+description: What data xantoom.dev processes, why, by whom and for how long.
+updatedDate: 2026-11-20
 ---
 
-**In short: this site sets no cookies, uses no analytics and no trackers, and collects no personal data for tracking.** That's why there is no consent banner.
+## Data controller
 
-## What is stored on your device
+Xavier (Xantoom), publisher of the site, reachable at [contact@xantoom.dev](mailto:contact@xantoom.dev).
 
-If you pick a theme (light or dark), that choice is saved in your browser's local storage (`localStorage`, key `theme`). It never leaves your device and is only read by this site to show the theme you picked. Choosing "System" clears it. This storage only serves a feature you asked for, so it needs no consent.
+The site sets no cookies, uses no analytics and shows no ads, so no consent banner is needed.
+
+## Local storage
+
+The theme choice (light or dark) is saved in the browser (`localStorage`, key `theme`). The value stays on the device and is only read to show the chosen theme. Switching back to "System" removes it. This storage is strictly necessary for a feature the visitor asked for and needs no consent.
 
 ## Hosting and technical logs
 
-The site is hosted and delivered by **Cloudflare, Inc.** To deliver pages and protect the site from attacks, Cloudflare processes technical connection data (IP address, browser, requested page, date). The publisher does not use this data to track or profile you; only aggregated, anonymous traffic statistics are available.
+The site is hosted and delivered by **Cloudflare, Inc.** To deliver pages and protect the site from attacks, Cloudflare processes connection data: IP address, browser, requested page, date and time.
 
-- Legal basis: legitimate interest (security and proper operation of the site).
-- Cloudflare may process this data outside the European Union, under the EU–US Data Privacy Framework and standard contractual clauses.
-- Cloudflare's policy: [cloudflare.com/privacypolicy](https://www.cloudflare.com/privacypolicy/)
+- Purpose: security and operation of the site.
+- Legal basis: legitimate interest.
+- Access: the publisher only sees aggregated traffic statistics, without IP addresses.
+- Transfers: Cloudflare may process this data outside the European Union, under the EU–US Data Privacy Framework and standard contractual clauses.
+- [Cloudflare privacy policy](https://www.cloudflare.com/privacypolicy/)
 
-## Fonts and resources
+## Email
 
-Fonts and every resource of the site are hosted on xantoom.dev: your browser contacts no third-party service when loading a page.
+Messages sent to contact@xantoom.dev are forwarded by Cloudflare (Email Routing) to a Gmail inbox (Google).
 
-## YouTube videos
+- Data: sender's email address, message content and attachments.
+- Purpose: replying to the message.
+- Legal basis: legitimate interest.
+- Retention: for the duration of the exchange, then at most three years after the last message.
+- Transfers: Google may process this data outside the European Union, under the EU–US Data Privacy Framework. [Google privacy policy](https://policies.google.com/privacy)
 
-Some posts may include a YouTube video. Nothing loads from YouTube until you click the video. After your click, the player loads from `youtube-nocookie.com` (Google's privacy-enhanced mode), and [Google's privacy policy](https://policies.google.com/privacy) applies.
+## Third-party resources
 
-## External links
+Fonts, images and scripts are served from xantoom.dev. Loading a page contacts no other service.
 
-Links to other sites (GitHub, app websites…) lead to services with their own privacy rules.
+A YouTube video embedded in a post only loads on click, from `youtube-nocookie.com`. Google then processes data under its [privacy policy](https://policies.google.com/privacy).
 
-## Your rights
+Links to other sites (GitHub, app websites) lead to services with their own rules.
 
-Under the GDPR you have the right to access, rectify, erase, object and restrict processing. Since this site collects no personal data, it holds none about you. Questions: [contact@xantoom.dev](mailto:contact@xantoom.dev). You can also contact the French data protection authority, the [CNIL](https://www.cnil.fr/en/complaints).
+## Rights
+
+The GDPR grants the right to access, rectify, erase, object to and restrict processing. Requests go to [contact@xantoom.dev](mailto:contact@xantoom.dev). A complaint can be filed with the French data protection authority, the [CNIL](https://www.cnil.fr/en/complaints).
