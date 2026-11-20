@@ -44,7 +44,7 @@ const jsonLd = {
   name: SITE.name,
   url: SITE.url,
   inLanguage: locale,
-  author: { "@type": "Person", name: SITE.author, alternateName: SITE.handle, url: SITE.github },
+  author: { "@type": "Person", name: SITE.author, url: SITE.github },
 };
 ---
 
@@ -94,7 +94,7 @@ const jsonLd = {
     <div class="orbit" aria-hidden="true">
       <div class="ring" />
       <div class="me">
-        <Logo size={9} eager />
+        <Logo size={13} eager />
       </div>
       {releases.slice(0, orbit.length).map(({ project, release }, i) => (
         <a
@@ -105,7 +105,7 @@ const jsonLd = {
           style={`--angle:${orbit[i]}deg;--delay:${120 + i * 90}ms;--p-a:${project.data.colors[0]}`}
         >
           <span class="tile">
-            <ProjectLogo logo={project.data.logo} size={34} />
+            <ProjectLogo logo={project.data.logo} size={48} />
           </span>
           <span class="tip">
             <span class="tip-head">
@@ -162,7 +162,7 @@ const jsonLd = {
 <style>
   .hero {
     display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: 3rem;
     padding-top: clamp(3rem, 8vw, 6.5rem);
@@ -275,8 +275,12 @@ const jsonLd = {
 
   /* Avatar with the apps on an orbit around it. */
   .orbit {
-    --size: 26rem;
-    --orbit-r: calc(var(--size) / 2 - 2.25rem);
+    /* Everything in the orbit scales from --size. */
+    --size: 36rem;
+    --tile: calc(var(--size) * 0.15);
+    --inset: calc(var(--tile) * 0.55);
+    --avatar: calc(var(--size) * 0.36);
+    --orbit-r: calc(var(--size) / 2 - var(--inset));
     position: relative;
     justify-self: center;
     width: var(--size);
@@ -287,7 +291,7 @@ const jsonLd = {
 
   .ring {
     position: absolute;
-    inset: 2.25rem;
+    inset: var(--inset);
     border: 1px dashed var(--line-strong);
     border-radius: 50%;
     animation: fade 900ms var(--ease-out) both;
@@ -312,19 +316,29 @@ const jsonLd = {
     position: relative;
     border-radius: 50%;
     box-shadow:
-      0 0 0 0.5rem var(--bg),
+      0 0 0 0.625rem var(--bg),
       0 1.5rem 3rem -1.5rem rgb(0 0 0 / 0.45);
     animation: fade 900ms var(--ease-out) both;
   }
 
   /* Each app sits on the orbit: rotate to its angle, move out, rotate back upright. */
+  .me :global(.logo) {
+    width: var(--avatar);
+    height: var(--avatar);
+  }
+
+  .tile :global(svg) {
+    width: calc(var(--tile) * 0.58);
+    height: calc(var(--tile) * 0.58);
+  }
+
   .app {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 4rem;
-    height: 4rem;
-    margin: -2rem 0 0 -2rem;
+    width: var(--tile);
+    height: var(--tile);
+    margin: calc(var(--tile) / -2) 0 0 calc(var(--tile) / -2);
     transform: rotate(var(--angle)) translateX(var(--orbit-r)) rotate(calc(-1 * var(--angle)));
     animation: launch 1100ms var(--ease-out) var(--delay) both;
 
@@ -352,7 +366,7 @@ const jsonLd = {
     width: 100%;
     height: 100%;
     border: 1px solid var(--line);
-    border-radius: 1.125rem;
+    border-radius: calc(var(--tile) * 0.28);
     background:
       linear-gradient(140deg, color-mix(in srgb, var(--p-a) 22%, transparent), transparent 70%),
       var(--raised);
@@ -363,7 +377,7 @@ const jsonLd = {
 
     .app:hover & {
       scale: 1.08;
-      border-color: color-mix(in srgb, var(--p-a) 60%, var(--line));
+      border-color: var(--p-a);
     }
   }
 
@@ -374,8 +388,7 @@ const jsonLd = {
     display: grid;
     gap: 0.25rem;
     padding: 0.625rem 0.875rem 0.75rem;
-    border: 1px solid var(--line);
-    border-top: 2px solid var(--p-a);
+    border: 1px solid var(--p-a);
     border-radius: var(--radius);
     background: var(--raised);
     box-shadow: var(--shadow);
@@ -510,13 +523,20 @@ const jsonLd = {
     }
   }
 
+  @media (max-width: 1100px) {
+    .orbit {
+      --size: 29rem;
+    }
+  }
+
   @media (max-width: 900px) {
     .hero {
       grid-template-columns: 1fr;
     }
 
     .orbit {
-      --size: 19rem;
+      /* No percentages: --size also feeds transforms on the tiles. */
+      --size: min(30rem, 100vw - 2 * var(--gutter) - 1rem);
       grid-row: 1;
     }
 

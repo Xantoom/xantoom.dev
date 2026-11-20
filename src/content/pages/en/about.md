@@ -1,9 +1,9 @@
 ---
 title: About
-description: Xavier, also known as Xantoom, web developer in France. What is published on xantoom.dev.
+description: Xantoom, web developer in France. What is published on xantoom.dev.
 ---
 
-My name is **Xavier**, also known as **Xantoom**. I'm a web developer based in France.
+I'm **Xantoom**, a web developer based in France.
 
 ## Apps
 

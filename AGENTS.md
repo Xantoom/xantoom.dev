@@ -126,7 +126,8 @@ About, legal notice and privacy policy are Markdown in `src/content/pages/<local
 
 ## Rules
 
-- **Privacy:** no cookies, no analytics, no third-party requests on page load. Fonts are
+- **Privacy:** no cookies, no third-party requests on page load except the cookieless
+  Cloudflare Web Analytics beacon (production builds only, `BaseHead.astro`). Fonts are
   self-hosted (Astro Fonts API). Anything embedded from another site loads only after a
   user action (see `YouTube.astro`). The only browser storage is `localStorage.theme`.
   If this ever changes, update the privacy pages in both languages.

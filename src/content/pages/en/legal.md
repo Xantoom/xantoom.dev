@@ -6,16 +6,17 @@ updatedDate: 2026-11-20
 
 ## Publisher
 
-xantoom.dev is published on a personal, non-commercial basis by Xavier (Xantoom).
+xantoom.dev is published on a personal, non-commercial basis by Xantoom.
 
 Contact: [contact@xantoom.dev](mailto:contact@xantoom.dev)
 
-Under French law (article 6, III, 2° of law no. 2004-575 of 21 June 2004), the publisher, acting on a non-professional basis, has provided their identification details to the host.
+Under article 1-1 of French law no. 2004-575 of 21 June 2004, the publisher, acting on a non-professional basis, has provided their identification details to the host and only publishes the host's contact details.
 
 ## Host
 
-Cloudflare, Inc.
-101 Townsend Street, San Francisco, CA 94107, United States
+Cloudflare, Inc.\
+101 Townsend Street, San Francisco, CA 94107, United States\
+Phone: +1 650 319 8930\
 [cloudflare.com](https://www.cloudflare.com)
 
 ## Intellectual property

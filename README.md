@@ -7,8 +7,8 @@ explainers, plus the pages of my apps ([Vixely](https://github.com/Xantoom/Vixel
 In French, with an English translation.
 
 - Static site built with [Astro](https://astro.build) and [Bun](https://bun.sh), hosted on Cloudflare.
-- No cookies, no analytics, no third-party requests: fonts are self-hosted and YouTube
-  videos only load after a click.
+- No cookies. Visits are counted with cookieless Cloudflare Web Analytics; fonts are
+  self-hosted and YouTube videos only load after a click.
 - Light, dark and system themes.
 
 ## Develop

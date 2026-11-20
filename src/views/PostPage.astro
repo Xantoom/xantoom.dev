@@ -60,7 +60,7 @@ const jsonLd = {
   mainEntityOfPage: url,
   url,
   image: new URL(ogImage, SITE.url).href,
-  author: { "@type": "Person", name: SITE.author, alternateName: SITE.handle, url: SITE.github },
+  author: { "@type": "Person", name: SITE.author, url: SITE.github },
   publisher: { "@type": "Person", name: SITE.author, url: SITE.url },
   keywords: post.data.tags.join(", ") || undefined,
   timeRequired: `PT${minutes}M`,

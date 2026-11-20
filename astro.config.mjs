@@ -60,12 +60,16 @@ export default defineConfig({
         "img-src 'self' data:",
         "media-src 'self'",
         "font-src 'self'",
-        "connect-src 'self'",
+        // Cloudflare Web Analytics beacon reports here.
+        "connect-src 'self' https://cloudflareinsights.com",
         "frame-src https://www.youtube-nocookie.com",
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'",
       ],
+      scriptDirective: {
+        resources: ["'self'", "https://static.cloudflareinsights.com"],
+      },
       styleDirective: {
         resources: [
           "'self'",

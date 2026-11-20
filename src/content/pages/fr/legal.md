@@ -6,16 +6,17 @@ updatedDate: 2026-11-20
 
 ## Éditeur
 
-Le site xantoom.dev est édité à titre personnel et non professionnel par Xavier (Xantoom).
+Le site xantoom.dev est édité à titre personnel et non professionnel par Xantoom.
 
 Contact : [contact@xantoom.dev](mailto:contact@xantoom.dev)
 
-Conformément à l'article 6, III, 2° de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique, l'éditeur, agissant à titre non professionnel, a communiqué ses éléments d'identification à l'hébergeur.
+Conformément à l'article 1-1 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique, l'éditeur, agissant à titre non professionnel, a communiqué ses éléments d'identification à l'hébergeur et ne publie que les coordonnées de celui-ci.
 
 ## Hébergeur
 
-Cloudflare, Inc.
-101 Townsend Street, San Francisco, CA 94107, États-Unis
+Cloudflare, Inc.\
+101 Townsend Street, San Francisco, CA 94107, États-Unis\
+Téléphone : +1 650 319 8930\
 [cloudflare.com](https://www.cloudflare.com)
 
 ## Propriété intellectuelle

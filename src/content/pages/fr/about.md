@@ -1,9 +1,9 @@
 ---
 title: À propos
-description: Xavier, alias Xantoom, développeur web en France. Ce qui est publié sur xantoom.dev.
+description: Xantoom, développeur web en France. Ce qui est publié sur xantoom.dev.
 ---
 
-Je m'appelle **Xavier**, alias **Xantoom**. Je suis développeur web et je vis en France.
+Je suis **Xantoom**, développeur web en France.
 
 ## Les applications
 

@@ -6,9 +6,9 @@ updatedDate: 2026-11-20
 
 ## Data controller
 
-Xavier (Xantoom), publisher of the site, reachable at [contact@xantoom.dev](mailto:contact@xantoom.dev).
+Xavier Lauer (Xantoom), publisher of the site, reachable at [contact@xantoom.dev](mailto:contact@xantoom.dev).
 
-The site sets no cookies, uses no analytics and shows no ads, so no consent banner is needed.
+The site sets no cookies, reads nothing from the device for measurement and shows no ads, so no consent banner is needed.
 
 ## Local storage
 
@@ -21,8 +21,20 @@ The site is hosted and delivered by **Cloudflare, Inc.** To deliver pages and pr
 - Purpose: security and operation of the site.
 - Legal basis: legitimate interest.
 - Access: the publisher only sees aggregated traffic statistics, without IP addresses.
+- Retention: set by Cloudflare in its privacy policy. The publisher keeps no logs.
 - Transfers: Cloudflare may process this data outside the European Union, under the EU–US Data Privacy Framework and standard contractual clauses.
 - [Cloudflare privacy policy](https://www.cloudflare.com/privacypolicy/)
+
+## Audience measurement
+
+Visits are counted with **Cloudflare Web Analytics**, without cookies or any identifier stored on the device. On each page view, a script sends Cloudflare: the page address, the referring page, the browser, the operating system, the screen size and page load timings. The country is derived from the IP address, which is not kept.
+
+- Purpose: knowing which pages are read and how fast the site is, as aggregated statistics.
+- Legal basis: legitimate interest.
+- No tracking of a visitor from one page to another or across sites.
+- Retention: the publisher only sees the data as aggregated statistics, for as long as Cloudflare displays them.
+- Transfers: Cloudflare may process this data outside the European Union, under the EU–US Data Privacy Framework.
+- Opting out: blocking `static.cloudflareinsights.com` (with a content blocker, for example) turns measurement off without breaking the site.
 
 ## Email
 
@@ -30,13 +42,14 @@ Messages sent to contact@xantoom.dev are forwarded by Cloudflare (Email Routing)
 
 - Data: sender's email address, message content and attachments.
 - Purpose: replying to the message.
+- Providing this data is not mandatory: it is only sent when someone writes a message.
 - Legal basis: legitimate interest.
 - Retention: for the duration of the exchange, then at most three years after the last message.
 - Transfers: Google may process this data outside the European Union, under the EU–US Data Privacy Framework. [Google privacy policy](https://policies.google.com/privacy)
 
 ## Third-party resources
 
-Fonts, images and scripts are served from xantoom.dev. Loading a page contacts no other service.
+The site's fonts, images and scripts are served from xantoom.dev. The only other service contacted when a page loads is Cloudflare, for the audience measurement described above.
 
 A YouTube video embedded in a post only loads on click, from `youtube-nocookie.com`. Google then processes data under its [privacy policy](https://policies.google.com/privacy).
 

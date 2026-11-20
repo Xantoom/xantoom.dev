@@ -2,7 +2,7 @@ import type { Locale } from "./config";
 
 const fr = {
   "site.description":
-    "Articles sur les réglages de jeux, l'optimisation et le matériel, et applications open source de Xavier (Xantoom).",
+    "Articles sur les réglages de jeux, l'optimisation et le matériel, et applications open source de Xantoom.",
   skip: "Aller au contenu",
   "nav.home": "Accueil",
   "nav.blog": "Blog",
@@ -17,7 +17,7 @@ const fr = {
   "theme.light": "Clair",
   "theme.dark": "Sombre",
 
-  "home.hello": "Xavier, développeur web.",
+  "home.hello": "Développeur web.",
   "home.lede":
     "Je publie ici mes applications open source et des articles sur les réglages de jeux, l'optimisation et le matériel informatique.",
   "home.newRelease": "Nouvelle version :",
@@ -94,7 +94,7 @@ export type UIKey = keyof typeof fr;
 
 const en: Record<UIKey, string> = {
   "site.description":
-    "Posts on game settings, optimization and hardware, and open source apps by Xavier (Xantoom).",
+    "Posts on game settings, optimization and hardware, and open source apps by Xantoom.",
   skip: "Skip to content",
   "nav.home": "Home",
   "nav.blog": "Blog",
@@ -109,7 +109,7 @@ const en: Record<UIKey, string> = {
   "theme.light": "Light",
   "theme.dark": "Dark",
 
-  "home.hello": "Xavier, web developer.",
+  "home.hello": "Web developer.",
   "home.lede":
     "This is where I publish my open source apps and posts about game settings, optimization and PC hardware.",
   "home.newRelease": "New release:",

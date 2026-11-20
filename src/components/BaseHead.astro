@@ -90,6 +90,15 @@ const ldItems = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 {modifiedTime && <meta property="article:modified_time" content={modifiedTime.toISOString()} />}
 <meta name="twitter:card" content="summary_large_image" />
 
+{import.meta.env.PROD && (
+  <script
+    is:inline
+    defer
+    src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon={JSON.stringify({ token: SITE.analyticsToken })}
+  />
+)}
+
 <Font cssVariable="--font-inter" />
 <Font cssVariable="--font-jetbrains" />
 
