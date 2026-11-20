@@ -5,9 +5,9 @@ import PostList from "~/components/PostList.astro";
 import ProjectCard from "~/components/ProjectCard.astro";
 import ProjectLogo from "~/components/ProjectLogo.astro";
 import { homePath, localePath, LOCALES, type Locale } from "~/i18n/config";
-import { formatDate, useTranslations } from "~/i18n/ui";
+import { useTranslations } from "~/i18n/ui";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { getPosts, getProjects, projectUrl } from "~/lib/content";
+import { entrySlug, getPosts, getProjects, projectUrl } from "~/lib/content";
 import { latestRelease } from "~/lib/github";
 import { SITE } from "~/lib/site";
 
@@ -20,15 +20,13 @@ const t = useTranslations(locale);
 const posts = (await getPosts(locale)).slice(0, 5);
 const projects = await getProjects(locale);
 const alternates = Object.fromEntries(LOCALES.map((l) => [l, homePath(l)]));
+const lede = t("home.lede").split(/(\{apps\}|\{topics\})/);
 const rss = locale === "fr" ? "/rss.xml" : `/${locale}/rss.xml`;
 
-// Most recent release across all apps, shown under the intro.
+// Latest release of each app, shown in the orbit tooltips.
 const releases = await Promise.all(
   projects.map(async (project) => ({ project, release: await latestRelease(project.data.repo) })),
 );
-const newest = releases
-  .filter((r) => r.release)
-  .toSorted((a, b) => b.release!.date.valueOf() - a.release!.date.valueOf())[0];
 
 // Apps placed around the avatar: angle on the orbit, in degrees.
 const orbit = [-38, 62, 172];
@@ -58,37 +56,32 @@ const jsonLd = {
   <section class="container hero">
     <div class="intro">
       <h1>{t("home.hello")}</h1>
-      <p class="lede">{t("home.lede")}</p>
-
-      <ul class="links">
-        <li>
-          <a href={SITE.github} rel="me noopener" title="GitHub">
-            <Icon name="si:github" size={18} label="GitHub" />
-          </a>
-        </li>
-        <li>
-          <a href={rss} title={t("nav.rss")}>
-            <Icon name="rss" size={18} label={t("nav.rss")} />
-          </a>
-        </li>
-        <li>
-          <a href={`mailto:${SITE.email}`} title={SITE.email}>
-            <Icon name="mail" size={18} label={SITE.email} />
-          </a>
-        </li>
-      </ul>
-
-      {newest && (
-        <a class="release" href={newest.release!.url} rel="noopener">
-          <span class="pulse" aria-hidden="true" />
-          <span>
-            {t("home.newRelease")} <strong>{newest.project.data.name}</strong>{" "}
-            <span class="mono">v{newest.release!.version}</span>
-          </span>
-          <span class="date">{formatDate(newest.release!.date, locale, "short")}</span>
-          <Icon name="arrow-up-right" size={14} />
-        </a>
-      )}
+      <p class="lede">
+        {lede.map((part) =>
+          part === "{apps}" ? (
+            projects.map((project, i) => (
+              <>
+                {i > 0 && (i === projects.length - 1 ? ` ${t("home.and")} ` : ", ")}
+                <a
+                  class="app-link"
+                  href={projectUrl(project)}
+                  data-app={entrySlug(project)}
+                  style={`--p-a:${project.data.colors[0]}`}
+                >
+                  <ProjectLogo logo={project.data.logo} size={22} />
+                  {project.data.name}
+                </a>
+              </>
+            ))
+          ) : part === "{topics}" ? (
+            <a class="topics" href={localePath(locale, "blog")}>
+              {t("home.topics")}
+            </a>
+          ) : (
+            part
+          ),
+        )}
+      </p>
     </div>
 
     <div class="orbit" aria-hidden="true">
@@ -100,8 +93,9 @@ const jsonLd = {
         <a
           class="app"
           href={projectUrl(project)}
+          data-app={entrySlug(project)}
           tabindex="-1"
-          data-side={side(orbit[i]!)}
+          data-place={side(orbit[i]!)}
           style={`--angle:${orbit[i]}deg;--delay:${120 + i * 90}ms;--p-a:${project.data.colors[0]}`}
         >
           <span class="tile">
@@ -159,14 +153,61 @@ const jsonLd = {
   </section>
 </BaseLayout>
 
+<script>
+  // Hovering or focusing an app name in the intro lights up the same app on the orbit.
+  for (const link of document.querySelectorAll<HTMLElement>(".app-link[data-app]")) {
+    const app = document.querySelector(`.orbit .app[data-app="${link.dataset.app}"]`);
+    if (!app) continue;
+    const on = () => app.classList.add("lit");
+    const off = () => app.classList.remove("lit");
+    link.addEventListener("pointerenter", on);
+    link.addEventListener("pointerleave", off);
+    link.addEventListener("focus", on);
+    link.addEventListener("blur", off);
+  }
+
+  // Keep each orbit tooltip inside the visible area: flip it above or below the tile,
+  // and slide it sideways, from the room available when the pointer arrives.
+  const header = document.querySelector<HTMLElement>(".header");
+  for (const app of document.querySelectorAll<HTMLElement>(".orbit .app")) {
+    const tip = app.querySelector<HTMLElement>(".tip");
+    const hero = app.closest<HTMLElement>(".hero");
+    if (!tip || !hero) continue;
+    const preferred = app.dataset.place;
+
+    app.addEventListener("pointerenter", () => {
+      const margin = 12;
+      const gap = 12;
+      const tile = app.getBoundingClientRect();
+      const bounds = hero.getBoundingClientRect();
+      const top = Math.max(header?.getBoundingClientRect().bottom ?? 0, 0) + margin;
+      const bottom = window.innerHeight - margin;
+      const { offsetWidth: width, offsetHeight: height } = tip;
+
+      const fitsAbove = tile.top - gap - height >= top;
+      const fitsBelow = tile.bottom + gap + height <= bottom;
+      let place = preferred;
+      if (place === "top" && !fitsAbove && fitsBelow) place = "bottom";
+      if (place === "bottom" && !fitsBelow && fitsAbove) place = "top";
+      app.dataset.place = place;
+
+      const left = Math.max(bounds.left, 0) + margin;
+      const right = Math.min(bounds.right, window.innerWidth) - margin;
+      const start = tile.left + tile.width / 2 - width / 2;
+      const shifted = Math.min(Math.max(start, left), right - width);
+      tip.style.setProperty("--dx", `${shifted - start}px`);
+    });
+  }
+</script>
+
 <style>
   .hero {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: 3rem;
-    padding-top: clamp(3rem, 8vw, 6.5rem);
-    padding-bottom: clamp(2.5rem, 6vw, 5rem);
+    padding-top: clamp(1rem, 3vw, 2.5rem);
+    padding-bottom: clamp(1.5rem, 4vw, 3rem);
     /* Tooltips near the edge never widen the page. */
     overflow-x: clip;
   }
@@ -179,98 +220,47 @@ const jsonLd = {
   }
 
   .lede {
-    margin-top: 1.5rem;
-    max-width: 34rem;
-    font-size: clamp(1.125rem, 1.5vw, 1.3125rem);
-    line-height: 1.55;
+    margin-top: 1.75rem;
+    max-width: 36rem;
+    font-size: clamp(1.25rem, 1.9vw, 1.625rem);
+    line-height: 1.6;
+    letter-spacing: -0.01em;
     color: var(--fg-muted);
   }
 
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(0.75rem);
-    }
-  }
-
-  .links {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 2rem;
-    padding: 0;
-    list-style: none;
-    animation: rise 600ms var(--ease-out) 100ms both;
-
-    & a {
-      display: grid;
-      place-items: center;
-      width: 2.75rem;
-      height: 2.75rem;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: var(--surface);
-      color: var(--fg-muted);
-      transition:
-        color var(--dur-fast) var(--ease-out),
-        border-color var(--dur-fast) var(--ease-out),
-        transform var(--dur) var(--ease-out);
-
-      &:hover {
-        color: var(--fg);
-        border-color: var(--line-strong);
-        transform: translateY(-2px);
-      }
-    }
-  }
-
-  .release {
+  /* App names sit in the sentence with their logo; hovering one lights up
+     the same app on the orbit. */
+  .app-link {
     display: inline-flex;
     align-items: center;
-    gap: 0.625rem;
-    margin-top: 1.5rem;
-    padding: 0.5rem 0.875rem 0.5rem 0.75rem;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    font-size: 0.875rem;
-    color: var(--fg-muted);
-    text-decoration: none;
-    animation: rise 600ms var(--ease-out) 180ms both;
-    transition: border-color var(--dur-fast) var(--ease-out);
+    gap: 0.375rem;
+    margin-inline: -0.25rem;
+    padding: 0 0.25rem;
+    border-radius: 0.375rem;
+    vertical-align: bottom;
+    color: var(--fg);
+    font-weight: 650;
+    white-space: nowrap;
+    transition: background-color var(--dur-fast) var(--ease-out);
 
     &:hover {
-      border-color: var(--line-strong);
-      color: var(--fg);
+      background: color-mix(in srgb, var(--p-a) 16%, transparent);
     }
 
-    & strong {
-      color: var(--fg);
-      font-weight: 600;
-    }
-
-    & .mono {
-      font-family: var(--font-mono);
-      font-size: 0.8125rem;
+    & :global(svg) {
+      width: 1.05em;
+      height: 1.05em;
     }
   }
 
-  .release > span {
-    white-space: nowrap;
-  }
+  .topics {
+    color: var(--fg);
+    font-weight: 650;
+    transition: color var(--dur-fast) var(--ease-out);
 
-  .date {
-    color: var(--fg-faint);
-
-    @media (max-width: 480px) {
-      display: none;
+    &:hover {
+      color: var(--accent);
     }
-  }
-
-  .pulse {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
-    background: var(--ok);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 20%, transparent);
   }
 
   /* Avatar with the apps on an orbit around it. */
@@ -375,7 +365,8 @@ const jsonLd = {
       scale var(--dur) var(--ease-out),
       border-color var(--dur-fast) var(--ease-out);
 
-    .app:hover & {
+    .app:hover &,
+    .app.lit & {
       scale: 1.08;
       border-color: var(--p-a);
     }
@@ -406,18 +397,18 @@ const jsonLd = {
       transition-delay: 60ms;
     }
 
-    [data-side="top"] & {
+    [data-place="top"] & {
       bottom: calc(100% + 0.75rem);
       left: 50%;
-      margin-left: -7.5rem;
+      margin-left: calc(-7.5rem + var(--dx, 0px));
       width: 15rem;
       --shift-y: 0.375rem;
     }
 
-    [data-side="bottom"] & {
+    [data-place="bottom"] & {
       top: calc(100% + 0.75rem);
       left: 50%;
-      margin-left: -7.5rem;
+      margin-left: calc(-7.5rem + var(--dx, 0px));
       width: 15rem;
       --shift-y: -0.375rem;
     }

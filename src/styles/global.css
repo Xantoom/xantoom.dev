@@ -27,8 +27,6 @@
     --brand-b: #ffae1a;
     --brand-gradient: linear-gradient(120deg, var(--brand-a) 0%, #ff7f22 45%, var(--brand-b) 100%);
     --on-brand: #1a1009;
-    /* Status: something new or running. */
-    --ok: #2fbf71;
   }
 
   /* Light: light grey ground. */

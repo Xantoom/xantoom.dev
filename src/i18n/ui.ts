@@ -18,9 +18,10 @@ const fr = {
   "theme.dark": "Sombre",
 
   "home.hello": "Développeur web.",
-  "home.lede":
-    "Je publie ici mes applications open source et des articles sur les réglages de jeux, l'optimisation et le matériel informatique.",
-  "home.newRelease": "Nouvelle version :",
+  // {apps} and {topics} become links in the sentence.
+  "home.lede": "Je développe {apps}, des applications open source, et j'écris sur {topics}.",
+  "home.topics": "les réglages de jeux, l'optimisation et le matériel",
+  "home.and": "et",
   "home.latest": "Articles",
   "home.allPosts": "Tout voir",
   "home.projects": "Apps",
@@ -110,9 +111,9 @@ const en: Record<UIKey, string> = {
   "theme.dark": "Dark",
 
   "home.hello": "Web developer.",
-  "home.lede":
-    "This is where I publish my open source apps and posts about game settings, optimization and PC hardware.",
-  "home.newRelease": "New release:",
+  "home.lede": "I build {apps}, open source apps, and write about {topics}.",
+  "home.topics": "game settings, optimization and hardware",
+  "home.and": "and",
   "home.latest": "Posts",
   "home.allPosts": "See all",
   "home.projects": "Apps",
