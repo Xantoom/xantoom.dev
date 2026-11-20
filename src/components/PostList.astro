@@ -45,7 +45,10 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
             <p class="desc">{post.data.description}</p>
             <span class="read">
               <Icon name="clock" size={14} />
-              <span class="sr-only">{t("post.readingTime")} :</span>
+              <span class="sr-only">
+                {t("post.readingTime")}
+                {locale === "fr" ? " :" : ":"}
+              </span>
               {readingTime(post.body)} {t("post.minRead")}
             </span>
           </div>
@@ -115,6 +118,11 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
     transition: color var(--dur-fast) var(--ease-out);
   }
 
+  a:hover .title,
+  a:focus-visible .title {
+    color: var(--accent);
+  }
+
   .desc {
     margin-top: 0.375rem;
     color: var(--fg-muted);
@@ -151,8 +159,14 @@ const Heading = `h${headingLevel}` as "h2" | "h3";
     width: 22.5rem;
     aspect-ratio: 16 / 10;
     object-fit: cover;
+    border: 1px solid var(--line);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    transition: border-color var(--dur-fast) var(--ease-out);
+  }
+
+  a:hover .cover,
+  a:focus-visible .cover {
+    border-color: var(--line-strong);
   }
 
   /* When the blog list is filtered, the lead row falls back to a normal row. */

@@ -21,11 +21,10 @@ const fr = {
     "Je développe des applications open source et j'écris sur les jeux vidéo, l'optimisation et le matériel.",
   "home.latest": "Derniers articles",
   "home.allPosts": "Tous les articles",
+  "home.allApps": "Toutes les apps",
 
   "blog.title": "Blog",
   "blog.description": "Guides, réglages de jeux, optimisation et explications.",
-  "blog.latest": "Dernier article",
-  "blog.recent": "Articles récents",
   "blog.filterAll": "Tout",
   "blog.filters": "Filtrer par catégorie",
   "blog.search": "Rechercher…",
@@ -33,6 +32,7 @@ const fr = {
   "blog.count.one": "article",
   "blog.count.other": "articles",
   "blog.empty": "Aucun article ne correspond.",
+  "blog.reset": "Réinitialiser les filtres",
   "blog.none": "Aucun article publié pour l'instant.",
   "blog.follow": "Flux RSS",
   "post.back": "Blog",
@@ -41,13 +41,17 @@ const fr = {
   "post.readingTime": "Temps de lecture",
   "post.updated": "Mis à jour le",
   "post.published": "Publié le",
-  "post.translation": "Lire en anglais",
   "post.prev": "Précédent",
   "post.next": "Suivant",
   "post.related": "App liée",
+  "post.tags": "Mots-clés",
   "post.backToTop": "Haut de page",
-  "code.copy": "Copier",
+  "post.headingLink": "Copier le lien vers cette section",
+  "post.linkCopied": "Lien copié",
+  "code.copy": "Copier le code",
   "code.copied": "Copié",
+  "figure.zoom": "Agrandir l'image",
+  "figure.close": "Fermer",
 
   "projects.title": "Apps",
   "projects.description": "Applications open source que je développe.",
@@ -68,6 +72,7 @@ const fr = {
 
   "video.play": "Lire la vidéo",
   "video.youtubeNotice": "Au clic, la vidéo est chargée depuis youtube-nocookie.com (Google).",
+  "video.watchOnYouTube": "Voir sur YouTube",
 
   "callout.note": "Note",
   "callout.tip": "Astuce",
@@ -108,11 +113,10 @@ const en: Record<UIKey, string> = {
   "home.hello": "I build open source apps and write about video games, optimization and hardware.",
   "home.latest": "Latest posts",
   "home.allPosts": "All posts",
+  "home.allApps": "All apps",
 
   "blog.title": "Blog",
   "blog.description": "Guides, game settings, optimization and explainers.",
-  "blog.latest": "Latest post",
-  "blog.recent": "Recent posts",
   "blog.filterAll": "All",
   "blog.filters": "Filter by category",
   "blog.search": "Search…",
@@ -120,6 +124,7 @@ const en: Record<UIKey, string> = {
   "blog.count.one": "post",
   "blog.count.other": "posts",
   "blog.empty": "No post matches.",
+  "blog.reset": "Reset filters",
   "blog.none": "No posts published yet.",
   "blog.follow": "RSS feed",
   "post.back": "Blog",
@@ -128,13 +133,17 @@ const en: Record<UIKey, string> = {
   "post.readingTime": "Reading time",
   "post.updated": "Updated",
   "post.published": "Published",
-  "post.translation": "Read in French",
   "post.prev": "Previous",
   "post.next": "Next",
   "post.related": "Related app",
+  "post.tags": "Tags",
   "post.backToTop": "Back to top",
-  "code.copy": "Copy",
+  "post.headingLink": "Copy link to this section",
+  "post.linkCopied": "Link copied",
+  "code.copy": "Copy code",
   "code.copied": "Copied",
+  "figure.zoom": "Zoom image",
+  "figure.close": "Close",
 
   "projects.title": "Apps",
   "projects.description": "Open source apps I build.",
@@ -155,6 +164,7 @@ const en: Record<UIKey, string> = {
 
   "video.play": "Play video",
   "video.youtubeNotice": "On click, the video loads from youtube-nocookie.com (Google).",
+  "video.watchOnYouTube": "Watch on YouTube",
 
   "callout.note": "Note",
   "callout.tip": "Tip",
@@ -203,4 +213,9 @@ export function formatDate(date: Date, locale: Locale, style: "long" | "short" =
     year: "numeric",
     timeZone: "UTC",
   }).format(date);
+}
+
+/** Join a label and value using locale-appropriate colon spacing. */
+export function labelValue(label: string, value: string, locale: Locale): string {
+  return locale === "fr" ? `${label} : ${value}` : `${label}: ${value}`;
 }

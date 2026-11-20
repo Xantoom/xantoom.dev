@@ -20,6 +20,7 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
       <summary>
         <Icon name="list" size={16} />
         <span id="toc-title">{t("post.toc")}</span>
+        <Icon name="chevron-down" size={16} class="chevron" />
       </summary>
       <ol>
         {items.map((heading) => (
@@ -34,6 +35,10 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     <div class="progress" aria-hidden="true">
       <span />
     </div>
+    <a class="top-link" href="#main">
+      <Icon name="arrow-up" size={14} />
+      {t("post.backToTop")}
+    </a>
   </nav>
 )}
 
@@ -49,17 +54,30 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => el !== null);
 
+    const side = toc.closest<HTMLElement>(".side");
+
     let current = "";
     const update = () => {
-      const offset = window.innerHeight * 0.25;
+      const atBottom =
+        window.scrollY > 0 &&
+        window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4;
       let active = headings[0]?.id ?? "";
-      for (const heading of headings) {
-        if (heading.getBoundingClientRect().top - offset <= 0) active = heading.id;
-        else break;
+      if (atBottom && headings.length > 0) {
+        active = headings[headings.length - 1]!.id;
+      } else {
+        const offset = window.innerHeight * 0.25;
+        for (const heading of headings) {
+          if (heading.getBoundingClientRect().top - offset <= 0) active = heading.id;
+          else break;
+        }
       }
       if (active === current) return;
       links.get(current)?.removeAttribute("aria-current");
-      links.get(active)?.setAttribute("aria-current", "location");
+      const activeLink = links.get(active);
+      activeLink?.setAttribute("aria-current", "location");
+      if (activeLink && side && side.scrollHeight > side.clientHeight) {
+        activeLink.scrollIntoView({ block: "nearest" });
+      }
       current = active;
     };
 
@@ -78,11 +96,17 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     );
     update();
 
-    // On wide screens the sidebar contents stay open; on small screens they start folded.
+    // On wide screens the sidebar contents stay permanently open; on small screens they start folded.
     const details = toc.querySelector("details");
+    const summary = toc.querySelector("summary");
     const wide = window.matchMedia("(min-width: 1100px)");
     const sync = () => {
-      if (details) details.open = wide.matches;
+      if (!details) return;
+      details.open = wide.matches;
+      if (summary) {
+        if (wide.matches) summary.setAttribute("tabindex", "-1");
+        else summary.removeAttribute("tabindex");
+      }
     };
     wide.addEventListener("change", sync);
     sync();
@@ -109,9 +133,16 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     font-weight: 600;
     color: var(--fg-faint);
     padding-block: 0.25rem 0.75rem;
+    pointer-events: none;
 
     &::-webkit-details-marker {
       display: none;
+    }
+
+    & :global(.chevron) {
+      display: none;
+      margin-left: auto;
+      transition: transform var(--dur-fast) var(--ease-out);
     }
   }
 
@@ -130,7 +161,7 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     padding-left: 0.875rem;
   }
 
-  a {
+  ol a {
     position: relative;
     display: block;
     padding: 0.3125rem 0;
@@ -142,7 +173,7 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     &::before {
       content: "";
       position: absolute;
-      left: -15px;
+      left: calc(-0.875rem - 1.5px);
       top: 0.25rem;
       bottom: 0.25rem;
       width: 2px;
@@ -171,31 +202,53 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
   }
 
   li.d3 a::before {
-    left: -29px;
+    left: calc(-1.75rem - 1.5px);
   }
 
-  /* Whole-article reading progress, drawn under the contents list. */
+  /* Whole-article reading progress, only shown when scroll-driven animations are supported. */
   .progress {
-    margin-top: 1.25rem;
-    height: 0.1875rem;
-    border-radius: 3px;
-    background: var(--line);
-    overflow: hidden;
+    display: none;
+  }
 
-    & span {
+  @supports (animation-timeline: scroll()) {
+    .progress {
       display: block;
-      height: 100%;
-      background: var(--brand-gradient);
-      transform-origin: left;
-      transform: scaleX(0);
-      animation: read-progress linear both;
-      animation-timeline: scroll(root);
+      margin-top: 1.25rem;
+      height: 0.1875rem;
+      border-radius: 3px;
+      background: var(--line);
+      overflow: hidden;
+
+      & span {
+        display: block;
+        height: 100%;
+        background: var(--brand-gradient);
+        transform-origin: left;
+        transform: scaleX(0);
+        animation: read-progress linear both;
+        animation-timeline: scroll(root);
+      }
     }
   }
 
   @keyframes read-progress {
     to {
       transform: scaleX(1);
+    }
+  }
+
+  .top-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--fg-faint);
+    transition: color var(--dur-fast) var(--ease-out);
+
+    &:hover {
+      color: var(--fg);
     }
   }
 
@@ -209,14 +262,24 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
     summary {
       cursor: pointer;
-      padding-block: 2px;
+      pointer-events: auto;
+      padding-block: 0.125rem;
+
+      & :global(.chevron) {
+        display: block;
+      }
     }
 
     details[open] summary {
       padding-bottom: 0.75rem;
+
+      & :global(.chevron) {
+        transform: rotate(180deg);
+      }
     }
 
-    .progress {
+    .progress,
+    .top-link {
       display: none;
     }
   }

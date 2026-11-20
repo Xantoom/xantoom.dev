@@ -27,12 +27,12 @@ const year = new Date().getFullYear();
         <a href={localePath(locale, "privacy")}>{t("footer.privacy")}</a>
       </li>
       <li>
-        <a href={rss} title={t("nav.rss")}>
+        <a class="icon-link" href={rss} title={t("nav.rss")}>
           <Icon name="rss" size={16} label={t("nav.rss")} />
         </a>
       </li>
       <li>
-        <a href={SITE.repo} rel="noopener" title={t("footer.source")}>
+        <a class="icon-link" href={SITE.repo} rel="noopener" title={t("footer.source")}>
           <Icon name="si:github" size={16} label={t("footer.source")} />
         </a>
       </li>
@@ -60,6 +60,7 @@ const year = new Date().getFullYear();
   .links {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0.375rem 1.25rem;
     list-style: none;
     padding: 0;
@@ -71,9 +72,24 @@ const year = new Date().getFullYear();
     gap: 0.375rem;
     color: var(--fg-muted);
     text-decoration: none;
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
 
     &:hover {
       color: var(--fg);
+    }
+  }
+
+  .icon-link {
+    justify-content: center;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+    margin-inline: -0.375rem;
+    border-radius: var(--radius-sm);
+
+    &:hover {
+      background: var(--surface);
     }
   }
 </style>

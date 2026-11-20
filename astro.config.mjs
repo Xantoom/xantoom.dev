@@ -50,6 +50,20 @@ export default defineConfig({
       themes: { light: "github-light", dark: "github-dark-dimmed" },
       defaultColor: false,
       wrap: false,
+      transformers: [
+        {
+          pre(node) {
+            const lang = this.options.lang;
+            if (lang && lang !== "plaintext" && lang !== "text") {
+              node.properties["data-lang"] = lang;
+            }
+            const raw = this.options.meta?.["__raw"] ?? "";
+            const match = /\btitle=(?:"([^"]+)"|'([^']+)'|(\S+))/.exec(raw);
+            const title = match?.[1] ?? match?.[2] ?? match?.[3];
+            if (title) node.properties["data-title"] = title;
+          },
+        },
+      ],
     },
   },
 

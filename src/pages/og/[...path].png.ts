@@ -8,7 +8,11 @@ export const getStaticPaths = (async () => {
   const paths: { params: { path: string }; props: OgInput }[] = [
     {
       params: { path: "default" },
-      props: { title: "Des apps légères, des guides utiles.", footer: "Blog & projets" },
+      props: {
+        title: "Xantoom",
+        kicker: "Blog & apps open source",
+        footer: "FR / EN",
+      },
     },
   ];
 

@@ -61,8 +61,18 @@ const ldItems = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 <link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="manifest" href="/site.webmanifest" />
-<meta name="theme-color" content="#ebebee" media="(prefers-color-scheme: light)" />
-<meta name="theme-color" content="#15161c" media="(prefers-color-scheme: dark)" />
+<meta
+  name="theme-color"
+  content="#ebebee"
+  media="(prefers-color-scheme: light)"
+  data-theme-color="light"
+/>
+<meta
+  name="theme-color"
+  content="#15161c"
+  media="(prefers-color-scheme: dark)"
+  data-theme-color="dark"
+/>
 <meta name="color-scheme" content="light dark" />
 
 <link
@@ -106,7 +116,13 @@ const ldItems = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
   (() => {
     try {
       const t = localStorage.getItem("theme");
-      if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+      if (t === "light" || t === "dark") {
+        document.documentElement.dataset.theme = t;
+        const color = t === "dark" ? "#15161c" : "#ebebee";
+        document
+          .querySelectorAll('meta[name="theme-color"]')
+          .forEach((m) => m.setAttribute("content", color));
+      }
     } catch {}
   })();
 </script>

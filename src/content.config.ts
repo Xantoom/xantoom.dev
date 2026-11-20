@@ -28,24 +28,28 @@ const blog = defineCollection({
 const projects = defineCollection({
   // src/content/projects/<locale>/<slug>.md
   loader: glob({ base: "./src/content/projects", pattern: "**/*.{md,mdx}" }),
-  schema: z.object({
-    name: z.string(),
-    tagline: z.string(),
-    description: z.string().max(200),
-    status: z.enum(["stable", "beta", "wip"]),
-    order: z.number().int(),
-    /** File name of the logo in src/assets/projects/ (SVG). */
-    logo: z.string(),
-    /** Brand colours used for the project accent, [start, end] of its gradient. */
-    colors: z.tuple([z.string(), z.string()]),
-    url: z.url().optional(),
-    repo: z.url(),
-    license: z.string(),
-    platforms: z.array(z.enum(PLATFORM_KEYS)).min(1),
-    stack: z.array(z.string()),
-    /** Short title and one sentence each. */
-    features: z.array(z.object({ title: z.string(), text: z.string() })),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      name: z.string(),
+      tagline: z.string(),
+      description: z.string().max(200),
+      status: z.enum(["stable", "beta", "wip"]),
+      order: z.number().int(),
+      /** File name of the logo in src/assets/projects/ (SVG). */
+      logo: z.string(),
+      /** Brand colours used for the project accent, [start, end] of its gradient. */
+      colors: z.tuple([z.string(), z.string()]),
+      /** Optional preview screenshot shown on the project page. */
+      screenshot: image().optional(),
+      screenshotAlt: z.string().optional(),
+      url: z.url().optional(),
+      repo: z.url(),
+      license: z.string(),
+      platforms: z.array(z.enum(PLATFORM_KEYS)).min(1),
+      stack: z.array(z.string()),
+      /** Short title and one sentence each. */
+      features: z.array(z.object({ title: z.string(), text: z.string() })),
+    }),
 });
 
 const pages = defineCollection({

@@ -34,7 +34,6 @@ const locale: Locale = entryLocale(post);
 const t = useTranslations(locale);
 const { Content, headings } = await render(post);
 const alternates = await getPostTranslations(post);
-const otherLocale = (Object.keys(alternates) as Locale[]).find((l) => l !== locale);
 
 const posts = await getPosts(locale);
 const index = posts.findIndex((p) => p.id === post.id);
@@ -89,7 +88,12 @@ const jsonLd = {
       <p class="lede">{post.data.description}</p>
       <ul class="meta">
         <li>
-          <span class="tag">{categoryLabel(post.data.category, locale)}</span>
+          <a
+            class="tag tag-link"
+            href={`${localePath(locale, "blog")}?category=${post.data.category}`}
+          >
+            {categoryLabel(post.data.category, locale)}
+          </a>
         </li>
         <li title={t("post.published")}>
           <Icon name="calendar" size={15} />
@@ -108,17 +112,12 @@ const jsonLd = {
         )}
         <li title={t("post.readingTime")}>
           <Icon name="clock" size={15} />
-          <span class="sr-only">{t("post.readingTime")} :</span>
+          <span class="sr-only">
+            {t("post.readingTime")}
+            {locale === "fr" ? " :" : ":"}
+          </span>
           {minutes} {t("post.minRead")}
         </li>
-        {otherLocale && (
-          <li>
-            <a href={alternates[otherLocale]} hreflang={otherLocale} lang={otherLocale}>
-              <Icon name={`flag:${LOCALE_META[otherLocale].flag}`} size={16} />
-              {t("post.translation")}
-            </a>
-          </li>
-        )}
       </ul>
     </header>
 
@@ -134,52 +133,72 @@ const jsonLd = {
       />
     )}
 
-    <div class="body">
-      <aside class="side">
-        <Toc headings={headings} locale={locale} />
-      </aside>
+    <aside class="side">
+      <Toc headings={headings} locale={locale} />
+    </aside>
 
-      <article class="prose" data-prose>
-        <Content components={{ Figure, Video, YouTube, Callout, Settings }} />
-      </article>
+    <article
+      class="prose"
+      data-prose
+      data-copy={t("code.copy")}
+      data-copied={t("code.copied")}
+      data-heading-link={t("post.headingLink")}
+      data-link-copied={t("post.linkCopied")}
+      data-close={t("figure.close")}
+    >
+      <Content components={{ Figure, Video, YouTube, Callout, Settings }} />
+    </article>
 
-      <footer class="post-foot">
-        {related.length > 0 && (
-          <section class="related" aria-labelledby="related-title">
-            <h2 id="related-title" class="label">
-              {t("post.related")}
-            </h2>
-            {related.map((project) => (
-              <ProjectCard project={project} locale={locale} />
-            ))}
-          </section>
-        )}
-        {(newer || older) && (
-          <nav class="pager" aria-label={t("blog.title")}>
-            {older ? (
-              <a class="prev" href={postUrl(older)}>
-                <span class="label">
-                  <Icon name="arrow-left" size={14} />
-                  {t("post.prev")}
-                </span>
-                <span class="pager-title">{older.data.title}</span>
-              </a>
-            ) : (
-              <span />
-            )}
-            {newer && (
-              <a class="next" href={postUrl(newer)}>
-                <span class="label">
-                  {t("post.next")}
-                  <Icon name="arrow-right" size={14} />
-                </span>
-                <span class="pager-title">{newer.data.title}</span>
-              </a>
-            )}
-          </nav>
-        )}
-      </footer>
-    </div>
+    <footer class="post-foot">
+      {post.data.tags.length > 0 && (
+        <div class="tags" aria-label={t("post.tags")}>
+          {post.data.tags.map((tag) => (
+            <a
+              class="tag tag-link"
+              href={`${localePath(locale, "blog")}?q=${encodeURIComponent(tag)}`}
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )}
+      {related.length > 0 && (
+        <section class="related" aria-labelledby="related-title">
+          <h2 id="related-title" class="label">
+            {t("post.related")}
+          </h2>
+          {related.map((project) => (
+            <ProjectCard project={project} locale={locale} />
+          ))}
+        </section>
+      )}
+      {(newer || older) && (
+        <nav class="pager" aria-label={t("blog.title")}>
+          {older && (
+            <a class="prev" href={postUrl(older)}>
+              <span class="label">
+                <Icon name="arrow-left" size={14} />
+                {t("post.prev")}
+              </span>
+              <span class="pager-title">{older.data.title}</span>
+            </a>
+          )}
+          {newer && (
+            <a class="next" href={postUrl(newer)}>
+              <span class="label">
+                {t("post.next")}
+                <Icon name="arrow-right" size={14} />
+              </span>
+              <span class="pager-title">{newer.data.title}</span>
+            </a>
+          )}
+        </nav>
+      )}
+      <a class="mobile-top" href="#main">
+        <Icon name="arrow-up" size={14} />
+        {t("post.backToTop")}
+      </a>
+    </footer>
   </div>
 </BaseLayout>
 
@@ -254,16 +273,39 @@ const jsonLd = {
       align-items: center;
       gap: 0.4375rem;
     }
+  }
 
-    & a {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3125rem;
-      color: var(--accent);
+  .tag-link {
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
 
-      &:hover {
-        color: var(--accent-hover);
-      }
+    &:hover {
+      border-color: var(--accent);
+      color: var(--fg);
+      background: var(--surface);
+    }
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4375rem;
+  }
+
+  .mobile-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    justify-self: start;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--fg-muted);
+    transition: color var(--dur-fast) var(--ease-out);
+
+    &:hover {
+      color: var(--fg);
     }
   }
 
@@ -322,6 +364,7 @@ const jsonLd = {
     }
 
     & .next {
+      grid-column: 2;
       text-align: right;
       justify-items: end;
     }
@@ -333,20 +376,20 @@ const jsonLd = {
   }
 
   @media (min-width: 1100px) {
-    .body {
-      display: grid;
+    .layout {
       grid-template-columns: 13.75rem minmax(0, var(--measure));
       column-gap: 4rem;
       align-items: start;
+      padding-top: clamp(2rem, 6vw, 4.5rem);
     }
 
-    .post-head,
-    .cover {
-      margin-left: calc(13.75rem + 4rem);
+    .post-head {
+      padding-top: 0;
     }
 
     .side {
-      grid-row: 1 / span 2;
+      grid-column: 1;
+      grid-row: 1 / span 5;
       position: sticky;
       top: calc(var(--header-h) + 2rem);
       max-height: calc(100dvh - var(--header-h) - 4rem);
@@ -355,15 +398,25 @@ const jsonLd = {
       margin: 0;
     }
 
+    .post-head,
+    .cover,
     .prose,
     .post-foot {
       grid-column: 2;
+    }
+
+    .mobile-top {
+      display: none;
     }
   }
 
   @media (max-width: 560px) {
     .pager {
       grid-template-columns: 1fr;
+
+      & .next {
+        grid-column: 1;
+      }
     }
   }
 </style>

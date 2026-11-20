@@ -1,7 +1,7 @@
 ---
 import { getEntry, render } from "astro:content";
 import { localePath, LOCALES, type Locale, type RouteKey } from "~/i18n/config";
-import { formatDate } from "~/i18n/ui";
+import { formatDate, useTranslations } from "~/i18n/ui";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import "~/styles/prose.css";
 
@@ -12,11 +12,11 @@ interface Props {
 }
 
 const { locale, page } = Astro.props;
+const t = useTranslations(locale);
 const entry = await getEntry("pages", `${locale}/${page}`);
 if (!entry) throw new Error(`Missing page content: src/content/pages/${locale}/${page}.md`);
 const { Content } = await render(entry);
 const alternates = Object.fromEntries(LOCALES.map((l) => [l, localePath(l, page)]));
-const updatedLabel = locale === "fr" ? "Mis à jour le" : "Updated";
 ---
 
 <BaseLayout
@@ -30,7 +30,7 @@ const updatedLabel = locale === "fr" ? "Mis à jour le" : "Updated";
       <h1>{entry.data.title}</h1>
       {entry.data.updatedDate && (
         <p class="updated">
-          {updatedLabel}{" "}
+          {t("post.updated")}{" "}
           <time datetime={entry.data.updatedDate.toISOString()}>
             {formatDate(entry.data.updatedDate, locale)}
           </time>
@@ -50,14 +50,14 @@ const updatedLabel = locale === "fr" ? "Mis à jour le" : "Updated";
   }
 
   .head {
-    padding-top: clamp(3rem, 8vw, 6rem);
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
     padding-bottom: clamp(1rem, 3vw, 2rem);
   }
 
   h1 {
-    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    font-size: clamp(2rem, 4.5vw, 3rem);
     letter-spacing: -0.03em;
-    font-weight: 800;
+    font-weight: 750;
   }
 
   /* Looser rhythm than articles: short sections, read in one go. */

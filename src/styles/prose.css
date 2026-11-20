@@ -18,14 +18,14 @@
     }
 
     & h2 {
-      font-size: 1.75rem;
+      font-size: 1.625rem;
       margin-top: 2.4em;
       padding-top: 1.1em;
       border-top: 1px solid var(--line);
     }
 
     & h3 {
-      font-size: 1.3125rem;
+      font-size: 1.25rem;
       margin-top: 2em;
     }
 
@@ -40,23 +40,65 @@
       margin-top: 0.6em;
     }
 
-    /* Links: accent colour and weight, no underline. */
-    & a {
-      color: var(--accent);
-      font-weight: 550;
-      border-radius: 0.1875rem;
+    /* Section anchor link injected on h2/h3 headings. */
+    & .heading-anchor {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 0.4em;
+      padding: 0.1em 0.25em;
+      border-radius: var(--radius-sm);
+      color: var(--fg-faint);
+      text-decoration: none;
+      font-weight: 500;
+      vertical-align: middle;
+      opacity: 0;
       transition:
+        opacity var(--dur-fast) var(--ease-out),
         color var(--dur-fast) var(--ease-out),
         background-color var(--dur-fast) var(--ease-out);
 
+      &:hover,
+      &:focus-visible,
+      &[data-copied] {
+        opacity: 1;
+        color: var(--accent);
+        background: var(--surface);
+      }
+    }
+
+    & h2:hover .heading-anchor,
+    & h3:hover .heading-anchor {
+      opacity: 1;
+    }
+
+    @media (hover: none) {
+      & .heading-anchor {
+        opacity: 0.65;
+      }
+    }
+
+    /* Links: accent colour + refined underline for WCAG AA distinguishability in both themes. */
+    & a:not(.heading-anchor) {
+      color: var(--accent);
+      font-weight: 500;
+      text-decoration: underline;
+      text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+      text-underline-offset: 0.22em;
+      text-decoration-thickness: 1.5px;
+      border-radius: 0.1875rem;
+      transition:
+        color var(--dur-fast) var(--ease-out),
+        text-decoration-color var(--dur-fast) var(--ease-out);
+
       &:hover {
         color: var(--accent-hover);
-        background: var(--accent-soft);
+        text-decoration-color: currentColor;
       }
     }
 
     /* External links get a small arrow (Lucide arrow-up-right as a mask). */
-    & a[href^="http"]:not(.no-ext)::after {
+    & a[href^="http"]:not(.no-ext):not(.heading-anchor)::after {
       content: "";
       display: inline-block;
       width: 0.75em;
@@ -89,7 +131,7 @@
       padding: 0.2em 0 0.2em 1.2em;
       color: var(--fg-muted);
       font-style: italic;
-      background: linear-gradient(var(--line-strong), var(--line-strong)) left / 1px 100% no-repeat;
+      background: linear-gradient(var(--line-strong), var(--line-strong)) left / 2px 100% no-repeat;
     }
 
     & hr {
@@ -101,7 +143,7 @@
 
     & :not(pre) > code {
       padding: 0.12em 0.4em;
-      border-radius: 5px;
+      border-radius: var(--radius-sm);
       background: var(--raised);
       border: 1px solid var(--line);
       font-size: 0.85em;
@@ -112,9 +154,16 @@
       padding: 0.05em 0.45em;
       border: 1px solid var(--line-strong);
       border-bottom-width: 2px;
-      border-radius: 5px;
+      border-radius: var(--radius-sm);
       background: var(--raised);
       font-size: 0.8em;
+    }
+
+    & .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
     }
 
     & table {
@@ -122,16 +171,28 @@
       border-collapse: collapse;
       font-size: 0.9375rem;
       font-variant-numeric: tabular-nums;
+    }
+
+    & > table {
       display: block;
       overflow-x: auto;
     }
 
+    & .table-wrap table {
+      display: table;
+    }
+
     & th,
     & td {
-      padding: 0.6em 0.9em;
+      padding: 0.65em 1em;
       text-align: left;
       border-bottom: 1px solid var(--line);
       vertical-align: top;
+    }
+
+    & .table-wrap tr:last-child td,
+    & .table-wrap tr:last-child th {
+      border-bottom: 0;
     }
 
     & th {
@@ -153,7 +214,7 @@
       text-align: center;
     }
 
-    /* Code blocks: Shiki dual themes through CSS variables. */
+    /* Code blocks: wrapped in .code-block by article enhancements so the copy button never scrolls away. */
     & pre {
       position: relative;
       padding: 1.1em 1.25em;
@@ -166,45 +227,153 @@
       tab-size: 2;
     }
 
+    & .code-block {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--code-bg);
+      overflow: hidden;
+
+      & pre {
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+      }
+    }
+
+    & .code-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.375rem 0.5rem 0.375rem 1rem;
+      border-bottom: 1px solid var(--line);
+      background: var(--raised);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--fg-faint);
+    }
+
+    & .code-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     & pre code {
       font-variant-ligatures: none;
     }
 
-    & pre .copy {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      display: grid;
+    & .code-copy {
+      display: inline-grid;
       place-items: center;
-      width: 2rem;
-      height: 2rem;
-      border-radius: 6px;
-      border: 1px solid var(--line);
-      background: var(--raised);
-      color: var(--fg-muted);
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      font-weight: 500;
-      opacity: 0;
-      transition: opacity var(--dur-fast) var(--ease-out);
+      width: 1.875rem;
+      height: 1.875rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--fg-faint);
+      transition:
+        color var(--dur-fast) var(--ease-out),
+        background-color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
 
       &:hover {
         color: var(--fg);
+        background: var(--surface);
+        border-color: var(--line);
       }
 
+      &[data-done] {
+        color: var(--tip);
+      }
+    }
+
+    /* Floating copy button when a code block has no title or language header. */
+    & .code-block > .code-copy {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      border-color: var(--line);
+      background: var(--raised);
+      color: var(--fg-muted);
+      opacity: 0;
+
+      &:hover,
       &:focus-visible,
       &[data-done] {
         opacity: 1;
       }
     }
 
-    & pre:hover .copy {
+    & .code-block:hover > .code-copy {
       opacity: 1;
     }
 
     @media (hover: none) {
-      & pre .copy {
+      & .code-block > .code-copy {
         opacity: 1;
+      }
+    }
+  }
+
+  /* Native dialog lightbox for zoomed article figures. */
+  dialog.lightbox {
+    margin: auto;
+    padding: 0;
+    max-width: min(94vw, 80rem);
+    max-height: 92dvh;
+    border: 0;
+    background: transparent;
+    color: #ededf2;
+    overflow: visible;
+
+    &::backdrop {
+      background: rgb(10 11 15 / 0.86);
+      backdrop-filter: blur(4px);
+    }
+
+    & .lightbox-body {
+      position: relative;
+      display: grid;
+      justify-items: center;
+      gap: 0.75rem;
+    }
+
+    & img {
+      max-width: 100%;
+      max-height: calc(92dvh - 4rem);
+      width: auto;
+      height: auto;
+      border-radius: var(--radius);
+      border: 1px solid rgb(255 255 255 / 0.14);
+      background: var(--surface);
+      box-shadow: 0 24px 64px -16px rgb(0 0 0 / 0.7);
+    }
+
+    & figcaption {
+      font-size: 0.875rem;
+      color: #c7cad4;
+      text-align: center;
+      max-width: 65ch;
+    }
+
+    & .lightbox-close {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      display: grid;
+      place-items: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgb(255 255 255 / 0.18);
+      background: rgb(21 22 28 / 0.9);
+      color: #ededf2;
+      transition: background-color var(--dur-fast) var(--ease-out);
+
+      &:hover {
+        background: #2c2e38;
       }
     }
   }
@@ -228,10 +397,12 @@
       font-size: 1rem;
 
       & h2 {
-        font-size: 1.5rem;
+        font-size: 1.4375rem;
       }
 
-      & pre {
+      /* Only top-level code blocks bleed edge-to-edge; blocks inside callouts stay contained. */
+      & > .code-block,
+      & > pre {
         margin-inline: calc(var(--gutter) * -1);
         border-radius: 0;
         border-inline: 0;

@@ -1,21 +1,22 @@
 ---
 import type { Locale } from "~/i18n/config";
-import { useTranslations } from "~/i18n/ui";
+import { labelValue, useTranslations } from "~/i18n/ui";
 import Icon from "./Icon.astro";
 
 /**
- * One button that cycles system → light → dark. The visible icon follows the
- * <html data-theme> attribute through CSS, so it is right before any script runs.
+ * One button that cycles through system, opposite-of-OS, and the other explicit theme.
+ * The visible icon follows <html data-theme> through CSS so it is right before any script runs.
  */
 interface Props {
   locale: Locale;
 }
 
-const t = useTranslations(Astro.props.locale);
+const { locale } = Astro.props;
+const t = useTranslations(locale);
 const labels = {
-  system: t("theme.system"),
-  light: t("theme.light"),
-  dark: t("theme.dark"),
+  system: labelValue(t("theme.label"), t("theme.system"), locale),
+  light: labelValue(t("theme.label"), t("theme.light"), locale),
+  dark: labelValue(t("theme.label"), t("theme.dark"), locale),
 };
 ---
 
@@ -24,28 +25,49 @@ const labels = {
   type="button"
   data-theme-toggle
   data-labels={JSON.stringify(labels)}
-  data-prefix={t("theme.label")}
-  aria-label={`${t("theme.label")} : ${labels.system}`}
-  title={`${t("theme.label")} : ${labels.system}`}
+  aria-label={labels.system}
+  title={labels.system}
 >
   <Icon name="sun-moon" size={18} class="system" />
   <Icon name="sun" size={18} class="light" />
   <Icon name="moon" size={18} class="dark" />
+  <span class="sr-only" aria-live="polite" data-theme-status></span>
 </button>
 
 <script>
-  const ORDER = ["system", "light", "dark"] as const;
-  type Theme = (typeof ORDER)[number];
+  type Theme = "system" | "light" | "dark";
   const root = document.documentElement;
+  const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
   function current(): Theme {
     const value = root.dataset.theme;
     return value === "light" || value === "dark" ? value : "system";
   }
 
+  /** From system, jump directly to the opposite theme so the first click always produces a visible change. */
+  function nextTheme(state: Theme): Theme {
+    const osDark = darkQuery.matches;
+    const opposite: Theme = osDark ? "light" : "dark";
+    const matching: Theme = osDark ? "dark" : "light";
+    if (state === "system") return opposite;
+    if (state === opposite) return matching;
+    return "system";
+  }
+
+  function syncThemeColor(theme: Theme) {
+    for (const meta of document.querySelectorAll<HTMLMetaElement>("meta[data-theme-color]")) {
+      if (theme === "system") {
+        meta.content = meta.dataset.themeColor === "dark" ? "#15161c" : "#ebebee";
+      } else {
+        meta.content = theme === "dark" ? "#15161c" : "#ebebee";
+      }
+    }
+  }
+
   function apply(theme: Theme) {
     if (theme === "system") delete root.dataset.theme;
     else root.dataset.theme = theme;
+    syncThemeColor(theme);
     try {
       if (theme === "system") localStorage.removeItem("theme");
       else localStorage.setItem("theme", theme);
@@ -56,46 +78,18 @@ const labels = {
 
   for (const button of document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]")) {
     const labels = JSON.parse(button.dataset.labels ?? "{}") as Record<Theme, string>;
-    const label = () => {
-      const text = `${button.dataset.prefix} : ${labels[current()]}`;
+    const status = button.querySelector<HTMLElement>("[data-theme-status]");
+    const updateLabel = (announce: boolean) => {
+      const text = labels[current()];
       button.setAttribute("aria-label", text);
       button.title = text;
+      if (announce && status) status.textContent = text;
     };
-    label();
+    updateLabel(false);
 
     button.addEventListener("click", () => {
-      const next = ORDER[(ORDER.indexOf(current()) + 1) % ORDER.length]!;
-      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (!document.startViewTransition || reduce) {
-        apply(next);
-        label();
-        return;
-      }
-
-      // The new theme spreads in a circle from the button.
-      const rect = button.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top + rect.height / 2;
-      const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-
-      root.classList.add("theme-switching");
-      const transition = document.startViewTransition(() => {
-        apply(next);
-        label();
-      });
-      transition.ready
-        .then(() => {
-          root.animate(
-            { clipPath: [`circle(0 at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
-            {
-              duration: 520,
-              easing: "cubic-bezier(0.16, 1, 0.3, 1)",
-              pseudoElement: "::view-transition-new(root)",
-            },
-          );
-        })
-        .catch(() => {});
-      transition.finished.finally(() => root.classList.remove("theme-switching"));
+      apply(nextTheme(current()));
+      updateLabel(true);
     });
   }
 </script>
@@ -107,7 +101,7 @@ const labels = {
     place-items: center;
     width: 2.25rem;
     height: 2.25rem;
-    border-radius: 999px;
+    border-radius: var(--radius-sm);
     color: var(--fg-faint);
     transition:
       background-color var(--dur-fast) var(--ease-out),
@@ -118,29 +112,20 @@ const labels = {
       color: var(--fg);
     }
 
-    &:active :global(.icon) {
-      scale: 0.9;
-    }
-
     & :global(.icon) {
       grid-area: 1 / 1;
       opacity: 0;
-      transform: rotate(-90deg) scale(0.5);
-      filter: blur(2px);
+      transform: translateY(0.1875rem) scale(0.88);
       transition:
-        opacity var(--dur) var(--ease-out),
-        transform 480ms var(--ease-out),
-        filter var(--dur) var(--ease-out),
-        scale var(--dur-fast) var(--ease-out);
+        opacity var(--dur-fast) var(--ease-out),
+        transform var(--dur-fast) var(--ease-out);
     }
   }
 
-  /* The icon of the active choice turns in; the others wait rotated out. */
   :global(:root:not([data-theme])) .theme :global(.system),
   :global(:root[data-theme="light"]) .theme :global(.light),
   :global(:root[data-theme="dark"]) .theme :global(.dark) {
     opacity: 1;
     transform: none;
-    filter: none;
   }
 </style>

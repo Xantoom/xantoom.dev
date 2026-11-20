@@ -1,4 +1,5 @@
 ---
+import Icon from "~/components/Icon.astro";
 import Logo from "~/components/Logo.astro";
 import PostList from "~/components/PostList.astro";
 import ProjectLogo from "~/components/ProjectLogo.astro";
@@ -22,7 +23,8 @@ const alternates = Object.fromEntries(LOCALES.map((l) => [l, homePath(l)]));
 const rss = locale === "fr" ? "/rss.xml" : `/${locale}/rss.xml`;
 
 // Apps placed around the avatar: angle on the orbit in degrees (0 is right, 90 is down).
-const angles = [-40, 42, 180];
+const angles = [-38, 40, 180];
+const hasMoreApps = projects.length > angles.length;
 
 // Each app on the orbit: its place, and a short second line (version, status or platform).
 const apps = await Promise.all(
@@ -71,15 +73,17 @@ const jsonLd = {
           <li
             class="app"
             data-side={side}
-            style={`--angle:${angle}deg;--delay:${160 + i * 110}ms;--p-a:${project.data.colors[0]}`}
+            style={`--angle:${angle}deg;--delay:${60 + i * 70}ms;--p-a:${project.data.colors[0]};--p-b:${project.data.colors[1]}`}
           >
             <a href={projectUrl(project)}>
               <span class="tile">
-                <ProjectLogo logo={project.data.logo} size={48} />
+                <ProjectLogo logo={project.data.logo} size={44} />
               </span>
               <span class="legend">
-                <span class="name">{project.data.name}</span>
-                <span class="meta">{meta}</span>
+                <span class="head-line">
+                  <span class="name">{project.data.name}</span>
+                  <span class="meta">{meta}</span>
+                </span>
                 <span class="more">
                   <span>{project.data.tagline}</span>
                 </span>
@@ -90,7 +94,15 @@ const jsonLd = {
       </ul>
     </nav>
 
-    <h1>{t("home.hello")}</h1>
+    <div class="intro">
+      <h1>{t("home.hello")}</h1>
+      {hasMoreApps && (
+        <a class="all-apps" href={localePath(locale, "projects")}>
+          {t("home.allApps")}
+          <Icon name="arrow-right" size={16} />
+        </a>
+      )}
+    </div>
   </section>
 
   <section class="container posts" aria-labelledby="posts-title">
@@ -112,15 +124,13 @@ const jsonLd = {
   .hero {
     display: grid;
     justify-items: center;
-    padding-top: clamp(0.5rem, 2vw, 1.5rem);
+    padding-top: clamp(1rem, 3vw, 2.25rem);
   }
 
-  /* The avatar with the apps on an orbit around it. Everything scales from --size;
-     no percentages, because --size also feeds the transforms of the tiles. */
+  /* Avatar with apps placed on a refined hairline gradient orbit. */
   .orbit {
-    /* Large, but the heading under it stays in the first screen. */
-    --size: clamp(22rem, 100svh - 19rem, 34rem);
-    --tile: calc(var(--size) * 0.155);
+    --size: clamp(19rem, 34vw, 26rem);
+    --tile: calc(var(--size) * 0.165);
     --inset: calc(var(--tile) * 0.55);
     --avatar: calc(var(--size) * 0.38);
     --orbit-r: calc(var(--size) / 2 - var(--inset));
@@ -133,46 +143,47 @@ const jsonLd = {
     & ul {
       display: contents;
       list-style: none;
+      padding: 0;
     }
   }
 
+  /* Crisp 1px conic-gradient hairline ring, no dashed clutter. */
   .ring {
     position: absolute;
     inset: var(--inset);
-    border: 1px dashed var(--line-strong);
     border-radius: 50%;
-    animation: appear 900ms var(--ease-out) both;
-  }
-
-  .ring::after {
-    content: "";
-    position: absolute;
-    inset: 22%;
-    border: 1px solid var(--line);
-    border-radius: 50%;
+    padding: 1.5px;
+    background: conic-gradient(
+      from 315deg,
+      color-mix(in srgb, var(--brand-a) 60%, var(--line)),
+      color-mix(in srgb, var(--brand-b) 50%, var(--line)) 22%,
+      var(--line) 46%,
+      var(--line) 78%,
+      color-mix(in srgb, var(--brand-a) 60%, var(--line))
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
   }
 
   .me {
     border-radius: 50%;
-    box-shadow:
-      0 0 0 0.625rem var(--bg),
-      0 1.5rem 3rem -1.5rem rgb(0 0 0 / 0.45);
-    animation: appear 900ms var(--ease-out) both;
+    padding: 0.25rem;
+    background: var(--bg);
+    box-shadow: 0 0 0 1px var(--line);
 
     & :global(.logo) {
       width: var(--avatar);
       height: var(--avatar);
+      box-shadow: none;
     }
   }
 
-  @keyframes appear {
-    from {
-      opacity: 0;
-      scale: 0.92;
-    }
-  }
-
-  /* Each app sits on the orbit: rotate to its angle, move out, rotate back upright. */
   .app {
     position: absolute;
     top: 50%;
@@ -181,7 +192,7 @@ const jsonLd = {
     height: var(--tile);
     margin: calc(var(--tile) / -2) 0 0 calc(var(--tile) / -2);
     transform: rotate(var(--angle)) translateX(var(--orbit-r)) rotate(calc(-1 * var(--angle)));
-    animation: launch 1100ms var(--ease-out) var(--delay) both;
+    animation: settle 420ms var(--ease-out) var(--delay) both;
 
     &:hover,
     &:focus-within {
@@ -192,7 +203,7 @@ const jsonLd = {
       display: block;
       width: 100%;
       height: 100%;
-      border-radius: calc(var(--tile) * 0.28);
+      border-radius: calc(var(--tile) * 0.26);
     }
 
     & a:focus-visible {
@@ -200,16 +211,10 @@ const jsonLd = {
     }
   }
 
-  /* The apps leave from behind the avatar and travel along the orbit to their place:
-     the page's one entrance. Only transform and opacity change. */
-  @keyframes launch {
+  @keyframes settle {
     from {
-      transform: rotate(calc(var(--angle) - 140deg)) translateX(0)
-        rotate(calc(140deg - var(--angle)));
       opacity: 0;
-    }
-    30% {
-      opacity: 1;
+      scale: 0.9;
     }
   }
 
@@ -218,25 +223,32 @@ const jsonLd = {
     place-items: center;
     width: 100%;
     height: 100%;
-    border: 1px solid var(--line);
+    border: 1.5px solid transparent;
     border-radius: inherit;
     background:
-      linear-gradient(140deg, color-mix(in srgb, var(--p-a) 22%, transparent), transparent 70%),
-      var(--raised);
+      linear-gradient(var(--raised), var(--raised)) padding-box,
+      linear-gradient(
+          135deg,
+          color-mix(in srgb, var(--p-a) 42%, var(--line)),
+          color-mix(in srgb, var(--p-b) 32%, var(--line))
+        )
+        border-box;
     box-shadow: var(--shadow);
     transition:
-      scale var(--dur) var(--ease-out),
-      border-color var(--dur-fast) var(--ease-out);
+      scale var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
 
     & :global(svg) {
-      width: calc(var(--tile) * 0.58);
-      height: calc(var(--tile) * 0.58);
+      width: calc(var(--tile) * 0.56);
+      height: calc(var(--tile) * 0.56);
     }
 
     a:hover &,
     a:focus-visible & {
-      scale: 1.06;
-      border-color: var(--p-a);
+      scale: 1.05;
+      background:
+        linear-gradient(var(--raised), var(--raised)) padding-box,
+        linear-gradient(135deg, var(--p-a), var(--p-b)) border-box;
     }
 
     a:focus-visible & {
@@ -245,38 +257,41 @@ const jsonLd = {
     }
   }
 
-  /* Name and version written next to each tile, on the side away from the avatar.
-     The one-line description opens under them on hover or keyboard focus. */
+  /* Name and version next to each tile; tagline expands cleanly on hover or keyboard focus. */
   .legend {
     position: absolute;
     top: 50%;
     display: grid;
-    width: 14rem;
-    translate: 0 -1.5rem;
-    animation: label-in 500ms var(--ease-out) calc(var(--delay) + 700ms) both;
+    width: 10.5rem;
+    translate: 0 -1.35rem;
+    animation: fade-in 320ms var(--ease-out) calc(var(--delay) + 120ms) both;
 
     [data-side="right"] & {
-      left: calc(100% + 1rem);
+      left: calc(100% + 0.875rem);
     }
 
     [data-side="left"] & {
-      right: calc(100% + 1rem);
+      right: calc(100% + 0.875rem);
       text-align: right;
     }
   }
 
-  @keyframes label-in {
+  @keyframes fade-in {
     from {
       opacity: 0;
     }
   }
 
+  .head-line {
+    display: grid;
+  }
+
   .name {
     font-family: var(--font-display);
-    font-size: 1.125rem;
+    font-size: 1.0625rem;
     font-weight: 700;
     letter-spacing: -0.015em;
-    line-height: 1.3;
+    line-height: 1.25;
     color: var(--fg);
   }
 
@@ -292,12 +307,12 @@ const jsonLd = {
     opacity: 0;
     transition:
       grid-template-rows var(--dur) var(--ease-out),
-      opacity var(--dur) var(--ease-out);
+      opacity var(--dur-fast) var(--ease-out);
 
     & span {
       overflow: hidden;
-      padding-top: 0.375rem;
-      font-size: 0.875rem;
+      padding-top: 0.3125rem;
+      font-size: 0.8125rem;
       line-height: 1.45;
       color: var(--fg-muted);
     }
@@ -309,18 +324,38 @@ const jsonLd = {
     }
   }
 
+  .intro {
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+    margin-top: clamp(0.75rem, 2.5vw, 1.5rem);
+  }
+
   h1 {
-    max-width: 40rem;
-    margin-top: clamp(0.5rem, 2vw, 1.25rem);
-    font-size: clamp(1.375rem, 2.4vw, 2rem);
+    max-width: 38rem;
+    font-size: clamp(1.375rem, 2.4vw, 1.875rem);
     font-weight: 650;
     line-height: 1.3;
     letter-spacing: -0.02em;
     text-align: center;
   }
 
+  .all-apps {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.9375rem;
+    font-weight: 550;
+    color: var(--accent);
+    transition: color var(--dur-fast) var(--ease-out);
+
+    &:hover {
+      color: var(--accent-hover);
+    }
+  }
+
   .posts {
-    margin-top: clamp(4rem, 9vw, 7rem);
+    margin-top: clamp(3.5rem, 8vw, 6rem);
   }
 
   .posts-head {
@@ -332,7 +367,7 @@ const jsonLd = {
     margin-bottom: 1.25rem;
 
     & h2 {
-      font-size: 1.5rem;
+      font-size: 1.375rem;
       letter-spacing: -0.02em;
     }
 
@@ -363,67 +398,169 @@ const jsonLd = {
     }
   }
 
-  /* Without room on the sides, names go under the tiles and the description stays
-     on the app page. */
-  @media (max-width: 68rem) {
-    .orbit {
-      --size: min(30rem, 100vw - 2 * var(--gutter) - 2rem);
-      margin-bottom: 2.5rem;
+  /* Mobile: avatar + heading, then a clean stack of app rows with visible taglines and zero overflow. */
+  @media (max-width: 48rem) {
+    .hero {
+      gap: 1.5rem;
+      padding-top: 1.5rem;
     }
 
-    .legend {
-      top: calc(100% + 0.5rem);
-      left: 50%;
-      width: max-content;
-      translate: -50% 0;
-      text-align: center;
+    .orbit {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+      gap: 1.5rem;
+      width: 100%;
+      aspect-ratio: auto;
 
-      [data-side="right"] &,
-      [data-side="left"] & {
-        left: 50%;
-        right: auto;
-        text-align: center;
+      & ul {
+        display: grid;
+        gap: 0.625rem;
+        width: 100%;
       }
     }
 
-    .name {
-      font-size: 0.9375rem;
-    }
-
-    .meta {
-      font-size: 0.75rem;
-    }
-
-    .more {
+    .ring {
       display: none;
     }
-  }
 
-  /* Wide screens: the orbit on the left, the sentence on the right. The orbit's sides
-     keep room for the names (--legend-room), so they never run into the text. */
-  @media (min-width: 75rem) {
-    .hero {
-      --legend-room: 9rem;
-      grid-template-columns: auto minmax(0, 1fr);
-      align-items: center;
-      justify-items: start;
-      column-gap: var(--legend-room);
-      padding-left: var(--legend-room);
-      padding-top: clamp(1rem, 3vw, 2.5rem);
+    .me {
+      padding: 2px;
+      background: var(--brand-gradient);
+      box-shadow: none;
+
+      & :global(.logo) {
+        width: 5.5rem;
+        height: 5.5rem;
+        border: 3px solid var(--bg);
+      }
     }
 
-    .orbit {
-      --size: max(24rem, min(32rem, 100svh - 9rem, 100vw - 46rem));
+    .intro {
+      order: -1;
+      margin-top: 0;
+    }
+
+    .app {
+      position: static;
+      width: auto;
+      height: auto;
+      margin: 0;
+      transform: none;
+      animation: none;
+
+      & a {
+        position: relative;
+        display: grid;
+        grid-template-columns: 3rem minmax(0, 1fr);
+        align-items: center;
+        gap: 0.875rem;
+        padding: 0.875rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        overflow: hidden;
+        transition:
+          border-color var(--dur-fast) var(--ease-out),
+          background-color var(--dur-fast) var(--ease-out);
+
+        &::before {
+          content: "";
+          position: absolute;
+          inset: 0 auto 0 0;
+          width: 3px;
+          background: linear-gradient(180deg, var(--p-a), var(--p-b));
+        }
+
+        &:hover {
+          border-color: color-mix(in srgb, var(--p-a) 45%, var(--line-strong));
+          background: var(--raised);
+        }
+
+        &:focus-visible {
+          outline: 2px solid var(--accent);
+          outline-offset: 2px;
+        }
+      }
+    }
+
+    .tile {
+      width: 3rem;
+      height: 3rem;
+      border-radius: var(--radius-sm);
+      box-shadow: none;
+
+      & :global(svg) {
+        width: 1.625rem;
+        height: 1.625rem;
+      }
+
+      a:hover &,
+      a:focus-visible & {
+        scale: none;
+        outline: none;
+      }
     }
 
     .legend {
-      width: calc(var(--legend-room) - 1rem);
+      position: static;
+      width: auto;
+      translate: none;
+      animation: none;
+
+      [data-side="left"] &,
+      [data-side="right"] & {
+        left: auto;
+        right: auto;
+        text-align: left;
+      }
+    }
+
+    .head-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.25rem 0.625rem;
+    }
+
+    .more {
+      grid-template-rows: 1fr;
+      opacity: 1;
+
+      & span {
+        padding-top: 0.1875rem;
+      }
+    }
+  }
+
+  /* Wide screens: orbit on the left with generous legend room, intro on the right. */
+  @media (min-width: 75rem) {
+    .hero {
+      --legend-room: 11.5rem;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      justify-items: start;
+      column-gap: calc(var(--legend-room) + 1rem);
+      padding-left: calc(var(--gutter) + var(--legend-room));
+      padding-top: clamp(1.5rem, 3.5vw, 3rem);
+    }
+
+    .orbit {
+      --size: clamp(22rem, min(28rem, 100svh - 14rem, 100vw - 52rem), 28rem);
+    }
+
+    .legend {
+      width: calc(var(--legend-room) - 0.5rem);
+    }
+
+    .intro {
+      justify-items: start;
+      margin-top: 0;
     }
 
     h1 {
-      max-width: 30rem;
-      margin-top: 0;
-      font-size: clamp(1.75rem, 2.2vw, 2.25rem);
+      max-width: 28rem;
+      font-size: clamp(1.625rem, 2.1vw, 2.125rem);
       line-height: 1.25;
       text-align: left;
     }

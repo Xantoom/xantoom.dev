@@ -1,7 +1,7 @@
 ---
+import { DEFAULT_LOCALE, isLocale } from "~/i18n/config";
+import { labelValue, useTranslations } from "~/i18n/ui";
 import Icon from "../Icon.astro";
-import { isLocale, DEFAULT_LOCALE } from "~/i18n/config";
-import { useTranslations } from "~/i18n/ui";
 
 /**
  * Privacy-first YouTube embed: nothing loads from YouTube until the visitor clicks.
@@ -20,16 +20,28 @@ const t = useTranslations(locale);
 const params = new URLSearchParams({ autoplay: "1", rel: "0" });
 if (start) params.set("start", String(start));
 const embed = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?${params}`;
+const watchUrl = `https://www.youtube.com/watch?v=${encodeURIComponent(id)}${start ? `&t=${start}s` : ""}`;
 ---
 
 <figure class="yt" data-youtube data-embed={embed} data-title={title}>
-  <button type="button" class="facade" aria-label={`${t("video.play")} : ${title}`}>
-    <span class="title">{title}</span>
+  <button type="button" class="facade" aria-label={labelValue(t("video.play"), title, locale)}>
+    <span class="top">
+      <span class="title">{title}</span>
+      <span class="badge" aria-hidden="true">
+        <Icon name="si:youtube" size={14} />
+        YouTube
+      </span>
+    </span>
     <span class="play">
       <Icon name="play" size={22} />
     </span>
   </button>
-  <figcaption>{t("video.youtubeNotice")}</figcaption>
+  <figcaption>
+    <span class="notice">{t("video.youtubeNotice")}</span>
+    <a class="direct" href={watchUrl} rel="noopener">
+      {t("video.watchOnYouTube")}
+    </a>
+  </figcaption>
 </figure>
 
 <script>
@@ -44,7 +56,10 @@ const embed = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?
         iframe.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
         iframe.referrerPolicy = "strict-origin-when-cross-origin";
         iframe.loading = "lazy";
+        iframe.tabIndex = -1;
         button.replaceWith(iframe);
+        figure.dataset.loaded = "";
+        iframe.focus();
       },
       { once: true },
     );
@@ -69,41 +84,82 @@ const embed = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?
     position: relative;
     display: grid;
     place-items: center;
-    background:
-      linear-gradient(160deg, color-mix(in srgb, var(--brand-a) 25%, transparent), transparent 60%),
-      var(--raised);
+    background: var(--raised);
     overflow: hidden;
     text-align: left;
+    transition: border-color var(--dur-fast) var(--ease-out);
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 2px;
+      background: var(--brand-gradient);
+    }
+
+    &:hover {
+      border-color: var(--line-strong);
+    }
   }
 
-  .title {
+  .top {
     position: absolute;
     left: 1.25rem;
     right: 1.25rem;
     top: 1.125rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .title {
     font-weight: 600;
     color: var(--fg);
+  }
+
+  .badge {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--fg-muted);
   }
 
   .play {
     display: grid;
     place-items: center;
-    width: 4rem;
-    height: 4rem;
+    width: 3.75rem;
+    height: 3.75rem;
     border-radius: 999px;
     background: var(--brand-gradient);
     color: var(--on-brand);
     box-shadow: var(--shadow);
-    transition: transform var(--dur) var(--ease-out);
+    transition: transform var(--dur-fast) var(--ease-out);
   }
 
   .facade:hover .play {
-    transform: scale(1.08);
+    transform: scale(1.06);
   }
 
   figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem 0.75rem;
     margin-top: 0.6em;
     font-size: 0.8125rem;
     color: var(--fg-faint);
+  }
+
+  .yt[data-loaded] .notice {
+    display: none;
   }
 </style>
