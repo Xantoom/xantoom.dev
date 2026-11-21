@@ -19,7 +19,7 @@ const fr = {
 
   // **…** marks the words shown in bold.
   "home.hello":
-    "Je suis **Xantoom**, développeur web. Je crée des **applications** et j'écris sur les **sujets qui me passionnent**.",
+    "Je suis **Xantoom**, développeur web. Je crée des **applications** et j'écris sur des **sujets qui me passionnent**, comme l'**optimisation**.",
   "home.latest": "Derniers articles",
   "home.allPosts": "Tous les articles",
   "home.allApps": "Toutes les apps",
@@ -112,7 +112,7 @@ const en: Record<UIKey, string> = {
   "theme.dark": "Dark",
 
   "home.hello":
-    "I'm **Xantoom**, a web developer. I build **apps** and write about the **subjects I care about**.",
+    "I'm **Xantoom**, a web developer. I build **apps** and write about **subjects I care about**, like **optimization**.",
   "home.latest": "Latest posts",
   "home.allPosts": "All posts",
   "home.allApps": "All apps",
