@@ -9,7 +9,22 @@ colors: ["#e5322d", "#ff7a59"]
 repo: https://github.com/Xantoom/Vixion
 license: AGPL-3.0
 platforms: [docker]
-stack: [Rust, Docker]
+stack:
+  [
+    Rust,
+    axum,
+    Tokio,
+    SQLite,
+    React,
+    TypeScript,
+    Tailwind CSS,
+    Vite,
+    TanStack Router,
+    TanStack Query,
+    Zustand,
+    Mediabunny,
+    Docker,
+  ]
 features:
   - title: "Enregistrement automatique"
     text: "Chaque live des chaînes suivies, en qualité source. Les flux HEVC et AV1 sont conservés tels quels."
@@ -26,6 +41,8 @@ features:
 ---
 
 Vixion tourne dans un conteneur Docker unique, sur un PC Linux, un NAS ou un serveur. Une chaîne ajoutée depuis la recherche est enregistrée à chacun de ses lives.
+
+Le serveur est écrit en Rust. Le lecteur lit les enregistrements avec **Mediabunny** : la vidéo est décodée par **WebCodecs** et l'image dessinée dans un canvas, avec la balise `<video>` du navigateur en secours quand WebCodecs n'est pas disponible.
 
 L'interface est disponible en français et en anglais, sur téléphone, tablette, ordinateur et TV.
 

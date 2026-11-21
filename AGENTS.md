@@ -98,6 +98,8 @@ Components available in MDX without importing them:
 - `<Callout type="note|tip|warning" title="…">…</Callout>`.
 - `<Settings title="…" rows={[{ name, value, why?, highlight? }]} />` for settings tables.
 
+Technologies in a project's `stack` get an icon from `src/lib/stack.ts`; add new names there.
+
 Code blocks are highlighted by Shiki at build time, with light and dark themes.
 
 ### Projects
@@ -113,6 +115,7 @@ current. A repository without releases simply shows no version.
 ### Fixed pages
 
 About, legal notice and privacy policy are Markdown in `src/content/pages/<locale>/`.
+The About page is MDX and lists the apps with `<AppList />` (`components/mdx/AppList.astro`).
 
 ## Adding a language
 

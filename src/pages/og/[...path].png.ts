@@ -10,7 +10,7 @@ export const getStaticPaths = (async () => {
       params: { path: "default" },
       props: {
         title: "Xantoom",
-        kicker: "Blog & apps open source",
+        kicker: "Blog & apps",
         footer: "FR / EN",
       },
     },

@@ -9,7 +9,22 @@ colors: ["#e5322d", "#ff7a59"]
 repo: https://github.com/Xantoom/Vixion
 license: AGPL-3.0
 platforms: [docker]
-stack: [Rust, Docker]
+stack:
+  [
+    Rust,
+    axum,
+    Tokio,
+    SQLite,
+    React,
+    TypeScript,
+    Tailwind CSS,
+    Vite,
+    TanStack Router,
+    TanStack Query,
+    Zustand,
+    Mediabunny,
+    Docker,
+  ]
 features:
   - title: "Automatic recording"
     text: "Every broadcast of followed channels, at source quality. HEVC and AV1 streams are kept as is."
@@ -26,6 +41,8 @@ features:
 ---
 
 Vixion runs as a single Docker container, on a Linux PC, a NAS or a server. A channel added from the search bar is recorded every time it goes live.
+
+The server is written in Rust. The player reads recordings with **Mediabunny**: video is decoded by **WebCodecs** and drawn on a canvas, with the browser's `<video>` element as a fallback when WebCodecs is not available.
 
 The interface is available in English and French, on phones, tablets, desktops and TVs.
 

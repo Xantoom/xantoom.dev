@@ -2,7 +2,7 @@ import type { Locale } from "./config";
 
 const fr = {
   "site.description":
-    "Articles sur les réglages de jeux, l'optimisation et le matériel, et applications open source de Xantoom.",
+    "Blog et applications de Xantoom, développeur web : des articles sur les sujets qui me passionnent et les apps que je développe.",
   skip: "Aller au contenu",
   "nav.home": "Accueil",
   "nav.blog": "Blog",
@@ -17,8 +17,9 @@ const fr = {
   "theme.light": "Clair",
   "theme.dark": "Sombre",
 
+  // **…** marks the words shown in bold.
   "home.hello":
-    "Je développe des applications open source et j'écris sur les jeux vidéo, l'optimisation et le matériel.",
+    "Je suis **Xantoom**, développeur web. Je crée des **applications** et j'écris sur les **sujets qui me passionnent**.",
   "home.latest": "Derniers articles",
   "home.allPosts": "Tous les articles",
   "home.allApps": "Toutes les apps",
@@ -54,7 +55,7 @@ const fr = {
   "figure.close": "Fermer",
 
   "projects.title": "Apps",
-  "projects.description": "Applications open source que je développe.",
+  "projects.description": "Les applications que je développe.",
   "project.visit": "Ouvrir",
   "project.download": "Télécharger",
   "project.source": "Code source",
@@ -95,7 +96,7 @@ export type UIKey = keyof typeof fr;
 
 const en: Record<UIKey, string> = {
   "site.description":
-    "Posts on game settings, optimization and hardware, and open source apps by Xantoom.",
+    "Blog and apps by Xantoom, web developer: posts on the subjects I care about and the apps I build.",
   skip: "Skip to content",
   "nav.home": "Home",
   "nav.blog": "Blog",
@@ -110,7 +111,8 @@ const en: Record<UIKey, string> = {
   "theme.light": "Light",
   "theme.dark": "Dark",
 
-  "home.hello": "I build open source apps and write about video games, optimization and hardware.",
+  "home.hello":
+    "I'm **Xantoom**, a web developer. I build **apps** and write about the **subjects I care about**.",
   "home.latest": "Latest posts",
   "home.allPosts": "All posts",
   "home.allApps": "All apps",
@@ -146,7 +148,7 @@ const en: Record<UIKey, string> = {
   "figure.close": "Close",
 
   "projects.title": "Apps",
-  "projects.description": "Open source apps I build.",
+  "projects.description": "The apps I build.",
   "project.visit": "Open",
   "project.download": "Download",
   "project.source": "Source code",

@@ -11,6 +11,7 @@ import { entryLocale, entrySlug, getPosts, projectUrl, type Project } from "~/li
 import { latestRelease } from "~/lib/github";
 import { PLATFORMS } from "~/lib/platforms";
 import { SITE } from "~/lib/site";
+import { stackIcon } from "~/lib/stack";
 import "~/styles/prose.css";
 
 interface Props {
@@ -133,9 +134,15 @@ const jsonLd = {
             <dt>{t("project.stack")}</dt>
             <dd>
               <ul class="stack">
-                {data.stack.map((item) => (
-                  <li>{item}</li>
-                ))}
+                {data.stack.map((item) => {
+                  const icon = stackIcon(item);
+                  return (
+                    <li>
+                      {icon && <Icon name={icon} size={14} />}
+                      {item}
+                    </li>
+                  );
+                })}
               </ul>
             </dd>
           </div>
@@ -393,13 +400,21 @@ const jsonLd = {
     list-style: none;
 
     & li {
-      padding: 0.125rem 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.1875rem 0.5rem;
       border: 1px solid var(--line);
       border-radius: var(--radius-sm);
       background: var(--surface);
       font-size: 0.8125rem;
       font-weight: 500;
       color: var(--fg-muted);
+    }
+
+    & :global(.icon) {
+      flex: none;
+      color: var(--fg);
     }
   }
 

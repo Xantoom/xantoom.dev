@@ -53,7 +53,7 @@ const projects = defineCollection({
 });
 
 const pages = defineCollection({
-  // src/content/pages/<locale>/<about|legal|privacy>.md
+  // src/content/pages/<locale>/<about|legal|privacy>.md(x)
   loader: glob({ base: "./src/content/pages", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
     title: z.string(),

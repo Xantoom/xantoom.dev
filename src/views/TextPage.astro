@@ -1,5 +1,6 @@
 ---
 import { getEntry, render } from "astro:content";
+import AppList from "~/components/mdx/AppList.astro";
 import { localePath, LOCALES, type Locale, type RouteKey } from "~/i18n/config";
 import { formatDate, useTranslations } from "~/i18n/ui";
 import BaseLayout from "~/layouts/BaseLayout.astro";
@@ -38,7 +39,7 @@ const alternates = Object.fromEntries(LOCALES.map((l) => [l, localePath(l, page)
       )}
     </header>
     <article class="prose doc">
-      <Content />
+      <Content components={{ AppList }} />
     </article>
   </div>
 </BaseLayout>

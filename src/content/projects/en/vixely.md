@@ -10,7 +10,20 @@ url: https://vixely.app/
 repo: https://github.com/Xantoom/Vixely
 license: MIT
 platforms: [web]
-stack: [React 19, TypeScript, TanStack Router, Zustand, WebCodecs, WebGL2]
+stack:
+  [
+    React 19,
+    TypeScript,
+    Tailwind CSS,
+    Vite,
+    TanStack Router,
+    Zustand,
+    Mediabunny,
+    WebCodecs,
+    WebGL2,
+    Rust,
+    WebAssembly,
+  ]
 features:
   - title: "Video"
     text: "Trim, crop, resize, color correction, audio and subtitle track selection."
@@ -26,7 +39,7 @@ features:
     text: "Files stay on the device. The app works offline after the first load."
 ---
 
-Decoding and encoding go through hardware-accelerated **WebCodecs**, and the preview through **WebGL2**. No FFmpeg and no server: the app is a static site.
+Files are read and written with **Mediabunny**, decoding and encoding go through hardware-accelerated **WebCodecs**, and the preview through **WebGL2**. GIF encoding is a Rust module compiled to WebAssembly. No FFmpeg and no server: the app is a static site.
 
 ## Formats
 
