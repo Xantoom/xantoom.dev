@@ -1,14 +1,14 @@
 ---
 name: Vixely
-tagline: Video, image and GIF editor that runs in the browser.
-description: A video, image and GIF editor that runs fully locally in the browser. No uploads, no account, works offline.
+tagline: Video, image, GIF, audio and subtitle editor that runs in the browser.
+description: A video, image, GIF, audio and subtitle editor that runs fully locally in the browser. No uploads, no account, works offline.
 status: stable
 order: 1
 logo: vixely
 colors: ["#a78bfa", "#7c3aed"]
 url: https://vixely.app/
 repo: https://github.com/Xantoom/Vixely
-license: MIT
+license: AGPL-3.0
 platforms: [web]
 stack:
   [
@@ -26,25 +26,31 @@ stack:
   ]
 features:
   - title: "Video"
-    text: "Trim, crop, resize, color correction, audio and subtitle track selection."
+    text: "Trim, crop, resize, speed, colour, layers, audio and subtitle tracks."
   - title: "Image"
-    text: "Crop, filters, brightness, contrast, saturation, format conversion."
+    text: "Crop, resize, colour, layers, format conversion."
   - title: "GIF"
-    text: "Trim, frame-by-frame editing, size reduction, APNG or animated WebP export."
-  - title: "Real-time preview"
-    text: "Every adjustment renders immediately with WebGL2."
+    text: "Trim, crop, frame-by-frame editing, size reduction, APNG or animated WebP export."
+  - title: "Audio"
+    text: "Trim, volume, loudness normalisation, noise reduction."
+  - title: "Subtitles"
+    text: "Lines, timing, styles, side-by-side translation, muxing into the video with their fonts."
   - title: "Export presets"
-    text: "Discord, TikTok, X, YouTube and Twitch."
+    text: "Discord, WhatsApp, TikTok, Instagram, YouTube, X, Bluesky, Twitch and more, kept under their size limits."
   - title: "Local processing"
-    text: "Files stay on the device. The app works offline after the first load."
+    text: "Files stay on the device. The site works offline once loaded and can be installed as an app."
 ---
 
-Files are read and written with **Mediabunny**, decoding and encoding go through hardware-accelerated **WebCodecs**, and the preview through **WebGL2**. GIF encoding is a Rust module compiled to WebAssembly. No FFmpeg and no server: the app is a static site.
+Files are read and written with **Mediabunny**, decoding and encoding go through hardware-accelerated **WebCodecs**, and the preview through **WebGL2**. GIF, image, audio and subtitle processing are Rust modules compiled to WebAssembly. No FFmpeg and no server: the app is a static site.
 
 ## Formats
 
-| Type  | Import and export                                 |
-| ----- | ------------------------------------------------- |
-| Video | MP4, WebM, MKV, AVI, MOV, FLV, WMV, OGV, M4V, MTS |
-| Image | PNG, JPG, WebP, AVIF, BMP, TIFF, ICO              |
-| GIF   | GIF, APNG, animated WebP                          |
+| Type      | Opens                                                |
+| --------- | ---------------------------------------------------- |
+| Video     | MP4, M4V, MKV, WebM, MOV, ProRes                     |
+| Image     | JPEG, PNG, WebP, AVIF, JPEG XL, HEIC, BMP, TIFF, ICO |
+| GIF       | GIF, APNG, animated WebP                             |
+| Audio     | MP3, WAV, FLAC, Ogg, Opus, M4A, AAC, MKA             |
+| Subtitles | SRT, VTT, ASS, SSA, SUP                              |
+
+AVI, FLV, WMV, MPEG and OGV are not supported: neither Mediabunny nor WebCodecs can read them.
