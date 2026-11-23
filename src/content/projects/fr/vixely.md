@@ -5,7 +5,7 @@ description: Éditeur de vidéos, d'images, de GIF, d'audio et de sous-titres en
 status: stable
 order: 1
 logo: vixely
-colors: ["#a78bfa", "#7c3aed"]
+colors: ["#2f5bff", "#5c86ff"]
 url: https://vixely.app/
 repo: https://github.com/Xantoom/Vixely
 license: AGPL-3.0
