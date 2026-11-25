@@ -21,6 +21,8 @@ const STACK_ICONS: Record<string, string> = {
   webgl2: "si:webgl",
   webassembly: "si:webassembly",
   rust: "si:rust",
+  slint: "si:slint",
+  ffmpeg: "si:ffmpeg",
   tauri: "si:tauri",
   docker: "si:docker",
   astro: "si:astro",
