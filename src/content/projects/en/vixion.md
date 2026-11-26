@@ -27,17 +27,21 @@ stack:
   ]
 features:
   - title: "Automatic recording"
-    text: "Every broadcast of followed channels, at source quality. HEVC and AV1 streams are kept as is."
+    text: "Every broadcast of followed channels, at source quality. HEVC and AV1 streams are kept as is, or only H.264 is kept."
   - title: "Chat"
-    text: "Recorded and replayed in sync, with Twitch, 7TV, BetterTTV and FrankerFaceZ badges and emotes."
+    text: "Recorded and replayed in sync, with Twitch, 7TV, BetterTTV and FrankerFaceZ badges and emotes. A timestamp takes the video to the message."
+  - title: "Ads"
+    text: "None with a Turbo or subscriber token. Without one, the Twitch player is switched when an ad starts: short gaps replace the ads."
   - title: "Player"
-    text: "Video and chat side by side, resume playback, audio compressor."
+    text: "Video and chat side by side, resume playback, audio compressor, the frame on screen saved as a PNG."
+  - title: "Downloads"
+    text: "The video, the chat as JSON, or the chat as ASS subtitles."
   - title: "Disk space"
-    text: "Recordings expire after 14 days unless kept. The oldest go first."
+    text: "Recordings expire after 14 days unless kept. The oldest go first. Statistics show the space each streamer takes."
   - title: "Multi-user"
-    text: "Roles and permissions per account."
+    text: "Administrators, users and custom roles, with permissions per role and per person."
   - title: "Lightweight"
-    text: "One static binary of a few megabytes, a few megabytes of memory at rest."
+    text: "One static binary of a few megabytes, a few megabytes of memory at rest. Logs, alerts and webhooks (Discord, ntfy or JSON) when something goes wrong."
 ---
 
 Vixion runs as a single Docker container, on a Linux PC, a NAS or a server. A channel added from the search bar is recorded every time it goes live.

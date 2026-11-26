@@ -20,6 +20,7 @@ The source of truth is `tokens/*.tokens.json` (DTCG 2025.10). A colour's dark va
 | `--x-overlay` | Modal backdrop |
 | `--x-accent-hover` | Hovered links and accent text (pulled toward `--x-fg`) |
 | `--x-hover`, `--x-press` | Translucent tints for hovered and pressed surfaces |
+| `--x-scrollbar-thumb`, `--x-scrollbar-track` | Scrollbar colours (thumb 3:1 on every surface); set them on a box to restyle its scrollbar |
 | `--x-selection`, `--x-ring` | Text selection, focus outline (`outline: var(--x-ring)`) |
 | `--x-font-sans`, `--x-font-mono` | Inter, JetBrains Mono, then system fonts |
 | `--x-weight-regular`, `--x-weight-medium`, `--x-weight-bold` | 400, 550, 680 |

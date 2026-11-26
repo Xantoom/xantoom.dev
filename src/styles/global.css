@@ -43,19 +43,7 @@
     display: block;
     max-width: 100%;
   }
-  img,
-  video {
-    height: auto;
-  }
-  input,
-  button,
-  textarea,
-  select {
-    font: inherit;
-    color: inherit;
-  }
   button {
-    cursor: pointer;
     background: none;
     border: 0;
     padding: 0;

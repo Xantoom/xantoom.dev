@@ -29,6 +29,8 @@ sake.
 | Toast | Rises in, sinks out (`data-closing`) |
 | Accordion | Height and chevron |
 | `x-reveal` | Rises in as it scrolls into view (scroll-driven, no script) |
+| `x-enter` | Content coming in (a page, a panel): rises by 0.5 rem and fades; only fades under reduced motion |
+| `x-stagger` | On a list or grid: its items enter one after the other, 28 ms apart, capped at 12 beats (`sibling-index()`, or `--x-index` where it is missing) |
 | Tabs | Edge fades follow the scroll position |
 | Spinner, indeterminate progress, skeleton | Loops (slower, or a static skeleton, under reduced motion) |
 

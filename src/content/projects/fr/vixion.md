@@ -27,17 +27,21 @@ stack:
   ]
 features:
   - title: "Enregistrement automatique"
-    text: "Chaque live des chaînes suivies, en qualité source. Les flux HEVC et AV1 sont conservés tels quels."
+    text: "Chaque live des chaînes suivies, en qualité source. Les flux HEVC et AV1 sont conservés tels quels, ou seul le H.264 est gardé."
   - title: "Chat"
-    text: "Enregistré et rejoué en synchronisation, avec les badges et emotes Twitch, 7TV, BetterTTV et FrankerFaceZ."
+    text: "Enregistré et rejoué en synchronisation, avec les badges et emotes Twitch, 7TV, BetterTTV et FrankerFaceZ. Un horodatage ramène la vidéo au message."
+  - title: "Publicités"
+    text: "Aucune avec un jeton Turbo ou d'abonné. Sans jeton, le lecteur Twitch est changé au début d'une pub : de courts trous remplacent les publicités."
   - title: "Lecteur"
-    text: "Vidéo et chat côte à côte, reprise de lecture, compresseur audio."
+    text: "Vidéo et chat côte à côte, reprise de lecture, compresseur audio, capture de l'image affichée en PNG."
+  - title: "Téléchargements"
+    text: "La vidéo, le chat en JSON, ou le chat en sous-titres ASS."
   - title: "Espace disque"
-    text: "Les enregistrements expirent après 14 jours sauf s'ils sont conservés. Les plus anciens partent en premier."
+    text: "Les enregistrements expirent après 14 jours sauf s'ils sont conservés. Les plus anciens partent en premier. Les statistiques montrent la place prise par chaque streamer."
   - title: "Multi-utilisateur"
-    text: "Rôles et permissions par compte."
+    text: "Administrateurs, utilisateurs et rôles personnalisés, avec des permissions par rôle et par personne."
   - title: "Léger"
-    text: "Un binaire statique de quelques Mo, quelques Mo de mémoire au repos."
+    text: "Un binaire statique de quelques Mo, quelques Mo de mémoire au repos. Journaux, alertes et webhooks (Discord, ntfy ou JSON) en cas de problème."
 ---
 
 Vixion tourne dans un conteneur Docker unique, sur un PC Linux, un NAS ou un serveur. Une chaîne ajoutée depuis la recherche est enregistrée à chacun de ses lives.
