@@ -4,7 +4,7 @@ description: The Xantoom design system, shared by every Xantoom web app (Vixion,
 license: MIT
 metadata:
   author: Xantoom
-  version: 0.1.1
+  version: 0.1.2
 ---
 
 # Xantoom design system
@@ -51,7 +51,7 @@ The package is `xantoom-design` (github.com/Xantoom/xantoom-design). It ships pu
 ## Adding the design system to a project
 
 ```sh
-bun add github:Xantoom/xantoom-design#v0.1.1
+bun add github:Xantoom/xantoom-design#v0.1.2
 bunx xantoom-design sync          # copies this skill into .agents/skills/, links .claude/skills/, adds pointers
 ```
 
