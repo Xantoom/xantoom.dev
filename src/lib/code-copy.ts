@@ -28,7 +28,7 @@ export function initCodeCopy(): void {
   const closeLabel = prose.dataset.close ?? "Close";
 
   const live = document.createElement("span");
-  live.className = "sr-only";
+  live.className = "x-visually-hidden";
   live.setAttribute("aria-live", "polite");
   prose.append(live);
 

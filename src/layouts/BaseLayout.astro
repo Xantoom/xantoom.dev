@@ -18,7 +18,7 @@ const t = useTranslations(props.locale);
     <slot name="head" />
   </head>
   <body>
-    <a class="skip" href="#main">
+    <a class="x-skip-link" href="#main">
       {t("skip")}
     </a>
     <Header locale={props.locale} alternates={props.alternates} />
@@ -28,23 +28,3 @@ const t = useTranslations(props.locale);
     <Footer locale={props.locale} />
   </body>
 </html>
-
-<style>
-  .skip {
-    position: fixed;
-    left: 1rem;
-    top: 0.75rem;
-    z-index: 50;
-    padding: 0.625rem 0.875rem;
-    border-radius: var(--radius-sm);
-    background: var(--fg);
-    color: var(--bg);
-    text-decoration: none;
-    transform: translateY(-200%);
-    transition: transform var(--dur-fast) var(--ease-out);
-
-    &:focus {
-      transform: none;
-    }
-  }
-</style>

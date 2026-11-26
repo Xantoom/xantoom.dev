@@ -59,16 +59,16 @@ const hasWhy = rows.some((row) => row.why);
 <style>
   .settings {
     margin-block: 2em;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: var(--surface);
+    border: 1px solid var(--x-line);
+    border-radius: var(--x-radius-md);
+    background: var(--x-surface);
     overflow: hidden;
   }
 
   .caption {
     padding: 0.75rem 1rem;
     font-weight: 650;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--x-line);
   }
 
   table {
@@ -81,8 +81,8 @@ const hasWhy = rows.some((row) => row.why);
     text-transform: none;
     letter-spacing: 0;
     font-size: 0.9375rem;
-    color: var(--fg);
-    border-bottom-color: var(--line);
+    color: var(--x-fg);
+    border-bottom-color: var(--x-line);
   }
 
   tr:last-child th,
@@ -91,7 +91,7 @@ const hasWhy = rows.some((row) => row.why);
   }
 
   .value {
-    font-family: var(--font-mono);
+    font-family: var(--x-font-mono);
     font-size: 0.875rem;
     font-weight: 500;
     white-space: nowrap;
@@ -99,14 +99,14 @@ const hasWhy = rows.some((row) => row.why);
 
   .hl .value {
     padding: 0.125rem 0.5rem;
-    border-radius: var(--radius-sm);
-    background: var(--brand-gradient);
-    color: var(--on-brand);
+    border-radius: var(--x-radius-sm);
+    background: var(--x-fill);
+    color: var(--x-on-fill);
     font-weight: 600;
   }
 
   .why {
-    color: var(--fg-muted);
+    color: var(--x-fg-muted);
   }
 
   /* Narrow screens: each setting becomes a two-line row (name and value, then why). */
@@ -125,7 +125,7 @@ const hasWhy = rows.some((row) => row.why);
       grid-template-columns: 1fr auto;
       column-gap: 0.75rem;
       padding: 0.625rem 1rem;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1px solid var(--x-line);
     }
 
     tr:last-child {

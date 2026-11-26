@@ -5,7 +5,7 @@ description: Application auto-hébergée qui enregistre chaque live des chaînes
 status: stable
 order: 2
 logo: vixion
-colors: ["#e5322d", "#ff7a59"]
+colors: ["#e8663a", "#ff94bf"]
 repo: https://github.com/Xantoom/Vixion
 license: AGPL-3.0
 platforms: [docker]

@@ -62,8 +62,8 @@ const links = [
     position: sticky;
     top: 0;
     z-index: 20;
-    background: var(--bg);
-    border-bottom: 1px solid var(--line);
+    background: var(--x-bg);
+    border-bottom: 1px solid var(--x-line);
   }
 
   .bar {
@@ -78,11 +78,11 @@ const links = [
     align-items: center;
     gap: 0.625rem;
     text-decoration: none;
-    font-family: var(--font-display);
+    font-family: var(--x-font-sans);
     font-weight: 750;
     font-size: 1.0625rem;
     letter-spacing: -0.02em;
-    transition: opacity var(--dur-fast) var(--ease-out);
+    transition: opacity var(--x-duration-fast) var(--x-ease-out);
 
     &:hover {
       opacity: 0.82;
@@ -99,24 +99,24 @@ const links = [
   nav a {
     display: block;
     padding: 0.375rem 0.75rem;
-    border-radius: var(--radius-sm);
+    border-radius: var(--x-radius-sm);
     text-decoration: none;
     font-size: 0.9375rem;
     font-weight: 500;
-    color: var(--fg-muted);
+    color: var(--x-fg-muted);
     transition:
-      color var(--dur-fast) var(--ease-out),
-      background-color var(--dur-fast) var(--ease-out);
+      color var(--x-duration-fast) var(--x-ease-out),
+      background-color var(--x-duration-fast) var(--x-ease-out);
 
     &:hover {
-      color: var(--fg);
-      background: var(--surface);
+      color: var(--x-fg);
+      background: var(--x-surface);
     }
 
     &[aria-current="page"] {
-      color: var(--fg);
-      background: var(--raised);
-      box-shadow: 0 0 0 1px var(--line);
+      color: var(--x-fg);
+      background: var(--x-raised);
+      box-shadow: 0 0 0 1px var(--x-line);
     }
   }
 
@@ -132,15 +132,15 @@ const links = [
     place-items: center;
     width: 2.25rem;
     height: 2.25rem;
-    border-radius: var(--radius-sm);
-    color: var(--fg-faint);
+    border-radius: var(--x-radius-sm);
+    color: var(--x-fg-faint);
     transition:
-      color var(--dur-fast) var(--ease-out),
-      background-color var(--dur-fast) var(--ease-out);
+      color var(--x-duration-fast) var(--x-ease-out),
+      background-color var(--x-duration-fast) var(--x-ease-out);
 
     &:hover {
-      color: var(--fg);
-      background: var(--surface);
+      color: var(--x-fg);
+      background: var(--x-surface);
     }
   }
 

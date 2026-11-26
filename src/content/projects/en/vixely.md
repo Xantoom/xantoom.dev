@@ -5,7 +5,7 @@ description: A video, image, GIF, audio and subtitle editor that runs fully loca
 status: stable
 order: 1
 logo: vixely
-colors: ["#2f5bff", "#5c86ff"]
+colors: ["#2f6bff", "#9b4dff"]
 url: https://vixely.app/
 repo: https://github.com/Xantoom/Vixely
 license: AGPL-3.0

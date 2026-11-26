@@ -51,7 +51,7 @@ src/
   views/                Page bodies, shared by every locale
   pages/                Routes only: thin files that pick a locale and render a view
   components/           UI components; components/mdx/ = components usable in articles
-  styles/global.css     Tokens (colours, spacing, motion), reset, base styles
+  styles/global.css     Site-specific tokens and base styles, on top of xantoom-design
   styles/prose.css      Article typography
   assets/projects/      Project logos (SVG)
 public/                 Copied as is: icons, robots.txt, _headers (security headers)
@@ -142,8 +142,11 @@ The About page is MDX and lists the apps with `<AppList />` (`components/mdx/App
   is ever added, follow Vercel's React best practices.
 - **Accessibility:** WCAG AA contrast in both themes, visible focus, keyboard support,
   `prefers-reduced-motion` respected for every animation.
-- **Design:** use the tokens in `global.css`, never raw colours in components (except
-  project brand colours from content).
+- **Design:** the site uses the Xantoom design system (`xantoom-design`, read its skill in
+  `.agents/skills/xantoom-design/`). Use its `--x-*` tokens and `x-*` components, never raw colours in
+  components (except project brand colours from content). Anything useful beyond this site goes to
+  xantoom-design (propose it first). Animate transforms only inside
+  `@media (prefers-reduced-motion: no-preference)`; there is no global reduced-motion override.
 - **Sizes:** use `rem`, not `px` (except 1–2px borders, shadows and media queries). The root
   font size grows slightly on large screens, and everything in `rem` scales with it.
 - **Icons:** `<Icon name="…" />` inlines icons at build time: Lucide names (`"arrow-right"`),
@@ -160,3 +163,11 @@ The About page is MDX and lists the apps with `<AppList />` (`components/mdx/App
 - **Repository hygiene:** this repo is public. No brainstorming, plans or scratch notes in
   tracked files. Working notes go in `docs/`, which is git-ignored.
 - Code and comments are in English. Content is written in French first, then translated.
+
+<!-- xantoom-design:start -->
+
+## Design system
+
+This project uses the Xantoom design system. Before any UI work (pages, components, styles, motion, icons,
+layout), read `.agents/skills/xantoom-design/SKILL.md` and follow it.
+<!-- xantoom-design:end -->

@@ -5,7 +5,7 @@ description: Application native de capture d'écran et d'enregistrement vidéo p
 status: beta
 order: 3
 logo: vixeeny
-colors: ["#0a84ff", "#4aa3ff"]
+colors: ["#5b5f6b", "#8a8e99"]
 repo: https://github.com/Xantoom/Vixeeny
 license: GPL-3.0
 platforms: [windows]

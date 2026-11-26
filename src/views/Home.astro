@@ -155,7 +155,7 @@ const jsonLd = {
     inset: var(--inset);
     border-radius: 50%;
     padding: 1.5px;
-    background: conic-gradient(from 315deg, var(--brand-a), var(--brand-b) 50%, var(--brand-a));
+    background: conic-gradient(from 315deg, var(--x-fill-1), var(--x-fill-3) 50%, var(--x-fill-1));
     -webkit-mask:
       linear-gradient(#000 0 0) content-box,
       linear-gradient(#000 0 0);
@@ -169,8 +169,8 @@ const jsonLd = {
   .me {
     border-radius: 50%;
     padding: 0.25rem;
-    background: var(--bg);
-    box-shadow: 0 0 0 1px var(--line);
+    background: var(--x-bg);
+    box-shadow: 0 0 0 1px var(--x-line);
 
     & :global(.logo) {
       width: var(--avatar);
@@ -187,7 +187,7 @@ const jsonLd = {
     height: var(--tile);
     margin: calc(var(--tile) / -2) 0 0 calc(var(--tile) / -2);
     transform: rotate(var(--angle)) translateX(var(--orbit-r)) rotate(calc(-1 * var(--angle)));
-    animation: settle 420ms var(--ease-out) var(--delay) both;
+    animation: settle 420ms var(--x-ease-out) var(--delay) both;
 
     &:hover,
     &:focus-within {
@@ -221,17 +221,17 @@ const jsonLd = {
     border: 1.5px solid transparent;
     border-radius: inherit;
     background:
-      linear-gradient(var(--raised), var(--raised)) padding-box,
+      linear-gradient(var(--x-raised), var(--x-raised)) padding-box,
       linear-gradient(
           135deg,
-          color-mix(in srgb, var(--p-a) 42%, var(--line)),
-          color-mix(in srgb, var(--p-b) 32%, var(--line))
+          color-mix(in srgb, var(--p-a) 42%, var(--x-line)),
+          color-mix(in srgb, var(--p-b) 32%, var(--x-line))
         )
         border-box;
-    box-shadow: var(--shadow);
+    box-shadow: var(--x-shadow-md);
     transition:
-      scale var(--dur-fast) var(--ease-out),
-      background var(--dur-fast) var(--ease-out);
+      scale var(--x-duration-fast) var(--x-ease-out),
+      background var(--x-duration-fast) var(--x-ease-out);
 
     & :global(svg) {
       width: calc(var(--tile) * 0.56);
@@ -242,12 +242,12 @@ const jsonLd = {
     a:focus-visible & {
       scale: 1.05;
       background:
-        linear-gradient(var(--raised), var(--raised)) padding-box,
+        linear-gradient(var(--x-raised), var(--x-raised)) padding-box,
         linear-gradient(135deg, var(--p-a), var(--p-b)) border-box;
     }
 
     a:focus-visible & {
-      outline: 2px solid var(--accent);
+      outline: 2px solid var(--x-accent);
       outline-offset: 3px;
     }
   }
@@ -259,7 +259,7 @@ const jsonLd = {
     display: grid;
     width: 10.5rem;
     translate: 0 -1.35rem;
-    animation: fade-in 320ms var(--ease-out) calc(var(--delay) + 120ms) both;
+    animation: fade-in 320ms var(--x-ease-out) calc(var(--delay) + 120ms) both;
 
     [data-side="right"] & {
       left: calc(100% + 0.875rem);
@@ -282,18 +282,18 @@ const jsonLd = {
   }
 
   .name {
-    font-family: var(--font-display);
+    font-family: var(--x-font-sans);
     font-size: 1.0625rem;
     font-weight: 700;
     letter-spacing: -0.015em;
     line-height: 1.25;
-    color: var(--fg);
+    color: var(--x-fg);
   }
 
   .meta {
     font-size: 0.8125rem;
     font-variant-numeric: tabular-nums;
-    color: var(--fg-faint);
+    color: var(--x-fg-faint);
   }
 
   .more {
@@ -301,15 +301,15 @@ const jsonLd = {
     grid-template-rows: 0fr;
     opacity: 0;
     transition:
-      grid-template-rows var(--dur) var(--ease-out),
-      opacity var(--dur-fast) var(--ease-out);
+      grid-template-rows var(--x-duration-base) var(--x-ease-out),
+      opacity var(--x-duration-fast) var(--x-ease-out);
 
     & span {
       overflow: hidden;
       padding-top: 0.3125rem;
       font-size: 0.8125rem;
       line-height: 1.45;
-      color: var(--fg-muted);
+      color: var(--x-fg-muted);
     }
 
     a:hover &,
@@ -328,18 +328,18 @@ const jsonLd = {
 
   h1 {
     max-width: 42rem;
-    font-family: var(--font-sans);
+    font-family: var(--x-font-sans);
     font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
     font-weight: 400;
     line-height: 1.6;
     letter-spacing: -0.005em;
     text-align: center;
     text-wrap: pretty;
-    color: var(--fg-muted);
+    color: var(--x-fg-muted);
 
     & strong {
       font-weight: 650;
-      color: var(--fg);
+      color: var(--x-fg);
     }
   }
 
@@ -349,11 +349,11 @@ const jsonLd = {
     gap: 0.375rem;
     font-size: 0.9375rem;
     font-weight: 550;
-    color: var(--accent);
-    transition: color var(--dur-fast) var(--ease-out);
+    color: var(--x-accent);
+    transition: color var(--x-duration-fast) var(--x-ease-out);
 
     &:hover {
-      color: var(--accent-hover);
+      color: var(--x-accent-hover);
     }
   }
 
@@ -377,26 +377,26 @@ const jsonLd = {
     & a {
       font-size: 0.9375rem;
       font-weight: 500;
-      color: var(--fg-muted);
-      transition: color var(--dur-fast) var(--ease-out);
+      color: var(--x-fg-muted);
+      transition: color var(--x-duration-fast) var(--x-ease-out);
 
       &:hover {
-        color: var(--accent);
+        color: var(--x-accent);
       }
     }
   }
 
   .empty {
     padding-block: 1.25rem;
-    border-block: 1px solid var(--line);
-    color: var(--fg-muted);
+    border-block: 1px solid var(--x-line);
+    color: var(--x-fg-muted);
 
     & a {
       font-weight: 550;
-      color: var(--accent);
+      color: var(--x-accent);
 
       &:hover {
-        color: var(--accent-hover);
+        color: var(--x-accent-hover);
       }
     }
   }
@@ -429,13 +429,13 @@ const jsonLd = {
 
     .me {
       padding: 2px;
-      background: var(--brand-gradient);
+      background: var(--x-fill);
       box-shadow: none;
 
       & :global(.logo) {
         width: 5.5rem;
         height: 5.5rem;
-        border: 3px solid var(--bg);
+        border: 3px solid var(--x-bg);
       }
     }
 
@@ -459,13 +459,13 @@ const jsonLd = {
         align-items: center;
         gap: 0.875rem;
         padding: 0.875rem 1rem;
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        background: var(--surface);
+        border: 1px solid var(--x-line);
+        border-radius: var(--x-radius-md);
+        background: var(--x-surface);
         overflow: hidden;
         transition:
-          border-color var(--dur-fast) var(--ease-out),
-          background-color var(--dur-fast) var(--ease-out);
+          border-color var(--x-duration-fast) var(--x-ease-out),
+          background-color var(--x-duration-fast) var(--x-ease-out);
 
         &::before {
           content: "";
@@ -476,12 +476,12 @@ const jsonLd = {
         }
 
         &:hover {
-          border-color: color-mix(in srgb, var(--p-a) 45%, var(--line-strong));
-          background: var(--raised);
+          border-color: color-mix(in srgb, var(--p-a) 45%, var(--x-line-strong));
+          background: var(--x-raised);
         }
 
         &:focus-visible {
-          outline: 2px solid var(--accent);
+          outline: 2px solid var(--x-accent);
           outline-offset: 2px;
         }
       }
@@ -490,7 +490,7 @@ const jsonLd = {
     .tile {
       width: 3rem;
       height: 3rem;
-      border-radius: var(--radius-sm);
+      border-radius: var(--x-radius-sm);
       box-shadow: none;
 
       & :global(svg) {
@@ -575,7 +575,7 @@ const jsonLd = {
     }
 
     .more {
-      transition: opacity var(--dur-fast) linear;
+      transition: opacity var(--x-duration-fast) linear;
     }
   }
 </style>

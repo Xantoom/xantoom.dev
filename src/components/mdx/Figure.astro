@@ -72,9 +72,9 @@ const t = useTranslations(locale);
 
   .figure :global(img) {
     width: 100%;
-    border-radius: var(--radius);
-    border: 1px solid var(--line);
-    background: var(--surface);
+    border-radius: var(--x-radius-md);
+    border: 1px solid var(--x-line);
+    background: var(--x-surface);
   }
 
   .figure-zoom {
@@ -85,19 +85,19 @@ const t = useTranslations(locale);
     place-items: center;
     width: 2rem;
     height: 2rem;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--line);
-    background: color-mix(in srgb, var(--raised) 92%, transparent);
-    color: var(--fg-muted);
+    border-radius: var(--x-radius-sm);
+    border: 1px solid var(--x-line);
+    background: color-mix(in srgb, var(--x-raised) 92%, transparent);
+    color: var(--x-fg-muted);
     opacity: 0;
     transition:
-      opacity var(--dur-fast) var(--ease-out),
-      color var(--dur-fast) var(--ease-out);
+      opacity var(--x-duration-fast) var(--x-ease-out),
+      color var(--x-duration-fast) var(--x-ease-out);
 
     &:hover,
     &:focus-visible {
       opacity: 1;
-      color: var(--fg);
+      color: var(--x-fg);
     }
   }
 
@@ -115,7 +115,7 @@ const t = useTranslations(locale);
   @media (min-width: 1100px) {
     .wide {
       width: calc(100% + 5rem);
-      max-width: calc(var(--container) - 18rem);
+      max-width: calc(var(--x-size-container) - 18rem);
     }
   }
 </style>

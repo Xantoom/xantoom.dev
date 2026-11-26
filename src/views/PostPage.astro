@@ -104,7 +104,7 @@ const jsonLd = {
         {post.data.updatedDate && (
           <li title={t("post.updated")}>
             <Icon name="refresh-cw" size={15} />
-            <span class="sr-only">{t("post.updated")}</span>
+            <span class="x-visually-hidden">{t("post.updated")}</span>
             <time datetime={post.data.updatedDate.toISOString()}>
               {formatDate(post.data.updatedDate, locale)}
             </time>
@@ -112,7 +112,7 @@ const jsonLd = {
         )}
         <li title={t("post.readingTime")}>
           <Icon name="clock" size={15} />
-          <span class="sr-only">
+          <span class="x-visually-hidden">
             {t("post.readingTime")}
             {locale === "fr" ? " :" : ":"}
           </span>
@@ -227,19 +227,21 @@ const jsonLd = {
     margin-bottom: 1.75rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--fg-muted);
+    color: var(--x-fg-muted);
     text-decoration: none;
 
     & :global(.icon) {
-      transition: transform var(--dur) var(--ease-out);
+      transition: transform var(--x-duration-base) var(--x-ease-out);
     }
 
     &:hover {
-      color: var(--fg);
+      color: var(--x-fg);
     }
 
-    &:hover :global(.icon) {
-      transform: translateX(-3px);
+    @media (prefers-reduced-motion: no-preference) {
+      &:hover :global(.icon) {
+        transform: translateX(-3px);
+      }
     }
   }
 
@@ -254,7 +256,7 @@ const jsonLd = {
     margin-top: 1.125rem;
     max-width: 62ch;
     font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
-    color: var(--fg-muted);
+    color: var(--x-fg-muted);
   }
 
   .meta {
@@ -266,7 +268,7 @@ const jsonLd = {
     padding: 0;
     list-style: none;
     font-size: 0.875rem;
-    color: var(--fg-faint);
+    color: var(--x-fg-faint);
 
     & li {
       display: inline-flex;
@@ -277,14 +279,14 @@ const jsonLd = {
 
   .tag-link {
     transition:
-      border-color var(--dur-fast) var(--ease-out),
-      color var(--dur-fast) var(--ease-out),
-      background-color var(--dur-fast) var(--ease-out);
+      border-color var(--x-duration-fast) var(--x-ease-out),
+      color var(--x-duration-fast) var(--x-ease-out),
+      background-color var(--x-duration-fast) var(--x-ease-out);
 
     &:hover {
-      border-color: var(--accent);
-      color: var(--fg);
-      background: var(--surface);
+      border-color: var(--x-accent);
+      color: var(--x-fg);
+      background: var(--x-surface);
     }
   }
 
@@ -301,11 +303,11 @@ const jsonLd = {
     justify-self: start;
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--fg-muted);
-    transition: color var(--dur-fast) var(--ease-out);
+    color: var(--x-fg-muted);
+    transition: color var(--x-duration-fast) var(--x-ease-out);
 
     &:hover {
-      color: var(--fg);
+      color: var(--x-fg);
     }
   }
 
@@ -314,8 +316,8 @@ const jsonLd = {
     max-width: 61.25rem;
     height: auto;
     margin-bottom: 2.5rem;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--line);
+    border-radius: var(--x-radius-lg);
+    border: 1px solid var(--x-line);
   }
 
   .side {
@@ -338,22 +340,22 @@ const jsonLd = {
     grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
     padding-top: 2rem;
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--x-line);
 
     & a {
       display: grid;
       gap: 0.375rem;
       padding: 1rem 1.125rem;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
+      border: 1px solid var(--x-line);
+      border-radius: var(--x-radius-md);
       text-decoration: none;
       transition:
-        border-color var(--dur-fast) var(--ease-out),
-        background-color var(--dur-fast) var(--ease-out);
+        border-color var(--x-duration-fast) var(--x-ease-out),
+        background-color var(--x-duration-fast) var(--x-ease-out);
 
       &:hover {
-        border-color: var(--line-strong);
-        background: var(--surface);
+        border-color: var(--x-line-strong);
+        background: var(--x-surface);
       }
     }
 
