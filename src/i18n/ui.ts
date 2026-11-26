@@ -191,7 +191,7 @@ export function useTranslations(locale: Locale) {
   return (key: UIKey): string => dictionaries[locale][key];
 }
 
-export const CATEGORIES = {
+const CATEGORIES = {
   guide: { fr: "Guide", en: "Guide" },
   settings: { fr: "Réglages", en: "Settings" },
   optimization: { fr: "Optimisation", en: "Optimization" },
