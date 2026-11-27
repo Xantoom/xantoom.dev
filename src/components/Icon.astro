@@ -16,9 +16,11 @@ interface Props {
   size?: number;
   label?: string;
   class?: string;
+  /** Other attributes go on the <svg> (a data-* hook). */
+  [attribute: `data-${string}`]: string | undefined;
 }
 
-const { name, size = 18, label, class: className } = Astro.props;
+const { name, size = 18, label, class: className, ...rest } = Astro.props;
 const [set, icon] = name.includes(":") ? name.split(":") : ["lucide", name];
 const collection = { lucide, si: brands, flag: flags }[set as "lucide" | "si" | "flag"];
 const data = collection && getIconData(collection, icon!);
@@ -39,4 +41,5 @@ const body = replaceIDs(svg.body);
   role={label ? "img" : undefined}
   aria-label={label}
   set:html={body}
+  {...rest}
 />

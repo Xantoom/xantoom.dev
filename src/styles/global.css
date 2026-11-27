@@ -1,11 +1,14 @@
 /*
- * The Xantoom design system (xantoom-design) provides the tokens, reset, base styles and components, in the `x`
- * layer. This file holds only what is specific to this site. Use the `--x-*` tokens; see the xantoom-design skill.
+ * The Xantoom design system (xantoom-design) provides the tokens, reset, base styles and utilities (its foundation),
+ * and the component families the site uses (buttons, menus), in the `x` layer. This file holds only what is specific
+ * to this site. Use the `--x-*` tokens; see the xantoom-design skill.
  * The site's reset sits below the design system, everything else above it.
  */
 @layer reset, x, tokens, base, prose, utilities;
 
-@import "xantoom-design/css";
+@import "xantoom-design/foundation";
+@import "xantoom-design/components/actions.css";
+@import "xantoom-design/components/overlays.css";
 
 /* ---------------------------------------------------------------- tokens */
 @layer tokens {

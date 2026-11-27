@@ -4,8 +4,8 @@ import { labelValue, useTranslations } from "~/i18n/ui";
 import Icon from "./Icon.astro";
 
 /**
- * One button that cycles through system, opposite-of-OS, and the other explicit theme.
- * The visible icon follows <html data-theme> through CSS so it is right before any script runs.
+ * The design system's theme switch (`.x-cycle`, wired by xantoom-design/theme.js): system, light, dark. The visible
+ * icon is set before any script by the head script (BaseHead), which reads the same stored choice.
  */
 interface Props {
   locale: Locale;
@@ -21,114 +21,42 @@ const labels = {
 ---
 
 <button
-  class="theme"
+  class="x-cycle"
   type="button"
   data-theme-toggle
-  data-labels={JSON.stringify(labels)}
+  data-label-system={labels.system}
+  data-label-light={labels.light}
+  data-label-dark={labels.dark}
   aria-label={labels.system}
-  title={labels.system}
 >
-  <Icon name="sun-moon" size={18} class="system" />
-  <Icon name="sun" size={18} class="light" />
-  <Icon name="moon" size={18} class="dark" />
-  <span class="x-visually-hidden" aria-live="polite" data-theme-status></span>
+  <Icon name="sun-moon" size={18} data-v="system" />
+  <Icon name="sun" size={18} data-v="light" />
+  <Icon name="moon" size={18} data-v="dark" />
 </button>
+<script is:inline>
+  // The current icon before the module below runs, so the button never shows empty.
+  (() => {
+    let theme = "system";
+    try {
+      theme = localStorage.getItem("x-theme") || "system";
+    } catch {}
+    const button = document.currentScript?.previousElementSibling;
+    button?.querySelector(`[data-v="${theme}"]`)?.setAttribute("data-current", "");
+  })();
+</script>
 
 <script>
-  type Theme = "system" | "light" | "dark";
-  const root = document.documentElement;
-  const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  import { type ThemeChoice, themeCycle } from "xantoom-design/theme.js";
 
-  function current(): Theme {
-    const value = root.dataset.theme;
-    return value === "light" || value === "dark" ? value : "system";
-  }
-
-  /** From system, jump directly to the opposite theme so the first click always produces a visible change. */
-  function nextTheme(state: Theme): Theme {
-    const osDark = darkQuery.matches;
-    const opposite: Theme = osDark ? "light" : "dark";
-    const matching: Theme = osDark ? "dark" : "light";
-    if (state === "system") return opposite;
-    if (state === opposite) return matching;
-    return "system";
-  }
-
-  function syncThemeColor(theme: Theme) {
+  /** The browser's bar follows the chosen theme; on system, each meta keeps its media query's colour. */
+  function syncThemeColor(theme: ThemeChoice) {
     for (const meta of document.querySelectorAll<HTMLMetaElement>("meta[data-theme-color]")) {
-      if (theme === "system") {
-        meta.content = meta.dataset.themeColor === "dark" ? "#15161c" : "#ebebee";
-      } else {
-        meta.content = theme === "dark" ? "#15161c" : "#ebebee";
-      }
-    }
-  }
-
-  function apply(theme: Theme) {
-    if (theme === "system") delete root.dataset.theme;
-    else root.dataset.theme = theme;
-    syncThemeColor(theme);
-    try {
-      if (theme === "system") localStorage.removeItem("theme");
-      else localStorage.setItem("theme", theme);
-    } catch {
-      /* storage unavailable: the choice lasts for this page only */
+      const scheme = theme === "system" ? meta.dataset.themeColor : theme;
+      meta.content = scheme === "dark" ? "#15161c" : "#ebebee";
     }
   }
 
   for (const button of document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]")) {
-    const labels = JSON.parse(button.dataset.labels ?? "{}") as Record<Theme, string>;
-    const status = button.querySelector<HTMLElement>("[data-theme-status]");
-    const updateLabel = (announce: boolean) => {
-      const text = labels[current()];
-      button.setAttribute("aria-label", text);
-      button.title = text;
-      if (announce && status) status.textContent = text;
-    };
-    updateLabel(false);
-
-    button.addEventListener("click", () => {
-      apply(nextTheme(current()));
-      updateLabel(true);
-    });
+    themeCycle(button, { onChange: syncThemeColor });
   }
 </script>
-
-<style>
-  .theme {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: var(--x-radius-sm);
-    color: var(--x-fg-faint);
-    transition:
-      background-color var(--x-duration-fast) var(--x-ease-out),
-      color var(--x-duration-fast) var(--x-ease-out);
-
-    &:hover {
-      background: var(--x-surface);
-      color: var(--x-fg);
-    }
-
-    & :global(.icon) {
-      grid-area: 1 / 1;
-      opacity: 0;
-      transition:
-        opacity var(--x-duration-fast) var(--x-ease-out),
-        transform var(--x-duration-fast) var(--x-ease-out);
-
-      @media (prefers-reduced-motion: no-preference) {
-        transform: translateY(0.1875rem) scale(0.88);
-      }
-    }
-  }
-
-  :global(:root:not([data-theme])) .theme :global(.system),
-  :global(:root[data-theme="light"]) .theme :global(.light),
-  :global(:root[data-theme="dark"]) .theme :global(.dark) {
-    opacity: 1;
-    transform: none;
-  }
-</style>

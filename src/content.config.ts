@@ -35,7 +35,7 @@ const projects = defineCollection({
       description: z.string().max(200),
       status: z.enum(["stable", "beta", "wip"]),
       order: z.number().int(),
-      /** File name of the logo in src/assets/projects/ (SVG). */
+      /** The brand logo in xantoom-design/brand/ (its name, without .svg). */
       logo: z.string(),
       /** Brand colours used for the project accent, [start, end] of its gradient. */
       colors: z.tuple([z.string(), z.string()]),
