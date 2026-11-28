@@ -10,7 +10,7 @@
         "@astrojs/sitemap": "^3.7.6",
         "astro": "^7.4.13",
         "sharp": "^0.35.5",
-        "xantoom-design": "github:Xantoom/xantoom-design#v0.4.2",
+        "xantoom-design": "github:Xantoom/xantoom-design#v0.7.5",
       },
       "devDependencies": {
         "@astrojs/compiler-rs": "^0.5.3",
@@ -896,7 +896,7 @@
 
     "ws": ["ws@8.21.0", "", { "peerDependencies": { "bufferutil": "^4.0.1", "utf-8-validate": ">=5.0.2" }, "optionalPeers": ["bufferutil", "utf-8-validate"] }, "sha512-Vsp28b7DRcimFQvrqu2Wek3z1iYxDCWqHYB8Qsnk/S4RfaCQzPGPyBNuVjJV3cd6UiKtUtp6sNM77gWvzcCH+g=="],
 
-    "xantoom-design": ["xantoom-design@github:Xantoom/xantoom-design#3c9924f", { "peerDependencies": { "react": ">=19.2" }, "optionalPeers": ["react"], "bin": { "xantoom-design": "./scripts/sync.ts" } }, "Xantoom-xantoom-design-3c9924f", "sha512-RJVxoYeunv22+VrNXNhP2F1XGhgzZuHhuXlpbuXxTm83ov+tYpBitm/lVebhjTegdeSlO7aLvQwvnXft1YXKzQ=="],
+    "xantoom-design": ["xantoom-design@github:Xantoom/xantoom-design#b1316e1", { "peerDependencies": { "react": ">=19.2" }, "optionalPeers": ["react"], "bin": { "xantoom-design": "./scripts/cli.ts" } }, "Xantoom-xantoom-design-b1316e1", "sha512-X455NtApL6i07qBRjRAV44A/4YG0ZmhRW5oyVtHznmpyZNsvfo7WP+63pxm0sF/XddQCuVWmRea9duy9iWHCCA=="],
 
     "xml-naming": ["xml-naming@0.3.0", "", {}, "sha512-ghig2TBE/H11aOVgmahA3MhimvkBr6JIYknH/Dhdk10nXwdbIqBJsbfMxpvFPG8bAw77gN29aQWvKpmVoPlvPQ=="],
 

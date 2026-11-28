@@ -15,8 +15,7 @@
     "fmt:check": "oxfmt --check",
     "verify": "bun run fmt:check && bun run lint && bun run check && bun run build",
     "deploy": "astro build && wrangler deploy",
-    "new-post": "bun scripts/new-post.ts",
-    "postinstall": "xantoom-design sync"
+    "new-post": "bun scripts/new-post.ts"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.1.6",
@@ -24,7 +23,7 @@
     "@astrojs/sitemap": "^3.7.6",
     "astro": "^7.4.13",
     "sharp": "^0.35.5",
-    "xantoom-design": "github:Xantoom/xantoom-design#v0.4.2"
+    "xantoom-design": "github:Xantoom/xantoom-design#v0.7.5"
   },
   "devDependencies": {
     "@astrojs/compiler-rs": "^0.5.3",

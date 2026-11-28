@@ -318,65 +318,17 @@
     }
   }
 
-  /* Native dialog lightbox for zoomed article figures. */
-  dialog.lightbox {
-    margin: auto;
-    padding: 0;
-    max-width: min(94vw, 80rem);
-    max-height: 92dvh;
-    border: 0;
-    background: transparent;
-    color: #ededf2;
-    overflow: visible;
+  /* The lightbox's caption, under the picture, which leaves it room so the box never scrolls. */
+  .x-lightbox:has(> .lightbox-caption:not([hidden])) > img {
+    max-block-size: calc(100dvh - 9rem);
+  }
 
-    &::backdrop {
-      background: rgb(10 11 15 / 0.86);
-      backdrop-filter: blur(4px);
-    }
-
-    & .lightbox-body {
-      position: relative;
-      display: grid;
-      justify-items: center;
-      gap: 0.75rem;
-    }
-
-    & img {
-      max-width: 100%;
-      max-height: calc(92dvh - 4rem);
-      width: auto;
-      height: auto;
-      border-radius: var(--x-radius-md);
-      border: 1px solid rgb(255 255 255 / 0.14);
-      background: var(--x-surface);
-      box-shadow: 0 24px 64px -16px rgb(0 0 0 / 0.7);
-    }
-
-    & figcaption {
-      font-size: 0.875rem;
-      color: #c7cad4;
-      text-align: center;
-      max-width: 65ch;
-    }
-
-    & .lightbox-close {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      display: grid;
-      place-items: center;
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: var(--x-radius-sm);
-      border: 1px solid rgb(255 255 255 / 0.18);
-      background: rgb(21 22 28 / 0.9);
-      color: #ededf2;
-      transition: background-color var(--x-duration-fast) var(--x-ease-out);
-
-      &:hover {
-        background: #2c2e38;
-      }
-    }
+  .lightbox-caption {
+    max-width: 65ch;
+    margin: var(--x-space-2) auto 0;
+    color: var(--x-fg-muted);
+    font-size: 0.875rem;
+    text-align: center;
   }
 
   .astro-code span {

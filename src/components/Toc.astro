@@ -15,22 +15,21 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
 {items.length > 0 && (
-  <nav class="toc" aria-labelledby="toc-title" data-toc>
+  <div class="toc" data-toc>
     <details open>
       <summary>
         <Icon name="list" size={16} />
         <span id="toc-title">{t("post.toc")}</span>
         <Icon name="chevron-down" size={16} class="chevron" />
       </summary>
-      <ol>
+      {/* The design system's contents: `contents()` marks the section being read. */}
+      <nav class="x-toc" aria-labelledby="toc-title">
         {items.map((heading) => (
-          <li class:list={[`d${heading.depth}`]}>
-            <a href={`#${heading.slug}`} data-toc-link={heading.slug}>
-              {heading.text}
-            </a>
-          </li>
+          <a href={`#${heading.slug}`} data-level={heading.depth === 3 ? "2" : undefined}>
+            {heading.text}
+          </a>
         ))}
-      </ol>
+      </nav>
     </details>
     <div class="progress" aria-hidden="true">
       <span />
@@ -39,62 +38,30 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
       <Icon name="arrow-up" size={14} />
       {t("post.backToTop")}
     </a>
-  </nav>
+  </div>
 )}
 
 <script>
+  import { contents } from "xantoom-design/extras.js";
+
   const toc = document.querySelector<HTMLElement>("[data-toc]");
   if (toc) {
-    const links = new Map<string, HTMLAnchorElement>();
-    toc.querySelectorAll<HTMLAnchorElement>("[data-toc-link]").forEach((link) => {
-      links.set(link.dataset.tocLink!, link);
-    });
+    contents(toc);
 
-    const headings = [...links.keys()]
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => el !== null);
-
+    // In a sidebar taller than the window, the current link stays in view.
     const side = toc.closest<HTMLElement>(".side");
-
-    let current = "";
-    const update = () => {
-      const atBottom =
-        window.scrollY > 0 &&
-        window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4;
-      let active = headings[0]?.id ?? "";
-      if (atBottom && headings.length > 0) {
-        active = headings[headings.length - 1]!.id;
-      } else {
-        const offset = window.innerHeight * 0.25;
-        for (const heading of headings) {
-          if (heading.getBoundingClientRect().top - offset <= 0) active = heading.id;
-          else break;
+    if (side) {
+      new MutationObserver((records) => {
+        for (const { target } of records) {
+          if (
+            target instanceof HTMLElement &&
+            target.getAttribute("aria-current") === "true" &&
+            side.scrollHeight > side.clientHeight
+          )
+            target.scrollIntoView({ block: "nearest" });
         }
-      }
-      if (active === current) return;
-      links.get(current)?.removeAttribute("aria-current");
-      const activeLink = links.get(active);
-      activeLink?.setAttribute("aria-current", "location");
-      if (activeLink && side && side.scrollHeight > side.clientHeight) {
-        activeLink.scrollIntoView({ block: "nearest" });
-      }
-      current = active;
-    };
-
-    let ticking = false;
-    window.addEventListener(
-      "scroll",
-      () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(() => {
-          update();
-          ticking = false;
-        });
-      },
-      { passive: true },
-    );
-    update();
+      }).observe(toc, { subtree: true, attributeFilter: ["aria-current"] });
+    }
 
     // On wide screens the sidebar contents stay permanently open; on small screens they start folded.
     const details = toc.querySelector("details");
@@ -144,65 +111,6 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
       margin-left: auto;
       transition: transform var(--x-duration-fast) var(--x-ease-out);
     }
-  }
-
-  ol {
-    list-style: none;
-    padding: 0 0 0 0.875rem;
-    margin: 0;
-    border-left: 1px solid var(--x-line);
-  }
-
-  li {
-    margin: 0;
-  }
-
-  li.d3 {
-    padding-left: 0.875rem;
-  }
-
-  ol a {
-    position: relative;
-    display: block;
-    padding: 0.3125rem 0;
-    color: var(--x-fg-muted);
-    text-decoration: none;
-    line-height: 1.4;
-    transition: color var(--x-duration-fast) var(--x-ease-out);
-
-    &::before {
-      content: "";
-      position: absolute;
-      left: calc(-0.875rem - 1.5px);
-      top: 0.25rem;
-      bottom: 0.25rem;
-      width: 2px;
-      border-radius: 2px;
-      background: var(--x-fill);
-      opacity: 0;
-      transform: scaleY(0.4);
-      transition:
-        opacity var(--x-duration-fast) var(--x-ease-out),
-        transform var(--x-duration-base) var(--x-ease-out);
-    }
-
-    &:hover {
-      color: var(--x-fg);
-    }
-
-    &[aria-current="location"] {
-      color: var(--x-fg);
-      font-weight: 550;
-
-      &::before {
-        opacity: 1;
-        transform: scaleY(1);
-      }
-    }
-  }
-
-  li.d3 a::before {
-    left: calc(-1.75rem - 1.5px);
   }
 
   /* Whole-article reading progress, only shown when scroll-driven animations are supported. */

@@ -130,49 +130,43 @@ export function initCodeCopy(): void {
     heading.append(anchor);
   }
 
-  // 4. Native <dialog> lightbox for <Figure> images.
+  // 4. One design-system lightbox (x-dialog x-lightbox) for every <Figure>: its picture is the button that opens it.
   const zoomButtons = prose.querySelectorAll<HTMLButtonElement>("[data-figure-zoom]");
   if (zoomButtons.length > 0) {
     const dialog = document.createElement("dialog");
-    dialog.className = "lightbox";
-    const body = document.createElement("figure");
-    body.className = "lightbox-body";
+    dialog.className = "x-dialog x-lightbox";
+    dialog.setAttribute("closedby", "any");
     const fullImg = document.createElement("img");
-    const caption = document.createElement("figcaption");
+    const caption = document.createElement("p");
+    caption.className = "lightbox-caption";
     const closeBtn = document.createElement("button");
     closeBtn.type = "button";
-    closeBtn.className = "lightbox-close";
+    closeBtn.className = "x-button x-dialog-close";
+    closeBtn.dataset.variant = "ghost";
+    closeBtn.dataset.icon = "";
     closeBtn.setAttribute("aria-label", closeLabel);
-    closeBtn.title = closeLabel;
     closeBtn.innerHTML = svg(ICONS.close, 18);
     closeBtn.addEventListener("click", () => dialog.close());
-    body.append(fullImg, caption);
-    dialog.append(closeBtn, body);
+    dialog.append(closeBtn, fullImg, caption);
+    // Where closedby is not supported yet: a press on the backdrop closes it too.
     dialog.addEventListener("click", (event) => {
       if (event.target === dialog) dialog.close();
     });
     document.body.append(dialog);
 
-    const openFigure = (figure: HTMLElement) => {
-      const img = figure.querySelector<HTMLImageElement>("img");
-      if (!img) return;
-      fullImg.src = img.currentSrc || img.src;
-      fullImg.alt = img.alt;
-      const text = figure.querySelector("figcaption")?.textContent?.trim() ?? "";
-      caption.textContent = text;
-      caption.hidden = text.length === 0;
-      dialog.showModal();
-    };
-
     for (const button of zoomButtons) {
-      const figure = button.closest<HTMLElement>("figure");
-      if (!figure) continue;
-      button.addEventListener("click", () => openFigure(figure));
-      const img = figure.querySelector<HTMLImageElement>("img");
-      if (img) {
-        img.style.cursor = "zoom-in";
-        img.addEventListener("click", () => openFigure(figure));
-      }
+      button.addEventListener("click", () => {
+        const img = button.querySelector<HTMLImageElement>("img");
+        if (!img) return;
+        fullImg.src = img.currentSrc || img.src;
+        fullImg.alt = img.alt;
+        const text =
+          button.closest("figure")?.querySelector("figcaption")?.textContent?.trim() ?? "";
+        caption.textContent = text;
+        caption.hidden = text.length === 0;
+        dialog.setAttribute("aria-label", text || img.alt);
+        dialog.showModal();
+      });
     }
   }
 }

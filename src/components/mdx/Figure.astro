@@ -3,10 +3,10 @@ import type { ImageMetadata } from "astro";
 import { Image } from "astro:assets";
 import { DEFAULT_LOCALE, isLocale } from "~/i18n/config";
 import { useTranslations } from "~/i18n/ui";
-import Icon from "../Icon.astro";
 
 /**
- * Optimized image with an optional caption and native dialog zoom.
+ * Optimized image with an optional caption (the design system's `x-figure`): the picture is a button that opens it
+ * large in the shared `x-lightbox` dialog (src/lib/code-copy.ts).
  * Usage in MDX:
  *   import shot from "./shot.png";
  *   <Figure src={shot} alt="…" caption="…" />
@@ -26,8 +26,8 @@ const locale = isLocale(Astro.currentLocale) ? Astro.currentLocale : DEFAULT_LOC
 const t = useTranslations(locale);
 ---
 
-<figure class:list={["figure", size]}>
-  <div class="frame">
+<figure class:list={["x-figure", "figure", size]}>
+  <button type="button" data-figure-zoom aria-label={`${t("figure.zoom")}: ${alt}`}>
     {isGif ? (
       <img
         src={src.src}
@@ -48,16 +48,7 @@ const t = useTranslations(locale);
         loading="lazy"
       />
     )}
-    <button
-      type="button"
-      class="figure-zoom"
-      data-figure-zoom
-      aria-label={t("figure.zoom")}
-      title={t("figure.zoom")}
-    >
-      <Icon name="maximize-2" size={15} />
-    </button>
-  </div>
+  </button>
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
 
@@ -66,49 +57,10 @@ const t = useTranslations(locale);
     margin-block: 2em;
   }
 
-  .frame {
-    position: relative;
-  }
-
   .figure :global(img) {
-    width: 100%;
+    border: 1px solid var(--x-line);
     border-radius: var(--x-radius-md);
-    border: 1px solid var(--x-line);
     background: var(--x-surface);
-  }
-
-  .figure-zoom {
-    position: absolute;
-    right: 0.625rem;
-    bottom: 0.625rem;
-    display: grid;
-    place-items: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: var(--x-radius-sm);
-    border: 1px solid var(--x-line);
-    background: color-mix(in srgb, var(--x-raised) 92%, transparent);
-    color: var(--x-fg-muted);
-    opacity: 0;
-    transition:
-      opacity var(--x-duration-fast) var(--x-ease-out),
-      color var(--x-duration-fast) var(--x-ease-out);
-
-    &:hover,
-    &:focus-visible {
-      opacity: 1;
-      color: var(--x-fg);
-    }
-  }
-
-  .frame:hover .figure-zoom {
-    opacity: 1;
-  }
-
-  @media (hover: none) {
-    .figure-zoom {
-      opacity: 1;
-    }
   }
 
   /* Expand rightwards on wide viewports so the figure never overlaps the left TOC sidebar. */

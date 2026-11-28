@@ -1,6 +1,6 @@
 /*
  * The Xantoom design system (xantoom-design) provides the tokens, reset, base styles and utilities (its foundation),
- * and the component families the site uses (buttons, menus), in the `x` layer. This file holds only what is specific
+ * and the component families the site uses (buttons, contents, figures, dialogs), in the `x` layer. This file holds only what is specific
  * to this site. Use the `--x-*` tokens; see the xantoom-design skill.
  * The site's reset sits below the design system, everything else above it.
  */
@@ -8,6 +8,7 @@
 
 @import "xantoom-design/foundation";
 @import "xantoom-design/components/actions.css";
+@import "xantoom-design/components/content.css";
 @import "xantoom-design/components/overlays.css";
 
 /* ---------------------------------------------------------------- tokens */
@@ -157,11 +158,10 @@
     .x-skip-link,
     header.header,
     footer.footer,
-    nav.toc,
+    .toc,
     .post-foot,
     .code-copy,
-    .heading-anchor,
-    .figure-zoom {
+    .heading-anchor {
       display: none !important;
     }
 

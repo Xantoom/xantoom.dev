@@ -142,8 +142,8 @@ The About page is MDX and lists the apps with `<AppList />` (`components/mdx/App
   is ever added, follow Vercel's React best practices.
 - **Accessibility:** WCAG AA contrast in both themes, visible focus, keyboard support,
   `prefers-reduced-motion` respected for every animation.
-- **Design:** the site uses the Xantoom design system (`xantoom-design`, read its skill in
-  `.agents/skills/xantoom-design/`). Use its `--x-*` tokens and `x-*` components, never raw colours in
+- **Design:** the site uses the Xantoom design system (`xantoom-design`, load its skill, installed
+  on the machine, not in this repository). Use its `--x-*` tokens and `x-*` components, never raw colours in
   components (except project brand colours from content). Anything useful beyond this site goes to
   xantoom-design (propose it first). Animate transforms only inside
   `@media (prefers-reduced-motion: no-preference)`; there is no global reduced-motion override.
@@ -164,10 +164,7 @@ The About page is MDX and lists the apps with `<AppList />` (`components/mdx/App
   tracked files. Working notes go in `docs/`, which is git-ignored.
 - Code and comments are in English. Content is written in French first, then translated.
 
-<!-- xantoom-design:start -->
-
 ## Design system
 
 This project uses the Xantoom design system. Before any UI work (pages, components, styles, motion, icons,
-layout), read `.agents/skills/xantoom-design/SKILL.md` and follow it.
-<!-- xantoom-design:end -->
+layout), load the `xantoom-design` skill (installed on the machine, not in this repository) and follow it.
